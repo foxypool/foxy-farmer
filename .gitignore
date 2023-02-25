@@ -1,0 +1,5 @@
+dist
+build
+foxy_farmer.egg-info
+.idea
+foxy-farmer.yaml
