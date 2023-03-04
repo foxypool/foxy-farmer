@@ -16,19 +16,17 @@ Foxy-Farmer is useful in the following scenarios:
 ### Using the binary
 
 1. Download the latest binary zip for your OS from the [releases page](https://github.com/foxypool/foxy-farmer/releases/latest)
-2. Run the binary, it will create a fresh chia config directory in your user home dir (`C:\Users\<your user>\.foxy-farmer`) and copy any existing chia `config.yaml` into it
-3. It will create a default `foxy-farmer.yaml` in the current directory based on your current chia `config.yaml`
-4. Edit the `foxy-farmer.yaml` to your liking and restart foxy-farmer
-5. Profit!
+2. Run the binary, it will create a default `foxy-farmer.yaml` in the current directory based on your current chia `config.yaml`
+3. Edit the `foxy-farmer.yaml` to your liking and restart foxy-farmer
+4. Profit!
 
 ### Running from source
 
 1. Clone the git repo and cd into it: `git clone https://github.com/foxypool/foxy-farmer && cd foxy-farmer`
 2. Install the dependencies: `pip install .`
-3. Run using `foxy-farmer`, it will create a fresh chia config directory in your user home dir (`C:\Users\<your user>\.foxy-farmer`) and copy any existing chia `config.yaml` into it
-4. It will create a default `foxy-farmer.yaml` in the current directory based on your current chia `config.yaml`
-5. Edit the `foxy-farmer.yaml` to your liking and restart foxy-farmer
-6. Profit!
+3. Run using `foxy-farmer`, it will create a default `foxy-farmer.yaml` in the current directory based on your current chia `config.yaml`
+4. Edit the `foxy-farmer.yaml` to your liking and restart foxy-farmer
+5. Profit!
 
 ### Using docker
 
@@ -36,7 +34,7 @@ A docker image based on the provided [Dockerfile](https://github.com/foxypool/fo
 For specific tags see [this list](https://github.com/foxypool/foxy-farmer/pkgs/container/foxy-farmer).
 A [docker-compose.yaml](https://github.com/foxypool/foxy-farmer/blob/main/docker-compose.yaml) example is available as well, to get started.
 
-Currently, this requires you to have a working `foxy-farmer.yaml` already available to mount into the container.
+Currently, this requires you to have a working `foxy-farmer.yaml` already available to mount into the container. See this [example configuration](https://docs.foxypool.io/proof-of-spacetime/foxy-farmer/configuration/#example-configuration) for reference.
 
 ## Are my keys safe?
 
