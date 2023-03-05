@@ -44,6 +44,11 @@ Yes, Foxy-Farmer itself is open source and uses the [og pooling patched chia-blo
 
 No, this is not officially supported at this time and might impose a fee for using.
 
+## Using remote harvesters
+
+You can use remote harvesters with foxy-farmer, just make sure to use the port 18447 and use the ssl ca directory from `.foxy-farmer`.
+A `make_harvester_installer.ps1` and `run_harvester.ps1` script is provided to simplify this for Windows users, especially when running gigahorse remote harvesters already. Just run the `make_harvester_installer.ps1` script and copy the resulting `foxy-harvester` directory onto the remote harvesters and run `run_harvester.ps1` on them.
+
 ## License
 
 GNU GPLv3 (see [LICENSE](https://github.com/foxypool/foxy-farmer/blob/main/LICENSE))
