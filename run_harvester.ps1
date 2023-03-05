@@ -26,6 +26,7 @@ if (!(Test-Path -Path $foxyHarvesterChiaRootPath)) {
     Start-Process -NoNewWindow -Wait -FilePath "$chiaBinPath" -ArgumentList "configure --set-harvester-port 18448 --set-farmer-peer $foxyFarmerPeerHost`:18447 --set-log-level INFO"
     ((Get-Content -path $foxyHarvesterChiaConfigPath -Raw) -replace 'rpc_port: 8560','rpc_port: 18560') | Set-Content -Path $foxyHarvesterChiaConfigPath
     ((Get-Content -path $foxyHarvesterChiaConfigPath -Raw) -replace 'log_stdout: false','log_stdout: true') | Set-Content -Path $foxyHarvesterChiaConfigPath
+    ((Get-Content -path $foxyHarvesterChiaConfigPath -Raw) -replace 'daemon_port: 55400','daemon_port: 55470') | Set-Content -Path $foxyHarvesterChiaConfigPath
 }
 
 try {
