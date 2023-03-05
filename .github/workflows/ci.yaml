@@ -71,6 +71,11 @@ jobs:
           pip install -e .[dev] --extra-index-url https://pypi.chia.net/simple/
       - name: Build binary
         run: pyinstaller foxy_farmer.spec
+      - name: Include powershell harvester scripts
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
+          copy make_harvester_installer.ps1 dist
+          copy run_harvester.ps1 dist
       - name: Save release archive
         uses: actions/upload-artifact@v3
         with:
