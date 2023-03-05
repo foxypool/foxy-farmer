@@ -6,7 +6,7 @@ if (!(Test-Path -Path $foxyFarmerChiaRootPath)) {
 }
 $foxyHarvesterPath = "foxy-harvester"
 if (Test-Path -Path $foxyHarvesterPath) {
-    Write-Output "foxy-harevster directory already exists, you can copy it to your harevsters and run the run_harvester.ps1 script there"
+    Write-Output "foxy-harvester directory already exists, you can copy it to your harvesters and run the run_harvester.ps1 script there"
     Read-Host -Prompt "Press any key to exit"
     exit
 }
