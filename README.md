@@ -42,7 +42,7 @@ Yes, Foxy-Farmer itself is open source and uses the [og pooling patched chia-blo
 
 ## Can i use the Foxy-Pool chia farming gateway without pooling in Foxy-Pool?
 
-No, this is not officially supported at this time and might impose a fee for using.
+Yes, using the chia farming gateway without pooling in Foxy-Pool is supported, but a 1% fee is charged when farming a block with a Pool Public Key or Launcher Id which is not pooling with Foxy-Pool.
 
 ## Using remote harvesters
 
