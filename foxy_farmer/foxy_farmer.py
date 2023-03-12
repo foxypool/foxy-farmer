@@ -8,6 +8,7 @@ from pathlib import Path
 from types import FrameType
 from typing import Optional
 
+import click
 import pkg_resources
 from chia.daemon.server import WebSocketServer
 from chia.farmer.farmer import Farmer
@@ -28,14 +29,18 @@ version = pkg_resources.require("foxy-farmer")[0].version
 
 class FoxyFarmer:
     _foxy_root: Path = Path(os.path.expanduser(os.getenv("FOXY_ROOT", "~/.foxy-farmer/mainnet"))).resolve()
+    _config_path: Path
     _daemon_ws_server: WebSocketServer
     _farmer_service: Service[Farmer]
     _harvester_service: Optional[Service[Harvester]] = None
     _gateway_availability_monitor: GatewayAvailabilityMonitor
 
+    def __init__(self, config_path: Path):
+        self._config_path = config_path
+
     async def start(self):
         foxy_chia_config_manager = FoxyChiaConfigManager(self._foxy_root)
-        foxy_chia_config_manager.ensure_foxy_config()
+        foxy_chia_config_manager.ensure_foxy_config(self._config_path)
 
         config = load_config(self._foxy_root, "config.yaml")
         initialize_logging(
@@ -50,7 +55,7 @@ class FoxyFarmer:
         self._daemon_ws_server = service_factory.make_daemon()
         self._farmer_service = service_factory.make_farmer()
 
-        foxy_config_manager = FoxyConfigManager()
+        foxy_config_manager = FoxyConfigManager(self._config_path)
         foxy_config = foxy_config_manager.load_config()
         if foxy_config.get("enable_harvester") is True:
             self._harvester_service = service_factory.make_harvester()
@@ -98,17 +103,29 @@ class FoxyFarmer:
             )
 
 
-async def async_main() -> int:
-    foxy_farmer = FoxyFarmer()
+async def run_foxy_farmer(config_path: Path):
+    foxy_farmer = FoxyFarmer(config_path)
     await foxy_farmer.setup_process_global_state()
     await foxy_farmer.start()
 
-    return 0
+
+@click.command()
+@click.help_option("--help", "-h")
+@click.option(
+    '-c',
+    '--config',
+    default='foxy-farmer.yaml',
+    help="Config file path",
+    type=click.Path(),
+    show_default=True
+)
+def cli(config: str):
+    async_run(run_foxy_farmer(Path(config)))
 
 
-def main() -> int:
-    return async_run(async_main())
+def main() -> None:
+    cli()
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    main()

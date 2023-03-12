@@ -19,7 +19,10 @@ def _get_default_config():
 
 
 class FoxyConfigManager:
-    _file_path = Path("foxy-farmer.yaml")
+    _file_path: Path
+
+    def __init__(self, file_path: Path):
+        self._file_path = file_path
 
     def has_config(self):
         return self._file_path.exists()

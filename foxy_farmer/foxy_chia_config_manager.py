@@ -17,7 +17,7 @@ class FoxyChiaConfigManager:
     def __init__(self, root_path: Path):
         self._root_path = root_path
 
-    def ensure_foxy_config(self):
+    def ensure_foxy_config(self, config_path: Path):
         foxy_chia_config_file_path = self._root_path / "config" / "config.yaml"
         is_first_install = foxy_chia_config_file_path.exists() is False
         if is_first_install:
@@ -30,7 +30,7 @@ class FoxyChiaConfigManager:
 
         config = load_config(self._root_path, "config.yaml")
 
-        foxy_config_manager = FoxyConfigManager()
+        foxy_config_manager = FoxyConfigManager(config_path)
         has_foxy_config = foxy_config_manager.has_config()
         foxy_config = foxy_config_manager.load_config()
 
