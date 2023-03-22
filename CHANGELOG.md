@@ -5,6 +5,9 @@
 ### Added
 
 - Added support for configurable config paths using the `-c` or `--config` argument when starting foxy-farmer
+
+### Changed
+
 - Upgraded chia to 1.7.1
 - Upgraded python to 3.11 in docker
 
