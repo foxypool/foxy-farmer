@@ -1,6 +1,5 @@
-import asyncio
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 
 from chia.cmds.init_funcs import chia_full_version_str
 from chia.consensus.default_constants import DEFAULT_CONSTANTS
@@ -20,7 +19,7 @@ class ServiceFactory:
         self._root_path = root_path
         self._config = config
 
-    def make_daemon(self):
+    def make_daemon(self) -> Optional[WebSocketServer]:
         crt_path = self._root_path / self._config["daemon_ssl"]["private_crt"]
         key_path = self._root_path / self._config["daemon_ssl"]["private_key"]
         ca_crt_path = self._root_path / self._config["private_ssl_ca"]["crt"]
@@ -29,15 +28,12 @@ class ServiceFactory:
             with Lockfile.create(daemon_launch_lock_path(self._root_path), timeout=1):
                 log.info(f"chia-blockchain version: {chia_full_version_str()}")
 
-                shutdown_event = asyncio.Event()
-
                 ws_server = WebSocketServer(
                     self._root_path,
                     ca_crt_path,
                     ca_key_path,
                     crt_path,
                     key_path,
-                    shutdown_event,
                 )
 
                 return ws_server

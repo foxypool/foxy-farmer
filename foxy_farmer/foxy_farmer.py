@@ -62,18 +62,17 @@ class FoxyFarmer:
 
         self._gateway_availability_monitor = GatewayAvailabilityMonitor(self._farmer_service)
 
-        await self._daemon_ws_server.start()
+        async with self._daemon_ws_server.run():
+            awaitables = [
+                self._farmer_service.run(),
+                self._daemon_ws_server.shutdown_event.wait(),
+            ]
+            if self._harvester_service is not None:
+                awaitables.append(self._harvester_service.run())
 
-        self._gateway_availability_monitor.start()
+            self._gateway_availability_monitor.start()
 
-        awaitables = [
-            self._farmer_service.run(),
-            self._daemon_ws_server.shutdown_event.wait(),
-        ]
-        if self._harvester_service is not None:
-            awaitables.append(self._harvester_service.run())
-
-        await asyncio.gather(*awaitables)
+            await asyncio.gather(*awaitables)
 
     def stop(self):
         self._gateway_availability_monitor.stop()
