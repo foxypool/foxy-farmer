@@ -1,7 +1,4 @@
-FROM python:3.10-slim
-
-ENV TZ=Europe/Berlin
-RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
+FROM python:3.11-slim
 
 RUN apt-get update && apt-get install -y build-essential git curl
 
