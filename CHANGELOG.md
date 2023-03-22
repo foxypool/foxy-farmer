@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Upgraded python to 3.11 for release builds
+
 ## [1.1.0] - 2023-03-22
 
 ### Added
