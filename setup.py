@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='foxy-farmer',
-    version='1.1.0',
+    version='1.2.0',
     url='https://foxypool.io',
     license='GPLv3',
     author='Felix Brucker',
