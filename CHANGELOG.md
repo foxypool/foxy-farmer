@@ -2,9 +2,13 @@
 
 ## [Unreleased]
 
+### Added
+
+- Log to stdout/console and the `debug.log` file located in `.foxy-farmer/mainnet/log`
+
 ### Fixed
 
-- Fixed foxy-farmer being unable to reconnect to the Chia Farming Gateway when the network connection was interrupted for extended periods.
+- Fixed foxy-farmer being unable to reconnect to the Chia Farming Gateway when the network connection was interrupted for extended periods
 
 ### Changed
 

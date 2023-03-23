@@ -14,13 +14,13 @@ from chia.daemon.server import WebSocketServer
 from chia.farmer.farmer import Farmer
 from chia.harvester.harvester import Harvester
 from chia.server.start_service import async_run, Service
-from chia.util.chia_logging import initialize_logging
 
 from chia.util.config import load_config
 
 from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_farmer.foxy_config_manager import FoxyConfigManager
 from foxy_farmer.gateway_availability_monitor import GatewayAvailabilityMonitor
+from foxy_farmer.foxy_farmer_logging import initialize_logging_with_stdout
 from foxy_farmer.service_factory import ServiceFactory
 
 log = logging.getLogger("foxy_farmer")
@@ -43,8 +43,7 @@ class FoxyFarmer:
         foxy_chia_config_manager.ensure_foxy_config(self._config_path)
 
         config = load_config(self._foxy_root, "config.yaml")
-        initialize_logging(
-            service_name="foxy_farmer",
+        initialize_logging_with_stdout(
             logging_config=config["logging"],
             root_path=self._foxy_root,
         )

@@ -59,9 +59,9 @@ class FoxyChiaConfigManager:
             foxy_config: Dict,
             config_was_updated: bool = False
     ):
-        if chia_foxy_config["logging"]["log_level"] != foxy_config["log_level"] or chia_foxy_config["logging"]["log_stdout"] is not True:
+        if chia_foxy_config["logging"]["log_level"] != foxy_config["log_level"] or chia_foxy_config["logging"]["log_stdout"] is not False:
             chia_foxy_config["logging"]["log_level"] = foxy_config["log_level"]
-            chia_foxy_config["logging"]["log_stdout"] = True
+            chia_foxy_config["logging"]["log_stdout"] = False
             config_was_updated = True
         if chia_foxy_config["self_hostname"] != foxy_config["listen_host"]:
             chia_foxy_config["self_hostname"] = foxy_config["listen_host"]
