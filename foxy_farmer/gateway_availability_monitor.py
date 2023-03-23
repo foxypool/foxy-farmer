@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from asyncio import sleep
 from typing import Optional
 
@@ -13,6 +14,7 @@ from foxy_farmer.service_wrapper import ServiceWrapper
 class GatewayAvailabilityMonitor:
     _farmer_service: ServiceWrapper
     _reconnect_if_necessary_task: Optional[asyncio.Task] = None
+    _logger: logging.Logger = logging.getLogger("gateway_availability_monitor")
 
     def __init__(self, farmer_service: Service[Farmer]):
         self._farmer_service = ServiceWrapper(farmer_service)
@@ -38,7 +40,10 @@ class GatewayAvailabilityMonitor:
     def _reconnect_if_necessary(self):
         if self._is_farmer_connected_to_gateway() is True:
             return
-        self._reconnect_to_gateway()
+        try:
+            self._reconnect_to_gateway()
+        except Exception as error:
+            self._logger.error(f"Failed to reconnect to the Chia Farming Gateway because an error occurred: {error}")
 
     def _is_farmer_connected_to_gateway(self):
         return self._farmer_service.has_active_connections(node_type=NodeType.FULL_NODE)
