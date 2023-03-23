@@ -14,7 +14,7 @@ datas.append((f"{DEP_ROOT}/mozilla-ca/*", "mozilla-ca"))
 
 
 a = Analysis(
-    ['foxy_farmer/foxy_farmer.py'],
+    ['foxy_farmer/foxy_farmer_main.py'],
     pathex=[],
     binaries=[],
     datas=datas,

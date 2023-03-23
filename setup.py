@@ -22,7 +22,7 @@ setup(
     ),
     entry_points={
         "console_scripts": [
-            "foxy-farmer = foxy_farmer.foxy_farmer:main",
+            "foxy-farmer = foxy_farmer.foxy_farmer_main:main",
         ],
     },
 )
