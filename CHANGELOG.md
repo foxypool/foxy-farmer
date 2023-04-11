@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Add support for showing the farm summary using the `summary` command, eg. `./foxy-farmer summary`.
+
 ## [1.2.0] - 2023-03-23
 
 ### Added

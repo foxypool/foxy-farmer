@@ -17,6 +17,7 @@ from chia.server.start_service import async_run, Service
 
 from chia.util.config import load_config
 
+from foxy_farmer.farm_summary import summary_cmd
 from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_farmer.foxy_config_manager import FoxyConfigManager
 from foxy_farmer.gateway_availability_monitor import GatewayAvailabilityMonitor
@@ -48,7 +49,7 @@ class FoxyFarmer:
             root_path=self._foxy_root,
         )
 
-        log.info(f"Foxy-Farmer {version}")
+        log.info(f"Foxy-Farmer {version} using config in {self._config_path}")
 
         service_factory = ServiceFactory(self._foxy_root, config)
         self._daemon_ws_server = service_factory.make_daemon()
@@ -107,8 +108,10 @@ async def run_foxy_farmer(config_path: Path):
     await foxy_farmer.start()
 
 
-@click.command()
-@click.help_option("--help", "-h")
+@click.group(
+    invoke_without_command=True,
+    context_settings=dict(help_option_names=["-h", "--help"])
+)
 @click.option(
     '-c',
     '--config',
@@ -117,8 +120,26 @@ async def run_foxy_farmer(config_path: Path):
     type=click.Path(),
     show_default=True
 )
-def cli(config: str):
+@click.pass_context
+def cli(ctx, config):
+    if ctx.invoked_subcommand is None:
+        ctx.forward(run_cmd)
+
+
+@cli.command("run", short_help="Run foxy-farmer, can be omitted")
+@click.option(
+    '-c',
+    '--config',
+    default='foxy-farmer.yaml',
+    help="Config file path",
+    type=click.Path(),
+    show_default=True
+)
+def run_cmd(config: str):
     async_run(run_foxy_farmer(Path(config)))
+
+
+cli.add_command(summary_cmd)
 
 
 def main() -> None:
