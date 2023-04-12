@@ -1,3 +1,4 @@
+import foxy_farmer.monkey_patch_chia_version
 import asyncio
 import functools
 import logging
