@@ -5,6 +5,8 @@
 ### Added
 
 - Add support for showing the farm summary using the `summary` command, eg. `./foxy-farmer summary`.
+- Include foxy-farmer version in partial submits in the user-agent header.
+- Bump chia to 1.7.1+og-1.3.0 to support `harvester_id` in OG partial submits.
 
 ## [1.2.0] - 2023-03-23
 
