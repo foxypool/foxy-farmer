@@ -6,9 +6,8 @@ from chia.consensus.default_constants import DEFAULT_CONSTANTS
 from chia.daemon.server import daemon_launch_lock_path, log, WebSocketServer
 from chia.server.start_farmer import create_farmer_service
 from chia.server.start_harvester import create_harvester_service
-from chia.types.peer_info import PeerInfo
+from chia.types.peer_info import UnresolvedPeerInfo
 from chia.util.lock import Lockfile, LockfileError
-from chia.util.network import get_host_addr
 
 
 class ServiceFactory:
@@ -42,8 +41,8 @@ class ServiceFactory:
             return None
 
     def make_harvester(self):
-        farmer_peer = PeerInfo(
-            str(get_host_addr(self._config["harvester"]["farmer_peer"]["host"])),
+        farmer_peer = UnresolvedPeerInfo(
+            str(self._config["harvester"]["farmer_peer"]["host"]),
             self._config["harvester"]["farmer_peer"]["port"]
         )
 

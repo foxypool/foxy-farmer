@@ -21,7 +21,6 @@ from chia.util.config import load_config
 from foxy_farmer.farm_summary import summary_cmd
 from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_farmer.foxy_config_manager import FoxyConfigManager
-from foxy_farmer.gateway_availability_monitor import GatewayAvailabilityMonitor
 from foxy_farmer.foxy_farmer_logging import initialize_logging_with_stdout
 from foxy_farmer.service_factory import ServiceFactory
 
@@ -35,7 +34,6 @@ class FoxyFarmer:
     _daemon_ws_server: WebSocketServer
     _farmer_service: Service[Farmer]
     _harvester_service: Optional[Service[Harvester]] = None
-    _gateway_availability_monitor: GatewayAvailabilityMonitor
 
     def __init__(self, config_path: Path):
         self._config_path = config_path
@@ -61,8 +59,6 @@ class FoxyFarmer:
         if foxy_config.get("enable_harvester") is True:
             self._harvester_service = service_factory.make_harvester()
 
-        self._gateway_availability_monitor = GatewayAvailabilityMonitor(self._farmer_service)
-
         async with self._daemon_ws_server.run():
             awaitables = [
                 self._farmer_service.run(),
@@ -71,12 +67,9 @@ class FoxyFarmer:
             if self._harvester_service is not None:
                 awaitables.append(self._harvester_service.run())
 
-            self._gateway_availability_monitor.start()
-
             await asyncio.gather(*awaitables)
 
     def stop(self):
-        self._gateway_availability_monitor.stop()
         if self._harvester_service is not None:
             self._harvester_service.stop()
         self._farmer_service.stop()
