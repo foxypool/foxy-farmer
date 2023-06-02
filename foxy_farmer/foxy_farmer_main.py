@@ -1,3 +1,8 @@
+from concurrent.futures import ThreadPoolExecutor
+
+from chia.cmds.passphrase_funcs import get_current_passphrase
+from chia.util.keychain import Keychain
+
 import foxy_farmer.monkey_patch_chia_version
 import asyncio
 import functools
@@ -60,6 +65,13 @@ class FoxyFarmer:
             self._harvester_service = service_factory.make_harvester()
 
         async with self._daemon_ws_server.run():
+            if Keychain.is_keyring_locked():
+                with ThreadPoolExecutor(max_workers=1, thread_name_prefix="get_current_passphrase") as executor:
+                    passphrase = await asyncio.get_running_loop().run_in_executor(executor, get_current_passphrase)
+
+                if passphrase:
+                    print("Unlocking daemon keyring")
+                    await self._daemon_ws_server.unlock_keyring({"key": passphrase})
             awaitables = [
                 self._farmer_service.run(),
                 self._daemon_ws_server.shutdown_event.wait(),
