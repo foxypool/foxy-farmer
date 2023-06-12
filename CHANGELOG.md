@@ -55,6 +55,8 @@
 
 ## [1.0.0] - 2023-02-25
 
+### Added
+
 - Initial release
 
 [unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.5.1...HEAD
