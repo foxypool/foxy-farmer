@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.5.1] - 2023-06-12
+
 ### Fixed
 
 - When using an encrypted keyring foxy-farmer will now correctly ask for its passphrase on startup.
@@ -55,7 +57,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.5.0...HEAD
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.5.1...HEAD
+[1.5.1]: https://github.com/foxypool/foxy-farmer/compare/1.5.0...1.5.1
 [1.5.0]: https://github.com/foxypool/foxy-farmer/compare/1.4.0...1.5.0
 [1.4.0]: https://github.com/foxypool/foxy-farmer/compare/1.3.0...1.4.0
 [1.3.0]: https://github.com/foxypool/foxy-farmer/compare/1.2.0...1.3.0
