@@ -30,6 +30,15 @@ class FoxyChiaConfigManager:
 
         config = load_config(self._root_path, "config.yaml")
 
+        # Ensure we always have the 'xch_target_address' key set
+        config_was_updated = False
+        if "xch_target_address" not in config["farmer"]:
+            config["farmer"]["xch_target_address"] = ""
+            config_was_updated = True
+        if "xch_target_address" not in config["pool"]:
+            config["pool"]["xch_target_address"] = ""
+            config_was_updated = True
+
         foxy_config_manager = FoxyConfigManager(config_path)
         has_foxy_config = foxy_config_manager.has_config()
         foxy_config = foxy_config_manager.load_config()
@@ -42,7 +51,7 @@ class FoxyChiaConfigManager:
             foxy_config["pool_payout_address"] = config["farmer"]["xch_target_address"]
             foxy_config_manager.save_config(foxy_config)
 
-        config_was_updated = self.ensure_different_ports(config)
+        config_was_updated = self.ensure_different_ports(config, config_was_updated)
         config_was_updated = self.ensure_foxy_gateway(config, config_was_updated)
         config_was_updated = self.update_foxy_chia_config_from_foxy_config(
             chia_foxy_config=config,
