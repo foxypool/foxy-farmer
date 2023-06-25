@@ -1,4 +1,6 @@
-import foxy_farmer.monkey_patch_chia_version
+from foxy_farmer.monkey_patch_chia_version import monkey_patch_chia_version
+
+monkey_patch_chia_version()
 
 from concurrent.futures import ThreadPoolExecutor
 
@@ -27,7 +29,7 @@ from chia.server.start_service import async_run, Service
 
 from chia.util.config import load_config
 
-from foxy_farmer.farm_summary import summary_cmd
+from foxy_farmer.cmds.farm_summary import summary_cmd
 from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_farmer.foxy_config_manager import FoxyConfigManager
 from foxy_farmer.foxy_farmer_logging import initialize_logging_with_stdout
