@@ -73,7 +73,7 @@ async def print_farm_summary(root_path: Path):
 
 async def get_harvesters_summary(root_path: Path) -> Optional[Dict[str, Any]]:
     async with get_any_service_client(FarmerRpcClient, root_path=root_path) as node_config_fp:
-        farmer_client, _, _ = node_config_fp
+        farmer_client, _ = node_config_fp
         if farmer_client is not None:
             return await farmer_client.get_harvesters_summary()
     return None

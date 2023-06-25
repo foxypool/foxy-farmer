@@ -1,9 +1,13 @@
+import foxy_farmer.monkey_patch_chia_version
+
 from concurrent.futures import ThreadPoolExecutor
 
+from chia.cmds.keys import keys_cmd
+from chia.cmds.passphrase import passphrase_cmd
 from chia.cmds.passphrase_funcs import get_current_passphrase
+from chia.cmds.plots import plots_cmd
 from chia.util.keychain import Keychain
 
-import foxy_farmer.monkey_patch_chia_version
 import asyncio
 import functools
 import logging
@@ -34,13 +38,14 @@ version = pkg_resources.require("foxy-farmer")[0].version
 
 
 class FoxyFarmer:
-    _foxy_root: Path = Path(os.path.expanduser(os.getenv("FOXY_ROOT", "~/.foxy-farmer/mainnet"))).resolve()
+    _foxy_root: Path
     _config_path: Path
     _daemon_ws_server: WebSocketServer
     _farmer_service: Service[Farmer]
     _harvester_service: Optional[Service[Harvester]] = None
 
-    def __init__(self, config_path: Path):
+    def __init__(self, foxy_root: Path, config_path: Path):
+        self._foxy_root = foxy_root
         self._config_path = config_path
 
     async def start(self):
@@ -108,8 +113,8 @@ class FoxyFarmer:
             )
 
 
-async def run_foxy_farmer(config_path: Path):
-    foxy_farmer = FoxyFarmer(config_path)
+async def run_foxy_farmer(foxy_root: Path, config_path: Path):
+    foxy_farmer = FoxyFarmer(foxy_root, config_path)
     await foxy_farmer.setup_process_global_state()
     await foxy_farmer.start()
 
@@ -128,24 +133,23 @@ async def run_foxy_farmer(config_path: Path):
 )
 @click.pass_context
 def cli(ctx, config):
+    ctx.ensure_object(dict)
+    ctx.obj["root_path"] = Path(os.path.expanduser(os.getenv("FOXY_ROOT", "~/.foxy-farmer/mainnet"))).resolve()
+    ctx.obj["config_path"] = Path(config).resolve()
     if ctx.invoked_subcommand is None:
         ctx.forward(run_cmd)
 
 
 @cli.command("run", short_help="Run foxy-farmer, can be omitted")
-@click.option(
-    '-c',
-    '--config',
-    default='foxy-farmer.yaml',
-    help="Config file path",
-    type=click.Path(),
-    show_default=True
-)
-def run_cmd(config: str):
-    async_run(run_foxy_farmer(Path(config)))
+@click.pass_context
+def run_cmd(ctx, config):
+    async_run(run_foxy_farmer(ctx.obj["root_path"], ctx.obj["config_path"]))
 
 
 cli.add_command(summary_cmd)
+cli.add_command(keys_cmd)
+cli.add_command(plots_cmd)
+cli.add_command(passphrase_cmd)
 
 
 def main() -> None:

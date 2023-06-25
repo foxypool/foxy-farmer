@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- The chia cmds `keys`, `passphrase` and `plots` are now available for convenience.
+
+### Fixed
+
+- Starting foxy-farmer on a system which never ran chia before works correctly now.
+
 ## [1.5.1] - 2023-06-12
 
 ### Fixed
