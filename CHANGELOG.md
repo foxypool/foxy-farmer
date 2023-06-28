@@ -4,6 +4,7 @@
 
 ### Added
 
+- Bump chia to 1.8.2+og-1.4.0.
 - The chia cmds `keys`, `passphrase` and `plots` are now available for convenience.
 
 ### Fixed
