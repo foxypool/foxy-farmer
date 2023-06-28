@@ -8,7 +8,8 @@ DEP_ROOT = pathlib.Path(importlib.import_module("chia").__file__).absolute().par
 datas = []
 datas.append((f"{DEP_ROOT}/chia/util/english.txt", "chia/util"))
 datas.append((f"{DEP_ROOT}/chia/util/initial-config.yaml", "chia/util"))
-datas.append((f"{DEP_ROOT}/chia/wallet/puzzles/*.hex", "chia/wallet/puzzles"))
+for path in sorted({path.parent for path in DEP_ROOT.joinpath("chia").rglob("*.hex")}):
+    datas.append((f"{path}/*.hex", path.relative_to(DEP_ROOT)))
 datas.append((f"{DEP_ROOT}/chia/ssl/*", "chia/ssl"))
 datas.append((f"{DEP_ROOT}/mozilla-ca/*", "mozilla-ca"))
 
