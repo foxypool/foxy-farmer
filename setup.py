@@ -9,7 +9,7 @@ setup(
     author_email='contact@foxypool.io',
     description='A simplified farmer for the Chia blockchain using the foxy chia farming gateway.',
     install_requires=[
-        "chia-blockchain@git+https://github.com/foxypool/chia-blockchain@1.8.2-og-1.4.0#egg=chia-blockchain",
+        "chia-blockchain@git+https://github.com/foxypool/chia-blockchain@1ad515f4203382663126f151320a858438acc016#egg=chia-blockchain",
         "click==8.1.3"
     ],
     packages=[
