@@ -17,7 +17,7 @@ setup(
     ],
     extras_require=dict(
         dev=[
-            "pyinstaller==5.8.0",
+            "pyinstaller>=5.12",
         ]
     ),
     entry_points={
