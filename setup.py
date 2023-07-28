@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import find_packages, setup
 
 setup(
     name='foxy-farmer',
@@ -12,9 +12,7 @@ setup(
         "chia-blockchain@git+https://github.com/foxypool/chia-blockchain@1ad515f4203382663126f151320a858438acc016#egg=chia-blockchain",
         "click==8.1.3"
     ],
-    packages=[
-        "foxy_farmer",
-    ],
+    packages=find_packages(include=["foxy_farmer", "foxy_farmer.*"]),
     extras_require=dict(
         dev=[
             "pyinstaller>=5.12",
