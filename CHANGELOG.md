@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Installing foxy-farmer via pip is now working again.
+
 ## [1.6.0] - 2023-06-28
 
 ### Added
