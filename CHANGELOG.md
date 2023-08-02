@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.6.1] - 2023-08-02
+
 ### Fixed
 
 - Installing foxy-farmer via pip is now working again.
@@ -75,7 +77,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.6.0...HEAD
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.6.1...HEAD
+[1.6.1]: https://github.com/foxypool/foxy-farmer/compare/1.6.0...1.6.1
 [1.6.0]: https://github.com/foxypool/foxy-farmer/compare/1.5.1...1.6.0
 [1.5.1]: https://github.com/foxypool/foxy-farmer/compare/1.5.0...1.5.1
 [1.5.0]: https://github.com/foxypool/foxy-farmer/compare/1.4.0...1.5.0
