@@ -5,6 +5,7 @@
 ### Fixed
 
 - Installing foxy-farmer via pip is now working again.
+- Fix a crash when starting foxy-farmer for the first time and no pool reward address is present.
 
 ## [1.6.0] - 2023-06-28
 

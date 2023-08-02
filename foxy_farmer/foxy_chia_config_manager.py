@@ -112,6 +112,12 @@ class FoxyChiaConfigManager:
             chia_foxy_config["pool"]["xch_target_address"] = foxy_config["farmer_reward_address"]
             config_was_updated = True
 
+        # Ensure the pool reward address is set to any valid address when og pooling, the og client will auto adjust to
+        # the correct address on launch
+        if foxy_config["enable_og_pooling"] is True and chia_foxy_config["pool"]["xch_target_address"] == "":
+            chia_foxy_config["pool"]["xch_target_address"] = foxy_config["farmer_reward_address"]
+            config_was_updated = True
+
         return config_was_updated
 
     def ensure_foxy_gateway(self, config: Dict, config_was_updated: bool = False):
