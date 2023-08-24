@@ -65,11 +65,14 @@ class FoxyFarmer:
         service_factory = ServiceFactory(self._foxy_root, config)
         self._daemon_ws_server = service_factory.make_daemon()
         self._farmer_service = service_factory.make_farmer()
+        # Do not log farmer id as it is not tracked yet
+        # log.info(f"Farmer starting (id={self._farmer_service._node.server.node_id.hex()[:8]})")
 
         foxy_config_manager = FoxyConfigManager(self._config_path)
         foxy_config = foxy_config_manager.load_config()
         if foxy_config.get("enable_harvester") is True:
             self._harvester_service = service_factory.make_harvester()
+            log.info(f"Harvester starting (id={self._harvester_service._node.server.node_id.hex()[:8]})")
 
         async with self._daemon_ws_server.run():
             if Keychain.is_keyring_locked():
