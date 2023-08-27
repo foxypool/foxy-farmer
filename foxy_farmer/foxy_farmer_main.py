@@ -8,6 +8,9 @@ from chia.cmds.keys import keys_cmd
 from chia.cmds.passphrase import passphrase_cmd
 from chia.cmds.passphrase_funcs import get_current_passphrase
 from chia.cmds.plots import plots_cmd
+from chia.daemon.client import connect_to_daemon_and_validate
+from chia.farmer.farmer_api import FarmerAPI
+from chia.harvester.harvester_api import HarvesterAPI
 from chia.util.keychain import Keychain
 
 import asyncio
@@ -43,8 +46,8 @@ class FoxyFarmer:
     _foxy_root: Path
     _config_path: Path
     _daemon_ws_server: WebSocketServer
-    _farmer_service: Service[Farmer]
-    _harvester_service: Optional[Service[Harvester]] = None
+    _farmer_service: Service[Farmer, FarmerAPI]
+    _harvester_service: Optional[Service[Harvester, HarvesterAPI]] = None
 
     def __init__(self, foxy_root: Path, config_path: Path):
         self._foxy_root = foxy_root
@@ -65,28 +68,40 @@ class FoxyFarmer:
         service_factory = ServiceFactory(self._foxy_root, config)
         self._daemon_ws_server = service_factory.make_daemon()
         self._farmer_service = service_factory.make_farmer()
-        # Do not log farmer id as it is not tracked yet
-        # log.info(f"Farmer starting (id={self._farmer_service._node.server.node_id.hex()[:8]})")
 
         foxy_config_manager = FoxyConfigManager(self._config_path)
         foxy_config = foxy_config_manager.load_config()
         if foxy_config.get("enable_harvester") is True:
             self._harvester_service = service_factory.make_harvester()
-            log.info(f"Harvester starting (id={self._harvester_service._node.server.node_id.hex()[:8]})")
 
         async with self._daemon_ws_server.run():
-            if Keychain.is_keyring_locked():
-                with ThreadPoolExecutor(max_workers=1, thread_name_prefix="get_current_passphrase") as executor:
-                    passphrase = await asyncio.get_running_loop().run_in_executor(executor, get_current_passphrase)
+            await asyncio.sleep(1)
+            connection = await connect_to_daemon_and_validate(self._foxy_root, config)
+            while connection is None:
+                log.warning(f"Trying to connect to the daemon failed, retrying in 1 second")
+                await asyncio.sleep(1)
+                connection = await connect_to_daemon_and_validate(self._foxy_root, config)
+
+            if connection is not None and await connection.is_keyring_locked():
+                passphrase = Keychain.get_cached_master_passphrase()
+                if passphrase is None or not Keychain.master_passphrase_is_valid(passphrase):
+                    with ThreadPoolExecutor(max_workers=1, thread_name_prefix="get_current_passphrase") as executor:
+                        passphrase = await asyncio.get_running_loop().run_in_executor(executor, get_current_passphrase)
 
                 if passphrase:
                     print("Unlocking daemon keyring")
-                    await self._daemon_ws_server.unlock_keyring({"key": passphrase})
+                    await connection.unlock_keyring(passphrase)
+
+            # Do not log farmer id as it is not tracked yet
+            # log.info(f"Farmer starting (id={self._farmer_service._node.server.node_id.hex()[:8]})")
+
             awaitables = [
                 self._farmer_service.run(),
                 self._daemon_ws_server.shutdown_event.wait(),
             ]
+
             if self._harvester_service is not None:
+                log.info(f"Harvester starting (id={self._harvester_service._node.server.node_id.hex()[:8]})")
                 awaitables.append(self._harvester_service.run())
 
             await asyncio.gather(*awaitables)
