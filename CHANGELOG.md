@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [1.7.0] - 2023-09-06
+
+### Added
+
+- Bump chia to 2.0.0+og-1.4.0.
+- Log the harvester node id on startup to more easily identify it in the pools harvesters tab when it is unnamed.
+
 ## [1.6.1] - 2023-08-02
 
 ### Fixed
@@ -77,7 +84,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.6.1...HEAD
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.7.0...HEAD
+[1.7.0]: https://github.com/foxypool/foxy-farmer/compare/1.6.1...1.7.0
 [1.6.1]: https://github.com/foxypool/foxy-farmer/compare/1.6.0...1.6.1
 [1.6.0]: https://github.com/foxypool/foxy-farmer/compare/1.5.1...1.6.0
 [1.5.1]: https://github.com/foxypool/foxy-farmer/compare/1.5.0...1.5.1
