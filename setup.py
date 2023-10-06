@@ -2,15 +2,15 @@ from setuptools import find_packages, setup
 
 setup(
     name='foxy-farmer',
-    version='1.7.0',
+    version='1.8.0',
     url='https://foxypool.io',
     license='GPLv3',
     author='Felix Brucker',
     author_email='contact@foxypool.io',
     description='A simplified farmer for the Chia blockchain using the foxy chia farming gateway.',
     install_requires=[
-        "chia-blockchain@git+https://github.com/foxypool/chia-blockchain@2.0.0-og-1.4.0#egg=chia-blockchain",
-        "click==8.1.3"
+        "chia-blockchain@git+https://github.com/foxypool/chia-blockchain@2.1.0-og-1.4.0#egg=chia-blockchain",
+        "click==8.1.3",
     ],
     packages=find_packages(include=["foxy_farmer", "foxy_farmer.*"]),
     extras_require=dict(

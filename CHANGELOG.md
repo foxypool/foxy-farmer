@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [1.8.0] - 2023-10-06
+
+### Added
+
+- Bump chia to 2.1.0+og-1.4.0.
+
 ## [1.7.0] - 2023-09-06
 
 ### Added
@@ -84,7 +90,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.7.0...HEAD
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.8.0...HEAD
+[1.8.0]: https://github.com/foxypool/foxy-farmer/compare/1.7.0...1.8.0
 [1.7.0]: https://github.com/foxypool/foxy-farmer/compare/1.6.1...1.7.0
 [1.6.1]: https://github.com/foxypool/foxy-farmer/compare/1.6.0...1.6.1
 [1.6.0]: https://github.com/foxypool/foxy-farmer/compare/1.5.1...1.6.0

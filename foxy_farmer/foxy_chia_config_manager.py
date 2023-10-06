@@ -8,7 +8,6 @@ from chia.util.config import load_config, save_config
 from chia.util.default_root import DEFAULT_ROOT_PATH
 
 from foxy_farmer.foxy_config_manager import FoxyConfigManager
-from foxy_farmer.foxy_farming_gateway import foxy_farming_gateway_address, foxy_farming_gateway_port
 
 
 class FoxyChiaConfigManager:
@@ -52,7 +51,7 @@ class FoxyChiaConfigManager:
             foxy_config_manager.save_config(foxy_config)
 
         config_was_updated = self.ensure_different_ports(config, config_was_updated)
-        config_was_updated = self.ensure_foxy_gateway(config, config_was_updated)
+        config_was_updated = self.ensure_no_full_node_peer_for_farmer(config, config_was_updated)
         config_was_updated = self.update_foxy_chia_config_from_foxy_config(
             chia_foxy_config=config,
             foxy_config=foxy_config,
@@ -120,10 +119,10 @@ class FoxyChiaConfigManager:
 
         return config_was_updated
 
-    def ensure_foxy_gateway(self, config: Dict, config_was_updated: bool = False):
-        if config["farmer"]["full_node_peer"]["host"] != foxy_farming_gateway_address or config["farmer"]["full_node_peer"]["port"] != foxy_farming_gateway_port:
-            config["farmer"]["full_node_peer"]["host"] = foxy_farming_gateway_address
-            config["farmer"]["full_node_peer"]["port"] = foxy_farming_gateway_port
+    def ensure_no_full_node_peer_for_farmer(self, config: Dict, config_was_updated: bool = False):
+        # Until peer lists are released manually add peers in the service factory instead
+        if "full_node_peer" in config["farmer"]:
+            config["farmer"].pop("full_node_peer", None)
             config_was_updated = True
 
         return config_was_updated

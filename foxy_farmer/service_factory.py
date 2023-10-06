@@ -7,7 +7,11 @@ from chia.daemon.server import daemon_launch_lock_path, log, WebSocketServer
 from chia.server.start_farmer import create_farmer_service
 from chia.server.start_harvester import create_harvester_service
 from chia.types.peer_info import UnresolvedPeerInfo
+from chia.util.ints import uint16
 from chia.util.lock import Lockfile, LockfileError
+
+from foxy_farmer.foxy_farming_gateway import eu1_foxy_farming_gateway_address, foxy_farming_gateway_port, \
+    eu3_foxy_farming_gateway_address
 
 
 class ServiceFactory:
@@ -49,4 +53,8 @@ class ServiceFactory:
         return create_harvester_service(self._root_path, self._config, DEFAULT_CONSTANTS, farmer_peer)
 
     def make_farmer(self):
-        return create_farmer_service(self._root_path, self._config, self._config["pool"], DEFAULT_CONSTANTS)
+        service = create_farmer_service(self._root_path, self._config, self._config["pool"], DEFAULT_CONSTANTS)
+        service.add_peer(UnresolvedPeerInfo(host=eu1_foxy_farming_gateway_address, port=uint16(foxy_farming_gateway_port)))
+        service.add_peer(UnresolvedPeerInfo(host=eu3_foxy_farming_gateway_address, port=uint16(foxy_farming_gateway_port)))
+
+        return service
