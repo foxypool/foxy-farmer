@@ -6,6 +6,7 @@ from chia.consensus.default_constants import DEFAULT_CONSTANTS
 from chia.daemon.server import daemon_launch_lock_path, log, WebSocketServer
 from chia.server.start_farmer import create_farmer_service
 from chia.server.start_harvester import create_harvester_service
+from chia.server.start_wallet import create_wallet_service
 from chia.types.peer_info import UnresolvedPeerInfo
 from chia.util.ints import uint16
 from chia.util.lock import Lockfile, LockfileError
@@ -58,3 +59,6 @@ class ServiceFactory:
         service.add_peer(UnresolvedPeerInfo(host=eu3_foxy_farming_gateway_address, port=uint16(foxy_farming_gateway_port)))
 
         return service
+
+    def make_wallet(self):
+        return create_wallet_service(self._root_path, self._config, DEFAULT_CONSTANTS)

@@ -73,6 +73,10 @@ class FoxyChiaConfigManager:
             foxy_config: Dict,
             config_was_updated: bool = False
     ):
+        if "full_node_peer" in chia_foxy_config["wallet"] or "full_node_peers" in chia_foxy_config["wallet"]:
+            chia_foxy_config["wallet"].pop("full_node_peer", None)
+            chia_foxy_config["wallet"].pop("full_node_peers", None)
+            config_was_updated = True
         if chia_foxy_config["logging"]["log_level"] != foxy_config["log_level"] or chia_foxy_config["logging"]["log_stdout"] is not False:
             chia_foxy_config["logging"]["log_level"] = foxy_config["log_level"]
             chia_foxy_config["logging"]["log_stdout"] = False
@@ -121,6 +125,11 @@ class FoxyChiaConfigManager:
         # the correct address on launch
         if foxy_config["enable_og_pooling"] is True and chia_foxy_config["pool"]["xch_target_address"] == "":
             chia_foxy_config["pool"]["xch_target_address"] = foxy_config["farmer_reward_address"]
+            config_was_updated = True
+
+        # Ensure the wallet syncs with unknown peers
+        if chia_foxy_config["wallet"].get("connect_to_unknown_peers") is not True:
+            chia_foxy_config["wallet"]["connect_to_unknown_peers"] = True
             config_was_updated = True
 
         return config_was_updated

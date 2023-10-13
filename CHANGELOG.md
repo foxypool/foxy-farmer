@@ -4,6 +4,7 @@
 
 ### Added
 
+- Add support for automatic PlotNFT pool joining via `./foxy-farmer join-pool`.
 - Support adding your first key via a `CHIA_MNEMONIC` environment variable to simplify docker setups.
 
 ## [1.8.0] - 2023-10-06

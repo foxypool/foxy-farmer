@@ -1,17 +1,8 @@
+from multiprocessing import freeze_support
+
 from foxy_farmer.monkey_patch_chia_version import monkey_patch_chia_version
 
 monkey_patch_chia_version()
-
-from concurrent.futures import ThreadPoolExecutor
-
-from chia.cmds.keys import keys_cmd
-from chia.cmds.passphrase import passphrase_cmd
-from chia.cmds.passphrase_funcs import get_current_passphrase
-from chia.cmds.plots import plots_cmd
-from chia.daemon.client import connect_to_daemon_and_validate
-from chia.farmer.farmer_api import FarmerAPI
-from chia.harvester.harvester_api import HarvesterAPI
-from chia.util.keychain import Keychain
 
 import asyncio
 import functools
@@ -25,13 +16,19 @@ from typing import Optional
 
 import click
 import pkg_resources
-from chia.daemon.server import WebSocketServer
+
+from chia.cmds.keys import keys_cmd
+from chia.cmds.passphrase import passphrase_cmd
+from chia.cmds.plots import plots_cmd
+from chia.farmer.farmer_api import FarmerAPI
+from chia.harvester.harvester_api import HarvesterAPI
 from chia.farmer.farmer import Farmer
 from chia.harvester.harvester import Harvester
 from chia.server.start_service import async_run, Service
-
 from chia.util.config import load_config
 
+from foxy_farmer.chia_launcher import ChiaLauncher
+from foxy_farmer.cmds.join_pool import join_pool_cmd
 from foxy_farmer.cmds.farm_summary import summary_cmd
 from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_farmer.foxy_config_manager import FoxyConfigManager
@@ -45,7 +42,7 @@ version = pkg_resources.require("foxy-farmer")[0].version
 class FoxyFarmer:
     _foxy_root: Path
     _config_path: Path
-    _daemon_ws_server: WebSocketServer
+    _chia_launcher: Optional[ChiaLauncher]
     _farmer_service: Service[Farmer, FarmerAPI]
     _harvester_service: Optional[Service[Harvester, HarvesterAPI]] = None
 
@@ -66,7 +63,6 @@ class FoxyFarmer:
         log.info(f"Foxy-Farmer {version} using config in {self._config_path}")
 
         service_factory = ServiceFactory(self._foxy_root, config)
-        self._daemon_ws_server = service_factory.make_daemon()
         self._farmer_service = service_factory.make_farmer()
 
         foxy_config_manager = FoxyConfigManager(self._config_path)
@@ -74,43 +70,30 @@ class FoxyFarmer:
         if foxy_config.get("enable_harvester") is True:
             self._harvester_service = service_factory.make_harvester()
 
-        async with self._daemon_ws_server.run():
-            await asyncio.sleep(1)
-            connection = await connect_to_daemon_and_validate(self._foxy_root, config)
-            while connection is None:
-                log.warning(f"Trying to connect to the daemon failed, retrying in 1 second")
-                await asyncio.sleep(1)
-                connection = await connect_to_daemon_and_validate(self._foxy_root, config)
+        self._chia_launcher = ChiaLauncher(foxy_root=self._foxy_root, config=config)
+        await self._chia_launcher.run_with_daemon(self.start_and_await_services)
+        await self._chia_launcher.wait_for_ready()
 
-            if connection is not None and await connection.is_keyring_locked():
-                passphrase = Keychain.get_cached_master_passphrase()
-                if passphrase is None or not Keychain.master_passphrase_is_valid(passphrase):
-                    with ThreadPoolExecutor(max_workers=1, thread_name_prefix="get_current_passphrase") as executor:
-                        passphrase = await asyncio.get_running_loop().run_in_executor(executor, get_current_passphrase)
+    async def start_and_await_services(self):
+        # Do not log farmer id as it is not tracked yet
+        # log.info(f"Farmer starting (id={self._farmer_service._node.server.node_id.hex()[:8]})")
 
-                if passphrase:
-                    print("Unlocking daemon keyring")
-                    await connection.unlock_keyring(passphrase)
+        awaitables = [
+            self._farmer_service.run(),
+            self._chia_launcher.daemon_ws_server.shutdown_event.wait(),
+        ]
 
-            # Do not log farmer id as it is not tracked yet
-            # log.info(f"Farmer starting (id={self._farmer_service._node.server.node_id.hex()[:8]})")
+        if self._harvester_service is not None:
+            log.info(f"Harvester starting (id={self._harvester_service._node.server.node_id.hex()[:8]})")
+            awaitables.append(self._harvester_service.run())
 
-            awaitables = [
-                self._farmer_service.run(),
-                self._daemon_ws_server.shutdown_event.wait(),
-            ]
-
-            if self._harvester_service is not None:
-                log.info(f"Harvester starting (id={self._harvester_service._node.server.node_id.hex()[:8]})")
-                awaitables.append(self._harvester_service.run())
-
-            await asyncio.gather(*awaitables)
+        await asyncio.gather(*awaitables)
 
     def stop(self):
         if self._harvester_service is not None:
             self._harvester_service.stop()
         self._farmer_service.stop()
-        asyncio.create_task(self._daemon_ws_server.stop())
+        asyncio.create_task(self._chia_launcher.daemon_ws_server.stop())
 
     def _accept_signal(self, signal_number: int, stack_frame: Optional[FrameType] = None) -> None:
         self.stop()
@@ -167,6 +150,7 @@ def run_cmd(ctx, config):
 
 
 cli.add_command(summary_cmd)
+cli.add_command(join_pool_cmd)
 cli.add_command(keys_cmd)
 cli.add_command(plots_cmd)
 cli.add_command(passphrase_cmd)
@@ -177,4 +161,5 @@ def main() -> None:
 
 
 if __name__ == '__main__':
+    freeze_support()
     main()
