@@ -32,7 +32,7 @@ Foxy-Farmer is useful in the following scenarios:
 
 ### Using docker
 
-A docker image based on the provided [Dockerfile](https://github.com/foxypool/foxy-farmer/blob/main/Dockerfile) is available via `ghcr.io/foxypool/foxy-farmer:latest`.
+A docker image based on the provided [Dockerfile](https://github.com/foxypool/foxy-farmer/blob/main/Dockerfile) is available via `ghcr.io/foxypool/foxy-farmer:latest` and `foxypool/foxy-farmer:latest`.
 For specific tags see [this list](https://github.com/foxypool/foxy-farmer/pkgs/container/foxy-farmer).
 A [docker-compose.yaml](https://github.com/foxypool/foxy-farmer/blob/main/docker-compose.yaml) example is available as well, to get started.
 
