@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.9.0] - 2023-10-13
+
 ### Added
 
 - Add support for automatic PlotNFT pool joining via `./foxy-farmer join-pool`.
@@ -95,7 +97,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.8.0...HEAD
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.9.0...HEAD
+[1.9.0]: https://github.com/foxypool/foxy-farmer/compare/1.8.0...1.9.0
 [1.8.0]: https://github.com/foxypool/foxy-farmer/compare/1.7.0...1.8.0
 [1.7.0]: https://github.com/foxypool/foxy-farmer/compare/1.6.1...1.7.0
 [1.6.1]: https://github.com/foxypool/foxy-farmer/compare/1.6.0...1.6.1
