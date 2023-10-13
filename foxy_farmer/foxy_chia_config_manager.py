@@ -1,11 +1,13 @@
+from os import environ
 from pathlib import Path
 from shutil import copyfile
 from typing import Dict
 
-from chia.cmds.init_funcs import chia_init
+from chia.cmds.init_funcs import chia_init, check_keys
+from chia.cmds.keys_funcs import add_private_key_seed
 from chia.util.bech32m import decode_puzzle_hash
 from chia.util.config import load_config, save_config
-from chia.util.default_root import DEFAULT_ROOT_PATH
+from chia.util.default_root import DEFAULT_ROOT_PATH, DEFAULT_KEYS_ROOT_PATH
 
 from foxy_farmer.foxy_config_manager import FoxyConfigManager
 
@@ -26,6 +28,10 @@ class FoxyChiaConfigManager:
         chia_config_file_path = chia_root / "config" / "config.yaml"
         if is_first_install is True and chia_config_file_path.exists():
             copyfile(chia_config_file_path, self._root_path / "config" / "config.yaml")
+
+        if not DEFAULT_KEYS_ROOT_PATH.exists() and environ.get("CHIA_MNEMONIC") is not None:
+            add_private_key_seed(environ["CHIA_MNEMONIC"].strip(), None)
+            check_keys(self._root_path)
 
         config = load_config(self._root_path, "config.yaml")
 
