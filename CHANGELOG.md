@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix detection of another instance already running in `join-pool` command.
+
 ## [1.9.0] - 2023-10-13
 
 ### Added

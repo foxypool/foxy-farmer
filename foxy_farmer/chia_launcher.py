@@ -1,4 +1,5 @@
 import asyncio
+import sys
 from concurrent.futures import ThreadPoolExecutor
 from logging import getLogger, Logger
 from pathlib import Path
@@ -17,6 +18,7 @@ class ChiaLauncher:
     _config: Dict[str, Any]
     _daemon_ws_server: Optional[WebSocketServer]
     _logger: Logger = getLogger("chia_launcher")
+    _did_launch_daemon = False
 
     @property
     def daemon_ws_server(self) -> Optional[WebSocketServer]:
@@ -30,10 +32,16 @@ class ChiaLauncher:
 
     async def run_with_daemon(self, closure: Callable[[], Awaitable[None]]) -> None:
         if self._daemon_ws_server is None:
-            self._logger.error("Another instance of foxy-farmer is already running, exiting now ..")
+            print("Another instance of foxy-farmer is already running, exiting now ..", file=sys.stderr)
+            exit(1)
+
+        connection = await connect_to_daemon_and_validate(self._foxy_root, self._config, quiet=True)
+        if connection is not None:
+            print("Another instance of foxy-farmer is already running, exiting now ..", file=sys.stderr)
             exit(1)
 
         async with self._daemon_ws_server.run():
+            self._did_launch_daemon = True
             await asyncio.sleep(1)
             connection = await connect_to_daemon_and_validate(self._foxy_root, self._config, quiet=True)
             while connection is None:
@@ -60,6 +68,9 @@ class ChiaLauncher:
             is_ready = await self.is_ready()
 
     async def is_ready(self):
+        if self._did_launch_daemon is False:
+            return False
+
         connection = await connect_to_daemon_and_validate(self._foxy_root, self._config, quiet=True)
 
         return connection is not None and await connection.is_keyring_locked() is False
