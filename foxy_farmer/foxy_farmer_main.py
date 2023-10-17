@@ -5,11 +5,9 @@ from foxy_farmer.monkey_patch_chia_version import monkey_patch_chia_version
 monkey_patch_chia_version()
 
 import asyncio
-import functools
 import logging
 import os
 import signal
-import sys
 from pathlib import Path
 from types import FrameType
 from typing import Optional
@@ -26,6 +24,7 @@ from chia.farmer.farmer import Farmer
 from chia.harvester.harvester import Harvester
 from chia.server.start_service import async_run, Service
 from chia.util.config import load_config
+from chia.util.misc import SignalHandlers
 
 from foxy_farmer.chia_launcher import ChiaLauncher
 from foxy_farmer.cmds.join_pool import join_pool_cmd
@@ -72,7 +71,6 @@ class FoxyFarmer:
 
         self._chia_launcher = ChiaLauncher(foxy_root=self._foxy_root, config=config)
         await self._chia_launcher.run_with_daemon(self.start_and_await_services)
-        await self._chia_launcher.wait_for_ready()
 
     async def start_and_await_services(self):
         # Do not log farmer id as it is not tracked yet
@@ -89,31 +87,23 @@ class FoxyFarmer:
 
         await asyncio.gather(*awaitables)
 
-    def stop(self):
+    async def stop(self):
         if self._harvester_service is not None:
             self._harvester_service.stop()
         self._farmer_service.stop()
-        asyncio.create_task(self._chia_launcher.daemon_ws_server.stop())
+        await self._chia_launcher.daemon_ws_server.stop()
 
-    def _accept_signal(self, signal_number: int, stack_frame: Optional[FrameType] = None) -> None:
-        self.stop()
+    async def _accept_signal(
+        self,
+        signal_: signal.Signals,
+        stack_frame: Optional[FrameType],
+        loop: asyncio.AbstractEventLoop,
+    ) -> None:
+        await self.stop()
 
     async def setup_process_global_state(self) -> None:
-        if sys.platform == "win32" or sys.platform == "cygwin":
-            # pylint: disable=E1101
-            signal.signal(signal.SIGBREAK, self._accept_signal)
-            signal.signal(signal.SIGINT, self._accept_signal)
-            signal.signal(signal.SIGTERM, self._accept_signal)
-        else:
-            loop = asyncio.get_running_loop()
-            loop.add_signal_handler(
-                signal.SIGINT,
-                functools.partial(self._accept_signal, signal_number=signal.SIGINT)
-            )
-            loop.add_signal_handler(
-                signal.SIGTERM,
-                functools.partial(self._accept_signal, signal_number=signal.SIGTERM)
-            )
+        async with SignalHandlers.manage() as signal_handlers:
+            signal_handlers.setup_async_signal_handler(handler=self._accept_signal)
 
 
 async def run_foxy_farmer(foxy_root: Path, config_path: Path):
