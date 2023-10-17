@@ -6,6 +6,7 @@
 
 - Fix detection of another instance already running in `join-pool` command.
 - Fix farmer not exiting properly on ctrl-c.
+- Fix `join-pool` command not working properly when another chia wallet is running.
 
 ## [1.9.0] - 2023-10-13
 

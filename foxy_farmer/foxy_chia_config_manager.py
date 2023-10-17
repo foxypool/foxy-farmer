@@ -164,5 +164,8 @@ class FoxyChiaConfigManager:
         if config["harvester"]["rpc_port"] != 18560:
             config["harvester"]["rpc_port"] = 18560
             config_was_updated = True
+        if config["wallet"]["rpc_port"] != 19256:
+            config["wallet"]["rpc_port"] = 19256
+            config_was_updated = True
 
         return config_was_updated
