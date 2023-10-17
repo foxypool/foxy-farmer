@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.9.1] - 2023-10-17
+
 ### Fixed
 
 - Fix detection of another instance already running in `join-pool` command.
@@ -103,7 +105,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.9.0...HEAD
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.9.1...HEAD
+[1.9.1]: https://github.com/foxypool/foxy-farmer/compare/1.9.0...1.9.1
 [1.9.0]: https://github.com/foxypool/foxy-farmer/compare/1.8.0...1.9.0
 [1.8.0]: https://github.com/foxypool/foxy-farmer/compare/1.7.0...1.8.0
 [1.7.0]: https://github.com/foxypool/foxy-farmer/compare/1.6.1...1.7.0
