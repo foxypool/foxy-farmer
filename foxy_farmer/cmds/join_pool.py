@@ -22,6 +22,7 @@ from chia.wallet.wallet_node_api import WalletNodeAPI
 from yaspin import yaspin
 
 from foxy_farmer.chia_launcher import ChiaLauncher
+from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_farmer.pool.pool_api_client import POOL_URL, PoolApiClient
 from foxy_farmer.service_factory import ServiceFactory
 
@@ -30,10 +31,9 @@ from foxy_farmer.service_factory import ServiceFactory
 @click.pass_context
 def join_pool_cmd(ctx) -> None:
     foxy_root: Path = ctx.obj["root_path"]
-    if not foxy_root.exists():
-        print("No config found, please start foxy-farmer at least once before joining the pool!")
-
-        return
+    config_path: Path = ctx.obj["config_path"]
+    foxy_chia_config_manager = FoxyChiaConfigManager(foxy_root)
+    foxy_chia_config_manager.ensure_foxy_config(config_path)
 
     config = load_config(foxy_root, "config.yaml")
 
