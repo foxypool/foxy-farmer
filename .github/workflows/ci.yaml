@@ -101,6 +101,10 @@ jobs:
         uses: actions/checkout@v4
       - name: Fetch release archives
         uses: actions/download-artifact@v3
+      - name: Mark binary as executable
+        run: |
+          chmod +x foxy-farmer-ubuntu-latest/foxy-farmer
+          chmod +x foxy-farmer-macos-latest/foxy-farmer
       - name: Create release zip
         run:
           for i in foxy-farmer-*/; do zip -r -j "${i%/}.zip" "$i"; done
