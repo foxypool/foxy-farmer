@@ -16,7 +16,7 @@ from chia.types.blockchain_format.sized_bytes import bytes32
 from chia.util.byte_types import hexstr_to_bytes
 from chia.util.chia_logging import initialize_logging
 from chia.util.config import load_config
-from chia.util.ints import uint64
+from chia.util.ints import uint64, uint16
 from chia.wallet.util.wallet_types import WalletType
 from chia.wallet.wallet_node import WalletNode
 from chia.wallet.wallet_node_api import WalletNodeAPI
@@ -68,29 +68,40 @@ class PoolJoiner:
         launch_task = create_task(self._chia_launcher.run_with_daemon(self.start_and_await_services))
         await self._chia_launcher.wait_for_ready()
 
-        with yaspin(text="Waiting for the wallet to finish starting ..."):
-            await sleep(5)
+        wallet_rpc = await WalletRpcClient.create(
+            self._config["self_hostname"],
+            uint16(self._config["wallet"]["rpc_port"]),
+            self._foxy_root,
+            self._config,
+        )
 
-        async with get_any_service_client(WalletRpcClient, root_path=self._foxy_root) as (wallet_client, _):
-            assert wallet_client is not None
+        async def is_wallet_reachable() -> bool:
+            try:
+                await wallet_rpc.healthz()
 
-            fingerprint = await get_wallet(self._foxy_root, wallet_client, fingerprint=None)
+                return True
+            except:
+                return False
 
-            await wait_for_wallet_sync(wallet_client)
+        try:
+            with yaspin(text="Waiting for the wallet to finish starting ..."):
+                while not await is_wallet_reachable():
+                    await sleep(3)
+
+            fingerprint = await get_wallet(self._foxy_root, wallet_rpc, fingerprint=None)
+
+            await wait_for_wallet_sync(wallet_rpc)
 
             config = load_config(self._foxy_root, "config.yaml")
             plot_nfts_not_pooling_with_foxy = get_plot_nft_not_pooling_with_foxy(config)
             if len(plot_nfts_not_pooling_with_foxy) == 0:
                 print("✅ All PlotNFTs are already pooling with Foxy, nothing to do")
-                self.stop()
-                await launch_task
-                time.sleep(0.1)
 
                 return
 
-            await join_plot_nfts_to_pool(wallet_client, plot_nfts_not_pooling_with_foxy, fingerprint)
+            await join_plot_nfts_to_pool(wallet_rpc, plot_nfts_not_pooling_with_foxy, fingerprint)
 
-            await wait_for_wallet_sync(wallet_client)
+            await wait_for_wallet_sync(wallet_rpc)
 
             with yaspin(text="Waiting for the pool join to complete ..."):
                 while len(plot_nfts_not_pooling_with_foxy) > 0:
@@ -98,10 +109,12 @@ class PoolJoiner:
                     config = load_config(self._foxy_root, "config.yaml")
                     plot_nfts_not_pooling_with_foxy = get_plot_nft_not_pooling_with_foxy(config)
             print("✅ Pool join completed")
-
-        self.stop()
-        await launch_task
-        time.sleep(0.1)
+        finally:
+            wallet_rpc.close()
+            await wallet_rpc.await_closed()
+            self.stop()
+            await launch_task
+            time.sleep(0.1)
 
     async def start_and_await_services(self):
         service_factory = ServiceFactory(self._foxy_root, self._config)
