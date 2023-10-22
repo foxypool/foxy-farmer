@@ -5,6 +5,7 @@
 ### Added
 
 - Add additional wallet sync info while running `./foxy-farmer join-pool`.
+- Support configuring BladeBit compression config options in `foxy-farmer.yaml`.
 
 ## [1.9.1] - 2023-10-17
 

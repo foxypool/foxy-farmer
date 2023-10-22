@@ -1,7 +1,7 @@
 from os import environ
 from pathlib import Path
 from shutil import copyfile
-from typing import Dict
+from typing import Dict, Optional
 
 from chia.cmds.init_funcs import chia_init, check_keys
 from chia.cmds.keys_funcs import add_private_key_seed
@@ -84,19 +84,32 @@ class FoxyChiaConfigManager:
         if chia_foxy_config["self_hostname"] != foxy_config["listen_host"]:
             chia_foxy_config["self_hostname"] = foxy_config["listen_host"]
             config_was_updated = True
-        if chia_foxy_config["harvester"]["num_threads"] != foxy_config["harvester_num_threads"]:
-            chia_foxy_config["harvester"]["num_threads"] = foxy_config["harvester_num_threads"]
-            config_was_updated = True
-        if chia_foxy_config["harvester"]["plot_directories"] != foxy_config["plot_directories"]:
-            chia_foxy_config["harvester"]["plot_directories"] = foxy_config["plot_directories"]
-            config_was_updated = True
+
+        def set_service_option_from_foxy_config(service: str, foxy_config_key: str, chia_config_key: Optional[str] = None):
+            if chia_config_key is None:
+                chia_config_key = foxy_config_key
+
+            nonlocal config_was_updated
+            if foxy_config.get(foxy_config_key) is not None and chia_foxy_config[service].get(chia_config_key) != foxy_config[foxy_config_key]:
+                chia_foxy_config[service][chia_config_key] = foxy_config[foxy_config_key]
+                config_was_updated = True
+
+        set_service_option_from_foxy_config("harvester", foxy_config_key="harvester_num_threads", chia_config_key="num_threads")
+        set_service_option_from_foxy_config("harvester", "plot_directories")
+        set_service_option_from_foxy_config("harvester", "recursive_plot_scan")
+        set_service_option_from_foxy_config("harvester", "parallel_decompressor_count")
+        set_service_option_from_foxy_config("harvester", "decompressor_thread_count")
+        set_service_option_from_foxy_config("harvester", "disable_cpu_affinity")
+        set_service_option_from_foxy_config("harvester", "max_compression_level_allowed")
+        set_service_option_from_foxy_config("harvester", "use_gpu_harvesting")
+        set_service_option_from_foxy_config("harvester", "gpu_index")
+        set_service_option_from_foxy_config("harvester", "enforce_gpu_index")
+        set_service_option_from_foxy_config("harvester", "decompressor_timeout")
         if chia_foxy_config["harvester"].get("plots_refresh_parameter") is not None and chia_foxy_config["harvester"]["plots_refresh_parameter"]["interval_seconds"] != foxy_config["plot_refresh_interval_seconds"]:
             chia_foxy_config["harvester"]["plots_refresh_parameter"]["interval_seconds"] = foxy_config["plot_refresh_interval_seconds"]
             config_was_updated = True
 
-        if chia_foxy_config["farmer"]["xch_target_address"] != foxy_config["farmer_reward_address"]:
-            chia_foxy_config["farmer"]["xch_target_address"] = foxy_config["farmer_reward_address"]
-            config_was_updated = True
+        set_service_option_from_foxy_config("farmer", foxy_config_key="farmer_reward_address", chia_config_key="xch_target_address")
 
         # Ensure all nft pools use the same payout address
         pool_payout_address_ph = decode_puzzle_hash(foxy_config["pool_payout_address"]).hex()
