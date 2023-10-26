@@ -6,6 +6,7 @@
 
 - Add additional wallet sync info while running `./foxy-farmer join-pool`.
 - Support configuring BladeBit compression config options in `foxy-farmer.yaml`.
+- Add `auth` command to generate PlotNFT login links.
 
 ## [1.9.1] - 2023-10-17
 

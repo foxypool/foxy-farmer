@@ -30,7 +30,7 @@ class ChiaLauncher:
         service_factory = ServiceFactory(foxy_root, config)
         self._daemon_ws_server = service_factory.make_daemon()
 
-    async def run_with_daemon(self, closure: Callable[[], Awaitable[None]]) -> None:
+    async def run_with_daemon(self, closure: Callable[[], Awaitable[None]], quiet: bool = False) -> None:
         if self._daemon_ws_server is None:
             print("Another instance of foxy-farmer is already running, exiting now ..", file=sys.stderr)
             exit(1)
@@ -40,6 +40,8 @@ class ChiaLauncher:
             print("Another instance of foxy-farmer is already running, exiting now ..", file=sys.stderr)
             exit(1)
 
+        if not quiet:
+            print("Starting daemon")
         async with self._daemon_ws_server.run():
             self._did_launch_daemon = True
             await asyncio.sleep(1)

@@ -1,5 +1,6 @@
 from multiprocessing import freeze_support
 
+from foxy_farmer.cmds.authenticate import authenticate_cmd
 from foxy_farmer.monkey_patch_chia_version import monkey_patch_chia_version
 
 monkey_patch_chia_version()
@@ -70,7 +71,7 @@ class FoxyFarmer:
             self._harvester_service = service_factory.make_harvester()
 
         self._chia_launcher = ChiaLauncher(foxy_root=self._foxy_root, config=config)
-        await self._chia_launcher.run_with_daemon(self.start_and_await_services)
+        await self._chia_launcher.run_with_daemon(self.start_and_await_services, quiet=True)
 
     async def start_and_await_services(self):
         # Do not log farmer id as it is not tracked yet
@@ -141,6 +142,7 @@ def run_cmd(ctx, config):
 
 cli.add_command(summary_cmd)
 cli.add_command(join_pool_cmd)
+cli.add_command(authenticate_cmd)
 cli.add_command(keys_cmd)
 cli.add_command(plots_cmd)
 cli.add_command(passphrase_cmd)
