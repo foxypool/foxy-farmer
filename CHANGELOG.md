@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.10.0] - 2023-10-26
+
 ### Added
 
 - Add additional wallet sync info while running `./foxy-farmer join-pool`.
@@ -111,7 +113,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.9.1...HEAD
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.10.0...HEAD
+[1.10.0]: https://github.com/foxypool/foxy-farmer/compare/1.9.1...1.10.0
 [1.9.1]: https://github.com/foxypool/foxy-farmer/compare/1.9.0...1.9.1
 [1.9.0]: https://github.com/foxypool/foxy-farmer/compare/1.8.0...1.9.0
 [1.8.0]: https://github.com/foxypool/foxy-farmer/compare/1.7.0...1.8.0
