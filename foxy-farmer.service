@@ -1,0 +1,16 @@
+[Unit]
+Description=Foxy-Farmer
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=exec
+ExecStart=/path/to/foxy-farmer -c /path/to/foxy-farmer.yaml
+LimitNOFILE=99999
+User=<your user>
+Group=<your user/group>
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
