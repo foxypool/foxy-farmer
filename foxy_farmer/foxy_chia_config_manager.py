@@ -22,7 +22,7 @@ class FoxyChiaConfigManager:
         foxy_chia_config_file_path = self._root_path / "config" / "config.yaml"
         is_first_install = foxy_chia_config_file_path.exists() is False
         if is_first_install:
-            chia_init(self._root_path)
+            chia_init(self._root_path, fix_ssl_permissions=True)
 
         chia_root = DEFAULT_ROOT_PATH
         chia_config_file_path = chia_root / "config" / "config.yaml"
