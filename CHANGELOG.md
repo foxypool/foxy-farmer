@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Prevent crash by exiting early on missing `farmer_reward_address` and/or `pool_payout_address`.
+
 ## [1.10.0] - 2023-10-26
 
 ### Added

@@ -56,6 +56,10 @@ class FoxyChiaConfigManager:
             foxy_config["pool_payout_address"] = config["farmer"]["xch_target_address"]
             foxy_config_manager.save_config(foxy_config)
 
+        if foxy_config.get("farmer_reward_address", "") == "" or foxy_config.get("pool_payout_address", "") == "":
+            print(f"You are missing a 'farmer_reward_address' and/or 'pool_payout_address' in {config_path}, please update the config and run again.")
+            exit(1)
+
         config_was_updated = self.ensure_different_ports(config, config_was_updated)
         config_was_updated = self.ensure_no_full_node_peer_for_farmer(config, config_was_updated)
         config_was_updated = self.update_foxy_chia_config_from_foxy_config(
