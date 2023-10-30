@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.10.1] - 2023-10-30
+
 ### Changed
 
 - Package ubuntu binaries using ubuntu 20.04 to support older systems.
@@ -122,7 +124,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.10.0...HEAD
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.10.1...HEAD
+[1.10.1]: https://github.com/foxypool/foxy-farmer/compare/1.10.0...1.10.1
 [1.10.0]: https://github.com/foxypool/foxy-farmer/compare/1.9.1...1.10.0
 [1.9.1]: https://github.com/foxypool/foxy-farmer/compare/1.9.0...1.9.1
 [1.9.0]: https://github.com/foxypool/foxy-farmer/compare/1.8.0...1.9.0
