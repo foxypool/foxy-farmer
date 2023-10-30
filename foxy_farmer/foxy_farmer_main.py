@@ -1,6 +1,5 @@
 from multiprocessing import freeze_support
 
-from foxy_farmer.cmds.authenticate import authenticate_cmd
 from foxy_farmer.monkey_patch_chia_version import monkey_patch_chia_version
 
 monkey_patch_chia_version()
@@ -34,6 +33,7 @@ from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_farmer.foxy_config_manager import FoxyConfigManager
 from foxy_farmer.foxy_farmer_logging import initialize_logging_with_stdout
 from foxy_farmer.service_factory import ServiceFactory
+from foxy_farmer.cmds.authenticate import authenticate_cmd
 
 log = logging.getLogger("foxy_farmer")
 version = pkg_resources.require("foxy-farmer")[0].version
