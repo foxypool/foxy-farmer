@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Package ubuntu binaries using ubuntu 20.04 to support older systems.
+
 ### Fixed
 
 - Prevent crash by exiting early on missing `farmer_reward_address` and/or `pool_payout_address`.
