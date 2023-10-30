@@ -34,7 +34,7 @@ The docs can be found [here](https://docs.foxypool.io/proof-of-spacetime/foxy-fa
 1. Clone the git repo and cd into it: `git clone https://github.com/foxypool/foxy-farmer && cd foxy-farmer`
 2. Create a venv:
     ```bash
-    pyhon3 -m venv venv
+    python3 -m venv venv
     ```
 3. Install the dependencies:
     ```bash
