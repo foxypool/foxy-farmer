@@ -152,6 +152,8 @@ async def join_plot_nfts_to_pool(wallet_client: WalletRpcClient, plot_nfts: List
             print(f"Could not find PlotNFT for LauncherID {pool_wallet_info.launcher_id.hex()} in config.yaml, skipping")
             continue
         with yaspin(text=f"Joining PlotNFT with LauncherID {pool_wallet_info.launcher_id.hex()} to the pool ..."):
+            while not (await wallet_client.get_synced()):
+                await sleep(5)
             await join_plot_nft_to_pool(wallet_client, pool_info, wallet_id, fingerprint)
 
 

@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Prevent deadlock when joining many PlotNFTs to the pool.
+
 ## [1.10.1] - 2023-10-30
 
 ### Changed
