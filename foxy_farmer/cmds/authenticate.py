@@ -16,6 +16,7 @@ from chia.util.hash import std_hash
 from chia.wallet.derive_keys import find_authentication_sk
 
 from foxy_farmer.chia_launcher import ChiaLauncher
+from foxy_farmer.error_reporting import close_sentry
 from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_farmer.pool.pool_api_client import PoolApiClient
 
@@ -56,7 +57,11 @@ class Authenticator:
 
         self._chia_launcher = ChiaLauncher(foxy_root=self._foxy_root, config=self._config)
         launch_task = create_task(self._chia_launcher.run_with_daemon(self.await_daemon_shutdown))
-        await self._chia_launcher.wait_for_ready()
+        await self._chia_launcher.wait_for_ready_or_shutdown()
+        if self._chia_launcher.is_shut_down:
+            await launch_task
+
+            return
         logger = getLogger("auth")
         keychain_proxy: Optional[KeychainProxy] = None
         try:
@@ -102,6 +107,7 @@ class Authenticator:
             self.stop()
             await launch_task
             time.sleep(0.1)
+            close_sentry()
 
     def stop(self):
         asyncio.create_task(self._chia_launcher.daemon_ws_server.stop())

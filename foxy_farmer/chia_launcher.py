@@ -19,6 +19,11 @@ class ChiaLauncher:
     _daemon_ws_server: Optional[WebSocketServer]
     _logger: Logger = getLogger("chia_launcher")
     _did_launch_daemon = False
+    _is_shut_down = False
+
+    @property
+    def is_shut_down(self) -> bool:
+        return self._is_shut_down
 
     @property
     def daemon_ws_server(self) -> Optional[WebSocketServer]:
@@ -33,12 +38,18 @@ class ChiaLauncher:
     async def run_with_daemon(self, closure: Callable[[], Awaitable[None]], quiet: bool = False) -> None:
         if self._daemon_ws_server is None:
             print("Another instance of foxy-farmer is already running, exiting now ..", file=sys.stderr)
-            exit(1)
+            await self.daemon_ws_server.stop()
+            self._is_shut_down = True
+
+            return
 
         connection = await connect_to_daemon_and_validate(self._foxy_root, self._config, quiet=True)
         if connection is not None:
             print("Another instance of foxy-farmer is already running, exiting now ..", file=sys.stderr)
-            exit(1)
+            await self.daemon_ws_server.stop()
+            self._is_shut_down = True
+
+            return
 
         if not quiet:
             print("Starting daemon")
@@ -63,10 +74,14 @@ class ChiaLauncher:
 
             await closure()
 
-    async def wait_for_ready(self):
+    async def wait_for_ready_or_shutdown(self):
+        if self._is_shut_down:
+            return
         is_ready = await self.is_ready()
         while is_ready is False:
             await asyncio.sleep(1)
+            if self._is_shut_down:
+                return
             is_ready = await self.is_ready()
 
     async def is_ready(self):

@@ -1,5 +1,9 @@
 from multiprocessing import freeze_support
 
+from foxy_farmer.error_reporting import init_sentry, close_sentry
+
+init_sentry()
+
 from foxy_farmer.monkey_patch_chia_version import monkey_patch_chia_version
 
 monkey_patch_chia_version()
@@ -8,12 +12,10 @@ import asyncio
 import logging
 import os
 import signal
+import click
 from pathlib import Path
 from types import FrameType
 from typing import Optional
-
-import click
-import pkg_resources
 
 from chia.cmds.keys import keys_cmd
 from chia.cmds.passphrase import passphrase_cmd
@@ -25,7 +27,6 @@ from chia.harvester.harvester import Harvester
 from chia.server.start_service import async_run, Service
 from chia.util.config import load_config
 from chia.util.misc import SignalHandlers
-
 from foxy_farmer.chia_launcher import ChiaLauncher
 from foxy_farmer.cmds.join_pool import join_pool_cmd
 from foxy_farmer.cmds.farm_summary import summary_cmd
@@ -34,9 +35,9 @@ from foxy_farmer.foxy_config_manager import FoxyConfigManager
 from foxy_farmer.foxy_farmer_logging import initialize_logging_with_stdout
 from foxy_farmer.service_factory import ServiceFactory
 from foxy_farmer.cmds.authenticate import authenticate_cmd
+from foxy_farmer.version import version
 
 log = logging.getLogger("foxy_farmer")
-version = pkg_resources.require("foxy-farmer")[0].version
 
 
 class FoxyFarmer:
@@ -79,7 +80,6 @@ class FoxyFarmer:
 
         awaitables = [
             self._farmer_service.run(),
-            self._chia_launcher.daemon_ws_server.shutdown_event.wait(),
         ]
 
         if self._harvester_service is not None:
@@ -88,29 +88,31 @@ class FoxyFarmer:
 
         await asyncio.gather(*awaitables)
 
-    async def stop(self):
+    def stop(self):
         if self._harvester_service is not None:
             self._harvester_service.stop()
         self._farmer_service.stop()
-        await self._chia_launcher.daemon_ws_server.stop()
 
-    async def _accept_signal(
+    def _accept_signal(
         self,
         signal_: signal.Signals,
         stack_frame: Optional[FrameType],
         loop: asyncio.AbstractEventLoop,
     ) -> None:
-        await self.stop()
+        self.stop()
 
     async def setup_process_global_state(self) -> None:
         async with SignalHandlers.manage() as signal_handlers:
-            signal_handlers.setup_async_signal_handler(handler=self._accept_signal)
+            signal_handlers.setup_sync_signal_handler(handler=self._accept_signal)
 
 
 async def run_foxy_farmer(foxy_root: Path, config_path: Path):
     foxy_farmer = FoxyFarmer(foxy_root, config_path)
     await foxy_farmer.setup_process_global_state()
-    await foxy_farmer.start()
+    try:
+        await foxy_farmer.start()
+    finally:
+        close_sentry()
 
 
 @click.group(

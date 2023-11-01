@@ -24,6 +24,7 @@ from humanize import naturaldelta
 from yaspin import yaspin
 
 from foxy_farmer.chia_launcher import ChiaLauncher
+from foxy_farmer.error_reporting import close_sentry
 from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_farmer.pool.pool_api_client import POOL_URL, PoolApiClient
 from foxy_farmer.service_factory import ServiceFactory
@@ -67,7 +68,11 @@ class PoolJoiner:
     async def join_pool(self):
         self._chia_launcher = ChiaLauncher(foxy_root=self._foxy_root, config=self._config)
         launch_task = create_task(self._chia_launcher.run_with_daemon(self.start_and_await_services))
-        await self._chia_launcher.wait_for_ready()
+        await self._chia_launcher.wait_for_ready_or_shutdown()
+        if self._chia_launcher.is_shut_down:
+            await launch_task
+
+            return
 
         wallet_rpc = await WalletRpcClient.create(
             self._config["self_hostname"],
@@ -116,6 +121,7 @@ class PoolJoiner:
             self.stop()
             await launch_task
             time.sleep(0.1)
+            close_sentry()
 
     async def start_and_await_services(self):
         service_factory = ServiceFactory(self._foxy_root, self._config)
@@ -123,14 +129,12 @@ class PoolJoiner:
 
         awaitables = [
             self._wallet_service.run(),
-            self._chia_launcher.daemon_ws_server.shutdown_event.wait(),
         ]
 
         await asyncio.gather(*awaitables)
 
     def stop(self):
         self._wallet_service.stop()
-        asyncio.create_task(self._chia_launcher.daemon_ws_server.stop())
 
 
 async def await_launcher_pool_join_completion(root_path: Path, joined_launcher_ids: List[str]):
