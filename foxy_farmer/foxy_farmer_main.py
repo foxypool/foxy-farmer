@@ -16,6 +16,7 @@ import click
 from pathlib import Path
 from types import FrameType
 from typing import Optional
+from sentry_sdk.sessions import auto_session_tracking
 
 from chia.cmds.keys import keys_cmd
 from chia.cmds.passphrase import passphrase_cmd
@@ -86,7 +87,8 @@ class FoxyFarmer:
             log.info(f"Harvester starting (id={self._harvester_service._node.server.node_id.hex()[:8]})")
             awaitables.append(self._harvester_service.run())
 
-        await asyncio.gather(*awaitables)
+        with auto_session_tracking(session_mode="application"):
+            await asyncio.gather(*awaitables)
 
     def stop(self):
         if self._harvester_service is not None:
