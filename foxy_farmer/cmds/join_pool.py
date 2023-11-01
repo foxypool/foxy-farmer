@@ -27,6 +27,7 @@ from foxy_farmer.chia_launcher import ChiaLauncher
 from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_farmer.pool.pool_api_client import POOL_URL, PoolApiClient
 from foxy_farmer.service_factory import ServiceFactory
+from foxy_farmer.util.hex import ensure_hex_prefix
 
 
 @click.command("join-pool", short_help="Join your PlotNFTs to the pool")
@@ -93,22 +94,21 @@ class PoolJoiner:
 
             await wait_for_wallet_sync(wallet_rpc)
 
-            config = load_config(self._foxy_root, "config.yaml")
-            plot_nfts_not_pooling_with_foxy = get_plot_nft_not_pooling_with_foxy(config)
+            plot_nfts_not_pooling_with_foxy = get_plot_nft_not_pooling_with_foxy(self._foxy_root)
             if len(plot_nfts_not_pooling_with_foxy) == 0:
                 print("✅ All PlotNFTs are already pooling with Foxy, nothing to do")
 
                 return
 
-            await join_plot_nfts_to_pool(wallet_rpc, plot_nfts_not_pooling_with_foxy)
+            joined_launcher_ids = await join_plot_nfts_to_pool(wallet_rpc, plot_nfts_not_pooling_with_foxy)
+            if len(joined_launcher_ids) == 0:
+                print("❌ Unable to join any of the PlotNFTs, exiting")
+
+                return
 
             await wait_for_wallet_sync(wallet_rpc)
 
-            with yaspin(text="Waiting for the pool join to complete ..."):
-                while len(plot_nfts_not_pooling_with_foxy) > 0:
-                    await sleep(15)
-                    config = load_config(self._foxy_root, "config.yaml")
-                    plot_nfts_not_pooling_with_foxy = get_plot_nft_not_pooling_with_foxy(config)
+            await await_launcher_pool_join_completion(self._foxy_root, joined_launcher_ids)
             print("✅ Pool join completed")
         finally:
             wallet_rpc.close()
@@ -133,7 +133,17 @@ class PoolJoiner:
         asyncio.create_task(self._chia_launcher.daemon_ws_server.stop())
 
 
-async def join_plot_nfts_to_pool(wallet_client: WalletRpcClient, plot_nfts: List[Dict[str, Any]]):
+async def await_launcher_pool_join_completion(root_path: Path, joined_launcher_ids: List[str]):
+    plot_nfts_not_pooling_with_foxy = get_plot_nft_not_pooling_with_foxy(root_path, joined_launcher_ids=joined_launcher_ids)
+    if len(plot_nfts_not_pooling_with_foxy) == 0:
+        return
+    with yaspin(text="Waiting for the pool join to complete ..."):
+        while len(plot_nfts_not_pooling_with_foxy) > 0:
+            await sleep(15)
+            plot_nfts_not_pooling_with_foxy = get_plot_nft_not_pooling_with_foxy(root_path, joined_launcher_ids=joined_launcher_ids)
+
+
+async def join_plot_nfts_to_pool(wallet_client: WalletRpcClient, plot_nfts: List[Dict[str, Any]]) -> List[str]:
     plot_nfts_by_launcher_id: Dict[bytes32, Dict[str, Any]] = {
         bytes32.from_hexstr(plot_nft["launcher_id"]): plot_nft
         for plot_nft in plot_nfts
@@ -145,6 +155,7 @@ async def join_plot_nfts_to_pool(wallet_client: WalletRpcClient, plot_nfts: List
 
     with yaspin(text="Fetching PlotNFT wallets ..."):
         pooling_wallets = await wallet_client.get_wallets(wallet_type=WalletType.POOLING_WALLET)
+    joined_launcher_ids: List[str] = []
     for pool_wallet in pooling_wallets:
         wallet_id = pool_wallet["id"]
         pool_wallet_info, _ = await wallet_client.pw_status(wallet_id)
@@ -161,9 +172,12 @@ async def join_plot_nfts_to_pool(wallet_client: WalletRpcClient, plot_nfts: List
                 await join_plot_nft_to_pool(wallet_client, pool_info, wallet_id)
                 spinner.stop()
                 print(f"✅ Submitted the pool join transaction for PlotNFT with LauncherID {launcher_id}")
+                joined_launcher_ids.append(ensure_hex_prefix(launcher_id))
             except Exception as e:
                 spinner.stop()
                 print(f"❌ Could not join PlotNFT with LauncherID {launcher_id} because an error occurred: {e}")
+
+    return joined_launcher_ids
 
 
 async def join_plot_nft_to_pool(wallet_client: WalletRpcClient, pool_info: Dict[str, Any], wallet_id: int):
@@ -207,11 +221,17 @@ async def wait_for_wallet_sync(wallet_client: WalletRpcClient):
     print("✅ Wallet synced")
 
 
-def get_plot_nft_not_pooling_with_foxy(config: Dict[str, Any]) -> List[Dict[str, Any]]:
+def get_plot_nft_not_pooling_with_foxy(root_path: Path, joined_launcher_ids: Optional[List[str]] = None) -> List[Dict[str, Any]]:
+    config = load_config(root_path, "config.yaml")
     if config["pool"].get("pool_list") is None:
         return []
 
-    return list(filter(lambda pool: "foxypool.io" not in pool["pool_url"], config["pool"]["pool_list"]))
+    return list(
+        filter(
+            lambda pool: "foxypool.io" not in pool["pool_url"] and (joined_launcher_ids is None or ensure_hex_prefix(pool["launcher_id"]) in joined_launcher_ids),
+            config["pool"]["pool_list"],
+        )
+    )
 
 
 async def submit_tx_with_confirmation(
