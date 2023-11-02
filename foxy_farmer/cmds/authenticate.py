@@ -19,6 +19,7 @@ from foxy_farmer.chia_launcher import ChiaLauncher
 from foxy_farmer.error_reporting import close_sentry
 from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_farmer.pool.pool_api_client import PoolApiClient
+from foxy_farmer.util.task import await_task_done
 
 
 @click.command("auth", short_help="Authenticate your Launcher Ids on the pool")
@@ -62,7 +63,7 @@ class Authenticator:
         launch_task = create_task(self._chia_launcher.run_with_daemon(self.await_daemon_shutdown))
         await self._chia_launcher.wait_for_ready_or_shutdown()
         if self._chia_launcher.is_shut_down:
-            await launch_task
+            await await_task_done(launch_task)
 
             return
         logger = getLogger("auth")
@@ -108,7 +109,7 @@ class Authenticator:
                 await keychain_proxy.close()
                 await sleep(0.5)
             self.stop()
-            await launch_task
+            await await_task_done(launch_task)
             time.sleep(0.1)
 
     def stop(self):

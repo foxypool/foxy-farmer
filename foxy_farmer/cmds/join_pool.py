@@ -30,6 +30,7 @@ from foxy_farmer.foxy_config_manager import FoxyConfigManager
 from foxy_farmer.pool.pool_api_client import POOL_URL, PoolApiClient
 from foxy_farmer.service_factory import ServiceFactory
 from foxy_farmer.util.hex import ensure_hex_prefix
+from foxy_farmer.util.task import await_task_done
 
 
 @click.command("join-pool", short_help="Join your PlotNFTs to the pool")
@@ -76,7 +77,7 @@ class PoolJoiner:
         launch_task = create_task(self._chia_launcher.run_with_daemon(self.start_and_await_services))
         await self._chia_launcher.wait_for_ready_or_shutdown()
         if self._chia_launcher.is_shut_down:
-            await launch_task
+            await await_task_done(launch_task)
 
             return
 
