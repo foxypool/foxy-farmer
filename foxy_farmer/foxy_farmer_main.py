@@ -37,6 +37,7 @@ from foxy_farmer.foxy_farmer_logging import initialize_logging_with_stdout
 from foxy_farmer.service_factory import ServiceFactory
 from foxy_farmer.cmds.authenticate import authenticate_cmd
 from foxy_farmer.version import version
+from foxy_farmer.exceptions.already_running_exception import AlreadyRunningException
 
 log = logging.getLogger("foxy_farmer")
 
@@ -45,7 +46,7 @@ class FoxyFarmer:
     _foxy_root: Path
     _config_path: Path
     _chia_launcher: Optional[ChiaLauncher]
-    _farmer_service: Service[Farmer, FarmerAPI]
+    _farmer_service: Optional[Service[Farmer, FarmerAPI]] = None
     _harvester_service: Optional[Service[Harvester, HarvesterAPI]] = None
 
     def __init__(self, foxy_root: Path, config_path: Path):
@@ -64,6 +65,9 @@ class FoxyFarmer:
 
         log.info(f"Foxy-Farmer {version} using config in {self._config_path}")
 
+        self._chia_launcher = ChiaLauncher(foxy_root=self._foxy_root, config=config)
+        await self._chia_launcher.ensure_daemon_running_and_unlocked(quiet=True)
+
         service_factory = ServiceFactory(self._foxy_root, config)
         self._farmer_service = service_factory.make_farmer()
 
@@ -72,14 +76,14 @@ class FoxyFarmer:
         if foxy_config.get("enable_harvester") is True:
             self._harvester_service = service_factory.make_harvester()
 
-        self._chia_launcher = ChiaLauncher(foxy_root=self._foxy_root, config=config)
-        await self._chia_launcher.run_with_daemon(self.start_and_await_services, quiet=True)
+        await self.start_and_await_services()
 
     async def start_and_await_services(self):
         # Do not log farmer id as it is not tracked yet
         # log.info(f"Farmer starting (id={self._farmer_service._node.server.node_id.hex()[:8]})")
 
         awaitables = [
+            self._chia_launcher.await_shutdown(),
             self._farmer_service.run(),
         ]
 
@@ -93,7 +97,10 @@ class FoxyFarmer:
     def stop(self):
         if self._harvester_service is not None:
             self._harvester_service.stop()
-        self._farmer_service.stop()
+        if self._farmer_service is not None:
+            self._farmer_service.stop()
+        if self._chia_launcher is not None:
+            self._chia_launcher.shutdown()
 
     def _accept_signal(
         self,
@@ -113,6 +120,8 @@ async def run_foxy_farmer(foxy_root: Path, config_path: Path):
     await foxy_farmer.setup_process_global_state()
     try:
         await foxy_farmer.start()
+    except AlreadyRunningException:
+        pass
     finally:
         close_sentry()
 

@@ -29,8 +29,8 @@ from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_farmer.foxy_config_manager import FoxyConfigManager
 from foxy_farmer.pool.pool_api_client import POOL_URL, PoolApiClient
 from foxy_farmer.service_factory import ServiceFactory
+from foxy_farmer.util.awaitable import await_done
 from foxy_farmer.util.hex import ensure_hex_prefix
-from foxy_farmer.util.task import await_task_done
 
 
 @click.command("join-pool", short_help="Join your PlotNFTs to the pool")
@@ -74,12 +74,8 @@ class PoolJoiner:
 
     async def join_pool(self):
         self._chia_launcher = ChiaLauncher(foxy_root=self._foxy_root, config=self._config)
-        launch_task = create_task(self._chia_launcher.run_with_daemon(self.start_and_await_services))
-        await self._chia_launcher.wait_for_ready_or_shutdown()
-        if self._chia_launcher.is_shut_down:
-            await await_task_done(launch_task)
-
-            return
+        await self._chia_launcher.ensure_daemon_running_and_unlocked(require_own_daemon=False)
+        start_wallet_task = create_task(self.start_and_await_services())
 
         wallet_rpc = await WalletRpcClient.create(
             self._config["self_hostname"],
@@ -135,9 +131,11 @@ class PoolJoiner:
             await wallet_rpc.await_closed()
             self.stop()
             try:
-                await launch_task
+                await start_wallet_task
             except:
-                await self._wallet_service.wait_closed()
+                await await_done(self._wallet_service.wait_closed())
+            self._chia_launcher.shutdown()
+            await self._chia_launcher.await_shutdown()
             time.sleep(0.1)
 
     async def start_and_await_services(self):
