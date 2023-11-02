@@ -31,7 +31,10 @@ def authenticate_cmd(ctx) -> None:
 
     config = load_config(foxy_root, "config.yaml")
 
-    asyncio.run(authenticate(foxy_root, config))
+    try:
+        asyncio.run(authenticate(foxy_root, config))
+    finally:
+        close_sentry()
 
 
 async def authenticate(foxy_root: Path, config: Dict[str, Any]):
@@ -107,7 +110,6 @@ class Authenticator:
             self.stop()
             await launch_task
             time.sleep(0.1)
-            close_sentry()
 
     def stop(self):
         asyncio.create_task(self._chia_launcher.daemon_ws_server.stop())

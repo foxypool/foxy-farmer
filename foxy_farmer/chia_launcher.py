@@ -56,23 +56,26 @@ class ChiaLauncher:
         async with self._daemon_ws_server.run():
             self._did_launch_daemon = True
             await asyncio.sleep(1)
-            connection = await connect_to_daemon_and_validate(self._foxy_root, self._config, quiet=True)
-            while connection is None:
-                self._logger.warning("Trying to connect to the daemon failed, retrying in 1 second")
-                await asyncio.sleep(1)
+            try:
                 connection = await connect_to_daemon_and_validate(self._foxy_root, self._config, quiet=True)
+                while connection is None:
+                    self._logger.warning("Trying to connect to the daemon failed, retrying in 1 second")
+                    await asyncio.sleep(1)
+                    connection = await connect_to_daemon_and_validate(self._foxy_root, self._config, quiet=True)
 
-            if connection is not None and await connection.is_keyring_locked():
-                passphrase = Keychain.get_cached_master_passphrase()
-                if passphrase is None or not Keychain.master_passphrase_is_valid(passphrase):
-                    with ThreadPoolExecutor(max_workers=1, thread_name_prefix="get_current_passphrase") as executor:
-                        passphrase = await asyncio.get_running_loop().run_in_executor(executor, get_current_passphrase)
+                if connection is not None and await connection.is_keyring_locked():
+                    passphrase = Keychain.get_cached_master_passphrase()
+                    if passphrase is None or not Keychain.master_passphrase_is_valid(passphrase):
+                        with ThreadPoolExecutor(max_workers=1, thread_name_prefix="get_current_passphrase") as executor:
+                            passphrase = await asyncio.get_running_loop().run_in_executor(executor, get_current_passphrase)
 
-                if passphrase:
-                    print("Unlocking daemon keyring")
-                    await connection.unlock_keyring(passphrase)
+                    if passphrase:
+                        print("Unlocking daemon keyring")
+                        await connection.unlock_keyring(passphrase)
 
-            await closure()
+                await closure()
+            finally:
+                self._is_shut_down = True
 
     async def wait_for_ready_or_shutdown(self):
         if self._is_shut_down:

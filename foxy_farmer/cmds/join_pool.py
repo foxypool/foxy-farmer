@@ -1,7 +1,7 @@
 import asyncio
 import functools
 import time
-from asyncio import sleep, create_task
+from asyncio import sleep, create_task, CancelledError
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Callable, Awaitable
@@ -40,7 +40,10 @@ def join_pool_cmd(ctx) -> None:
     foxy_chia_config_manager = FoxyChiaConfigManager(foxy_root)
     foxy_chia_config_manager.ensure_foxy_config(config_path)
 
-    asyncio.run(join_pool(foxy_root, config_path))
+    try:
+        asyncio.run(join_pool(foxy_root, config_path))
+    finally:
+        close_sentry()
 
 
 async def join_pool(foxy_root: Path, config_path: Path):
@@ -120,13 +123,21 @@ class PoolJoiner:
             await await_launcher_pool_join_completion(self._foxy_root, joined_launcher_ids)
             print("✅ Pool join completed")
             self._update_foxy_config_plot_nfts_if_required()
+        except CancelledError:
+            # Ctrl-c breaks wallet state, close peer discovery manually
+            self._wallet_service._node._close()
+            await self._wallet_service._node._await_closed()
+
+            raise
         finally:
             wallet_rpc.close()
             await wallet_rpc.await_closed()
             self.stop()
-            await launch_task
+            try:
+                await launch_task
+            except:
+                await self._wallet_service.wait_closed()
             time.sleep(0.1)
-            close_sentry()
 
     async def start_and_await_services(self):
         service_factory = ServiceFactory(self._foxy_root, self._config)
@@ -151,7 +162,6 @@ class PoolJoiner:
             return
         foxy_config["plot_nfts"] = pool_list
         self._foxy_config_manager.save_config(foxy_config)
-
 
 
 async def await_launcher_pool_join_completion(root_path: Path, joined_launcher_ids: List[str]):
