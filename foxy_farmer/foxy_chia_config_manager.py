@@ -1,7 +1,7 @@
 from os import environ
 from pathlib import Path
 from shutil import copyfile
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 
 from chia.cmds.init_funcs import chia_init, check_keys
 from chia.cmds.keys_funcs import add_private_key_seed
@@ -48,25 +48,39 @@ class FoxyChiaConfigManager:
         has_foxy_config = foxy_config_manager.has_config()
         foxy_config = foxy_config_manager.load_config()
 
+        foxy_config_was_updated = False
         # Init the foxy_farmer config from the chia foxy config
         if has_foxy_config is False:
             foxy_config["plot_directories"] = config["harvester"]["plot_directories"]
             foxy_config["harvester_num_threads"] = config["harvester"]["num_threads"]
             foxy_config["farmer_reward_address"] = config["farmer"]["xch_target_address"]
             foxy_config["pool_payout_address"] = config["farmer"]["xch_target_address"]
-            foxy_config_manager.save_config(foxy_config)
+            foxy_config_was_updated = True
+
+        if foxy_config["farmer_reward_address"] == "" and config["farmer"]["xch_target_address"] != "":
+            foxy_config["farmer_reward_address"] = config["farmer"]["xch_target_address"]
+            foxy_config_was_updated = True
+        if foxy_config["pool_payout_address"] == "" and config["farmer"]["xch_target_address"] != "":
+            foxy_config["pool_payout_address"] = config["farmer"]["xch_target_address"]
+            foxy_config_was_updated = True
 
         if foxy_config.get("farmer_reward_address", "") == "" or foxy_config.get("pool_payout_address", "") == "":
+            if foxy_config_was_updated:
+                foxy_config_manager.save_config(foxy_config)
             print(f"You are missing a 'farmer_reward_address' and/or 'pool_payout_address' in {config_path}, please update the config and run again.")
             exit(1)
 
         config_was_updated = self.ensure_different_ports(config, config_was_updated)
         config_was_updated = self.ensure_no_full_node_peer_for_farmer(config, config_was_updated)
-        config_was_updated = self.update_foxy_chia_config_from_foxy_config(
+        config_was_updated, foxy_config_was_updated = self.update_foxy_chia_config_from_foxy_config(
             chia_foxy_config=config,
             foxy_config=foxy_config,
-            config_was_updated=config_was_updated
+            config_was_updated=config_was_updated,
+            foxy_config_was_updated=foxy_config_was_updated
         )
+
+        if foxy_config_was_updated:
+            foxy_config_manager.save_config(foxy_config)
 
         if config_was_updated:
             save_config(self._root_path, "config.yaml", config)
@@ -75,8 +89,9 @@ class FoxyChiaConfigManager:
             self,
             chia_foxy_config: Dict,
             foxy_config: Dict,
-            config_was_updated: bool = False
-    ):
+            config_was_updated: bool = False,
+            foxy_config_was_updated: bool = False,
+    ) -> Tuple[bool, bool]:
         if "full_node_peer" in chia_foxy_config["wallet"] or "full_node_peers" in chia_foxy_config["wallet"]:
             chia_foxy_config["wallet"].pop("full_node_peer", None)
             chia_foxy_config["wallet"].pop("full_node_peers", None)
@@ -115,8 +130,16 @@ class FoxyChiaConfigManager:
 
         set_service_option_from_foxy_config("farmer", foxy_config_key="farmer_reward_address", chia_config_key="xch_target_address")
 
-        # Ensure all nft pools use the same payout address
+        # Ensure all PlotNFTs use the same payout address
         pool_payout_address_ph = decode_puzzle_hash(foxy_config["pool_payout_address"]).hex()
+        if foxy_config.get("plot_nfts") is not None:
+            for pool in foxy_config["plot_nfts"]:
+                if pool["payout_instructions"] != pool_payout_address_ph:
+                    pool["payout_instructions"] = pool_payout_address_ph
+                    foxy_config_was_updated = True
+
+        set_service_option_from_foxy_config("pool", foxy_config_key="plot_nfts", chia_config_key="pool_list")
+
         if chia_foxy_config["pool"].get("pool_list") is not None:
             for pool in chia_foxy_config["pool"]["pool_list"]:
                 if pool["payout_instructions"] != pool_payout_address_ph:
@@ -149,9 +172,7 @@ class FoxyChiaConfigManager:
             chia_foxy_config["wallet"]["connect_to_unknown_peers"] = True
             config_was_updated = True
 
-        set_service_option_from_foxy_config("pool", foxy_config_key="plot_nfts", chia_config_key="pool_list")
-
-        return config_was_updated
+        return config_was_updated, foxy_config_was_updated
 
     def ensure_no_full_node_peer_for_farmer(self, config: Dict, config_was_updated: bool = False):
         # Until peer lists are released manually add peers in the service factory instead
