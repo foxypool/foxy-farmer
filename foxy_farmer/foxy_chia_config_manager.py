@@ -149,6 +149,8 @@ class FoxyChiaConfigManager:
             chia_foxy_config["wallet"]["connect_to_unknown_peers"] = True
             config_was_updated = True
 
+        set_service_option_from_foxy_config("pool", foxy_config_key="plot_nfts", chia_config_key="pool_list")
+
         return config_was_updated
 
     def ensure_no_full_node_peer_for_farmer(self, config: Dict, config_was_updated: bool = False):

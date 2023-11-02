@@ -26,6 +26,7 @@ from yaspin import yaspin
 from foxy_farmer.chia_launcher import ChiaLauncher
 from foxy_farmer.error_reporting import close_sentry
 from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
+from foxy_farmer.foxy_config_manager import FoxyConfigManager
 from foxy_farmer.pool.pool_api_client import POOL_URL, PoolApiClient
 from foxy_farmer.service_factory import ServiceFactory
 from foxy_farmer.util.hex import ensure_hex_prefix
@@ -39,6 +40,10 @@ def join_pool_cmd(ctx) -> None:
     foxy_chia_config_manager = FoxyChiaConfigManager(foxy_root)
     foxy_chia_config_manager.ensure_foxy_config(config_path)
 
+    asyncio.run(join_pool(foxy_root, config_path))
+
+
+async def join_pool(foxy_root: Path, config_path: Path):
     config = load_config(foxy_root, "config.yaml")
 
     initialize_logging(
@@ -47,23 +52,21 @@ def join_pool_cmd(ctx) -> None:
         root_path=foxy_root,
     )
 
-    asyncio.run(join_pool(foxy_root, config))
-
-
-async def join_pool(foxy_root: Path, config: Dict[str, Any]):
-    pool_joiner = PoolJoiner(foxy_root=foxy_root, config=config)
+    pool_joiner = PoolJoiner(foxy_root=foxy_root, config=config, config_path=config_path)
     await pool_joiner.join_pool()
 
 
 class PoolJoiner:
     _foxy_root: Path
     _config: Dict[str, Any]
+    _foxy_config_manager: FoxyConfigManager
     _wallet_service: Optional[Service[WalletNode, WalletNodeAPI]]
     _chia_launcher: Optional[ChiaLauncher]
 
-    def __init__(self, foxy_root: Path, config: Dict[str, Any]):
+    def __init__(self, foxy_root: Path, config: Dict[str, Any], config_path: Path):
         self._foxy_root = foxy_root
         self._config = config
+        self._foxy_config_manager = FoxyConfigManager(config_path)
 
     async def join_pool(self):
         self._chia_launcher = ChiaLauncher(foxy_root=self._foxy_root, config=self._config)
@@ -98,6 +101,7 @@ class PoolJoiner:
             await get_wallet(self._foxy_root, wallet_rpc, fingerprint=None)
 
             await wait_for_wallet_sync(wallet_rpc)
+            self._update_foxy_config_plot_nfts_if_required()
 
             plot_nfts_not_pooling_with_foxy = get_plot_nft_not_pooling_with_foxy(self._foxy_root)
             if len(plot_nfts_not_pooling_with_foxy) == 0:
@@ -115,6 +119,7 @@ class PoolJoiner:
 
             await await_launcher_pool_join_completion(self._foxy_root, joined_launcher_ids)
             print("✅ Pool join completed")
+            self._update_foxy_config_plot_nfts_if_required()
         finally:
             wallet_rpc.close()
             await wallet_rpc.await_closed()
@@ -135,6 +140,18 @@ class PoolJoiner:
 
     def stop(self):
         self._wallet_service.stop()
+
+    def _update_foxy_config_plot_nfts_if_required(self):
+        config = load_config(self._foxy_root, "config.yaml")
+        pool_list: Optional[List[Dict[str, Any]]] = config["pool"].get("pool_list")
+        if pool_list is None:
+            return
+        foxy_config = self._foxy_config_manager.load_config()
+        if pool_list == foxy_config.get("plot_nfts"):
+            return
+        foxy_config["plot_nfts"] = pool_list
+        self._foxy_config_manager.save_config(foxy_config)
+
 
 
 async def await_launcher_pool_join_completion(root_path: Path, joined_launcher_ids: List[str]):

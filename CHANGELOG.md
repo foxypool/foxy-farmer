@@ -5,6 +5,7 @@
 ### Added
 
 - Add sentry error reporting.
+- Add `plot_nfts` config option to easily deploy new Foxy-Farmers for already joined PlotNFTs.
 
 ## [1.10.2] - 2023-10-31
 
