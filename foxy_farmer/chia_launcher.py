@@ -38,7 +38,6 @@ class ChiaLauncher:
     async def run_with_daemon(self, closure: Callable[[], Awaitable[None]], quiet: bool = False) -> None:
         if self._daemon_ws_server is None:
             print("Another instance of foxy-farmer is already running, exiting now ..", file=sys.stderr)
-            await self.daemon_ws_server.stop()
             self._is_shut_down = True
 
             return
@@ -46,6 +45,7 @@ class ChiaLauncher:
         connection = await connect_to_daemon_and_validate(self._foxy_root, self._config, quiet=True)
         if connection is not None:
             print("Another instance of foxy-farmer is already running, exiting now ..", file=sys.stderr)
+            await connection.close()
             await self.daemon_ws_server.stop()
             self._is_shut_down = True
 
