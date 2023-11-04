@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add plot refresh batch options `plot_refresh_batch_size` and `plot_refresh_batch_sleep_ms`.
+- Add port override config options and `--root-path` command line argument to allow running multiple Foxy-Farmer instances.
+
 ## [1.11.0] - 2023-11-03
 
 ### Added
