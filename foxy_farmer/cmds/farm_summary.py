@@ -1,5 +1,4 @@
-import asyncio
-import os
+from asyncio import run
 from pathlib import Path
 from typing import Dict, Any
 
@@ -10,10 +9,11 @@ from chia.util.network import is_localhost
 
 
 @click.command("summary", short_help="Summary of farming information")
-def summary_cmd() -> None:
-    foxy_root: Path = Path(os.path.expanduser(os.getenv("FOXY_ROOT", "~/.foxy-farmer/mainnet"))).resolve()
+@click.pass_context
+def summary_cmd(ctx) -> None:
+    foxy_root: Path = ctx.obj["root_path"]
 
-    asyncio.run(print_farm_summary(foxy_root))
+    run(print_farm_summary(foxy_root))
 
 
 async def print_farm_summary(root_path: Path):
