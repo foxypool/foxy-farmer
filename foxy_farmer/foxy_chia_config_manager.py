@@ -2,6 +2,7 @@ from os import environ
 from pathlib import Path
 from shutil import copyfile
 from typing import Dict, Any
+from sys import exit
 
 from chia.cmds.init_funcs import chia_init, check_keys
 from chia.cmds.keys_funcs import add_private_key_seed
