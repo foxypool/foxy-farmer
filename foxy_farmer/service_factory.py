@@ -55,6 +55,7 @@ class ServiceFactory:
 
     def make_farmer(self):
         service = create_farmer_service(self._root_path, self._config, self._config["pool"], DEFAULT_CONSTANTS)
+        # Deprecated: move into config with next chia release
         service.add_peer(UnresolvedPeerInfo(host=eu1_foxy_farming_gateway_address, port=uint16(foxy_farming_gateway_port)))
         service.add_peer(UnresolvedPeerInfo(host=eu3_foxy_farming_gateway_address, port=uint16(foxy_farming_gateway_port)))
 

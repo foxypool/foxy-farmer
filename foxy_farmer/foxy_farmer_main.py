@@ -38,10 +38,18 @@ async def run_foxy_farmer(foxy_root: Path, config_path: Path):
     type=click.Path(),
     show_default=True
 )
+@click.option(
+    '-r',
+    '--root-path',
+    default=get_root_path(),
+    help="Chia root path",
+    type=click.Path(),
+    show_default=True
+)
 @click.pass_context
-def cli(ctx, config):
+def cli(ctx, config, root_path):
     ctx.ensure_object(dict)
-    ctx.obj["root_path"] = get_root_path()
+    ctx.obj["root_path"] = Path(root_path).resolve()
     ctx.obj["config_path"] = Path(config).resolve()
     if ctx.invoked_subcommand is None:
         ctx.forward(run_cmd)
@@ -49,7 +57,7 @@ def cli(ctx, config):
 
 @cli.command("run", short_help="Run foxy-farmer, can be omitted")
 @click.pass_context
-def run_cmd(ctx, config):
+def run_cmd(ctx, config, root_path):
     from chia.server.start_service import async_run
     async_run(run_foxy_farmer(ctx.obj["root_path"], ctx.obj["config_path"]))
 

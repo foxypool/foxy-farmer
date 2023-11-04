@@ -9,6 +9,7 @@ from chia.util.hash import std_hash
 from chia.wallet.derive_keys import find_authentication_sk
 
 from foxy_farmer.foundation.pool.pool_info import get_pool_info
+from foxy_farmer.foundation.util.hex import strip_hex_prefix
 
 
 async def generate_login_links(keychain_proxy: KeychainProxy, pool_list: List[Dict[str, Any]]) -> List[Tuple[str, str]]:
@@ -16,7 +17,7 @@ async def generate_login_links(keychain_proxy: KeychainProxy, pool_list: List[Di
 
     login_links: List[Tuple[str, str]] = []
     for pool in pool_list:
-        launcher_id = pool["launcher_id"]
+        launcher_id = strip_hex_prefix(pool["launcher_id"])
         if pool.get("pool_url", "") == "":
             # Skip solo PlotNFT
             continue
