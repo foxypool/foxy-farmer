@@ -1,16 +1,13 @@
 import asyncio
-import sys
 from asyncio import Task, create_task, Event
-from concurrent.futures import ThreadPoolExecutor
 from logging import getLogger, Logger
 from pathlib import Path
 from typing import Dict, Any, Optional
 
-from chia.cmds.passphrase_funcs import get_current_passphrase
 from chia.daemon.client import connect_to_daemon_and_validate, DaemonProxy
-from chia.util.keychain import Keychain
 
 from foxy_farmer.exceptions.already_running_exception import AlreadyRunningException
+from foxy_farmer.foundation.daemon.daemon_proxy import get_daemon_proxy, ensure_daemon_keyring_is_unlocked
 from foxy_farmer.service_factory import ServiceFactory
 from foxy_farmer.util.awaitable import await_done
 
@@ -80,20 +77,9 @@ class ChiaLauncher:
     async def _ensure_daemon_is_unlocked(self, daemon_proxy: Optional[DaemonProxy] = None):
         close_daemon_proxy = daemon_proxy is None
         if daemon_proxy is None:
-            daemon_proxy = await connect_to_daemon_and_validate(self._foxy_root, self._config, quiet=True)
-        while daemon_proxy is None:
-            await asyncio.sleep(1)
-            daemon_proxy = await connect_to_daemon_and_validate(self._foxy_root, self._config, quiet=True)
+            daemon_proxy = await get_daemon_proxy(self._foxy_root, self._config)
         try:
-            if await daemon_proxy.is_keyring_locked():
-                passphrase = Keychain.get_cached_master_passphrase()
-                if passphrase is None or not Keychain.master_passphrase_is_valid(passphrase):
-                    with ThreadPoolExecutor(max_workers=1, thread_name_prefix="get_current_passphrase") as executor:
-                        passphrase = await asyncio.get_running_loop().run_in_executor(executor, get_current_passphrase)
-
-                if passphrase:
-                    print("Unlocking daemon keyring")
-                    await daemon_proxy.unlock_keyring(passphrase)
+            await ensure_daemon_keyring_is_unlocked(daemon_proxy)
         finally:
             if close_daemon_proxy:
                 await daemon_proxy.close()
