@@ -8,6 +8,8 @@ setup(
     author='Felix Brucker',
     author_email='contact@foxypool.io',
     description='A simplified farmer for the Chia blockchain using the foxy chia farming gateway.',
+    long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
     install_requires=[
         "aiohttp>=3.8.5",
         "blspy>=2.0.2",
