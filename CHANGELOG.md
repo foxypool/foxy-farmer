@@ -6,6 +6,10 @@
 
 - Show a more helpful error message when the `foxy-farmer.yaml` is not formatted correctly and can not be parsed.
 
+### Fixed
+
+- Fix harvester not connecting to the farmer on new installs.
+
 ## [1.12.0] - 2023-11-05
 
 ### Added

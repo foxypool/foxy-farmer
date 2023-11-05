@@ -99,6 +99,8 @@ class FoxyChiaConfigManager:
             .patch_value("daemon_port", foxy_farmer_config.get("chia_daemon_port", 55469))
             .patch_value("farmer.port", foxy_farmer_config.get("chia_farmer_port", 18447))
             .patch_value("farmer.rpc_port", foxy_farmer_config.get("chia_farmer_rpc_port", 18559))
+            # Deprecated: update to use new peer setter func with the next chia release
+            .patch_value("harvester.farmer_peer.port", foxy_farmer_config.get("chia_farmer_port", 18447))
             # Deprecated: harvester port can be dropped with the next chia release
             .patch_value("harvester.port", foxy_farmer_config.get("chia_harvester_port", 18448))
             .patch_value("harvester.rpc_port", foxy_farmer_config.get("chia_harvester_rpc_port", 18560))
