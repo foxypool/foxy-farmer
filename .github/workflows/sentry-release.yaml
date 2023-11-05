@@ -13,6 +13,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Get the tag name
+        id: tag
+        run: echo TAG=${GITHUB_REF/refs\/tags\//} >> $GITHUB_OUTPUT
       - name: Create Sentry release
         uses: getsentry/action-release@v1
         env:
@@ -20,4 +23,4 @@ jobs:
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         with:
-          version: ${{ github.ref }}
+          version: foxy-farmer@${{ steps.tag.outputs.TAG }}
