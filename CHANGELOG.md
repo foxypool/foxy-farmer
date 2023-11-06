@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add new `init` command to ensure configurations are available without running the farmer.
+
 ## [1.12.1] - 2023-11-05
 
 ### Changed

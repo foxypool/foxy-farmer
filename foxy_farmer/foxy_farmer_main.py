@@ -7,6 +7,7 @@ from chia.cmds.passphrase import passphrase_cmd
 from chia.cmds.plots import plots_cmd
 
 from foxy_farmer import close_sentry
+from foxy_farmer.cmds.init import init_cmd
 from foxy_farmer.cmds.join_pool import join_pool_cmd
 from foxy_farmer.cmds.farm_summary import summary_cmd
 from foxy_farmer.cmds.authenticate import authenticate_cmd
@@ -68,6 +69,7 @@ cli.add_command(authenticate_cmd)
 cli.add_command(keys_cmd)
 cli.add_command(plots_cmd)
 cli.add_command(passphrase_cmd)
+cli.add_command(init_cmd)
 
 
 def main() -> None:
