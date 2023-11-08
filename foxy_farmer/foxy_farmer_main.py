@@ -13,6 +13,7 @@ from foxy_farmer.cmds.farm_summary import summary_cmd
 from foxy_farmer.cmds.authenticate import authenticate_cmd
 from foxy_farmer.exceptions.already_running_exception import AlreadyRunningException
 from foxy_farmer.util.root_path import get_root_path
+from foxy_farmer.version import version
 
 
 async def run_foxy_farmer(foxy_root: Path, config_path: Path):
@@ -28,6 +29,7 @@ async def run_foxy_farmer(foxy_root: Path, config_path: Path):
 
 
 @click.group(
+    help=f"\n======== Foxy-Farmer {version} ========\n",
     invoke_without_command=True,
     context_settings=dict(help_option_names=["-h", "--help"])
 )
@@ -47,6 +49,7 @@ async def run_foxy_farmer(foxy_root: Path, config_path: Path):
     type=click.Path(),
     show_default=True
 )
+@click.version_option(version=version, message="Foxy-Farmer %(version)s")
 @click.pass_context
 def cli(ctx, config, root_path):
     ctx.ensure_object(dict)

@@ -5,6 +5,7 @@
 ### Added
 
 - Add new `init` command to ensure configurations are available without running the farmer.
+- Add support for `--version` argument to print the version and exit.
 
 ## [1.12.1] - 2023-11-05
 
