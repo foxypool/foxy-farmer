@@ -5,11 +5,9 @@ from typing import Dict, Any, Optional, List
 
 from chia.cmds.cmds_util import get_wallet
 from chia.rpc.wallet_rpc_client import WalletRpcClient
-from chia.server.start_service import Service
+from chia.types.aliases import WalletService
 from chia.util.config import load_config
 from chia.util.ints import uint16
-from chia.wallet.wallet_node import WalletNode
-from chia.wallet.wallet_node_api import WalletNodeAPI
 from yaspin import yaspin
 
 from foxy_farmer.chia_launcher import ChiaLauncher
@@ -25,7 +23,7 @@ class PoolJoiner:
     _foxy_root: Path
     _config: Dict[str, Any]
     _foxy_config_manager: FoxyConfigManager
-    _wallet_service: Optional[Service[WalletNode, WalletNodeAPI]]
+    _wallet_service: Optional[WalletService]
     _chia_launcher: Optional[ChiaLauncher]
 
     def __init__(self, foxy_root: Path, config: Dict[str, Any], config_path: Path):
@@ -81,12 +79,6 @@ class PoolJoiner:
             await await_launcher_pool_join_completion(self._foxy_root, joined_launcher_ids)
             print("✅ Pool join completed")
             self._update_foxy_config_plot_nfts_if_required()
-        except CancelledError:
-            # Ctrl-c breaks wallet state, close peer discovery manually
-            self._wallet_service._node._close()
-            await self._wallet_service._node._await_closed()
-
-            raise
         finally:
             wallet_rpc.close()
             await wallet_rpc.await_closed()
@@ -94,7 +86,7 @@ class PoolJoiner:
             try:
                 await start_wallet_task
             except:
-                await await_done(self._wallet_service.wait_closed())
+                await await_done(self._wallet_service.stop_requested.wait())
             self._chia_launcher.shutdown()
             await self._chia_launcher.await_shutdown()
             time.sleep(0.1)
@@ -110,7 +102,7 @@ class PoolJoiner:
         await gather(*awaitables)
 
     def stop(self):
-        self._wallet_service.stop()
+        self._wallet_service.stop_requested.set()
 
     def _update_foxy_config_plot_nfts_if_required(self):
         config = load_config(self._foxy_root, "config.yaml")

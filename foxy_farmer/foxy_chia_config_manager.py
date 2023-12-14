@@ -11,6 +11,8 @@ from chia.util.default_root import DEFAULT_ROOT_PATH, DEFAULT_KEYS_ROOT_PATH
 
 from foxy_farmer.foundation.config.config_patcher import ConfigPatcher
 from foxy_farmer.foxy_config_manager import FoxyConfigManager
+from foxy_farmer.foxy_farming_gateway import eu1_foxy_farming_gateway_address, foxy_farming_gateway_port, \
+    eu3_foxy_farming_gateway_address
 
 
 class FoxyChiaConfigManager:
@@ -99,15 +101,25 @@ class FoxyChiaConfigManager:
             .patch_value("daemon_port", foxy_farmer_config.get("chia_daemon_port", 55469))
             .patch_value("farmer.port", foxy_farmer_config.get("chia_farmer_port", 18447))
             .patch_value("farmer.rpc_port", foxy_farmer_config.get("chia_farmer_rpc_port", 18559))
-            # Deprecated: update to use new peer setter func with the next chia release
-            .patch_value("harvester.farmer_peer.port", foxy_farmer_config.get("chia_farmer_port", 18447))
-            # Deprecated: harvester port can be dropped with the next chia release
-            .patch_value("harvester.port", foxy_farmer_config.get("chia_harvester_port", 18448))
+            .remove_config_key("harvester.farmer_peer")
+            .patch_value("harvester.farmer_peers", [{
+                "host": foxy_farmer_config.get("listen_host"),
+                "port": foxy_farmer_config.get("chia_farmer_port", 18447),
+            }])
             .patch_value("harvester.rpc_port", foxy_farmer_config.get("chia_harvester_rpc_port", 18560))
             .patch_value("wallet.rpc_port", foxy_farmer_config.get("chia_wallet_rpc_port", 19256))
             # Ensure the wallet does not try to connect to localhost
             .remove_config_key("wallet.full_node_peer")
             .remove_config_key("wallet.full_node_peers")
+            # Ensure we connect to the farming gateway
+            .remove_config_key("farmer.full_node_peer")
+            .patch_value("farmer.full_node_peers", [{
+               "host": eu1_foxy_farming_gateway_address,
+               "port": foxy_farming_gateway_port,
+            }, {
+               "host": eu3_foxy_farming_gateway_address,
+               "port": foxy_farming_gateway_port,
+            }])
             # Sync logging
             .patch("log_level", "logging.log_level")
             .patch_value("logging.log_stdout", False)
@@ -146,6 +158,3 @@ class FoxyChiaConfigManager:
         else:
             # Ensure the og reward address is the farmer reward address
             config_patcher.patch("farmer_reward_address", "pool.xch_target_address")
-
-        # Deprecated: Update to set list of peers with next chia release. Drop adding peers in service factory.
-        config_patcher.remove_config_key("farmer.full_node_peer")

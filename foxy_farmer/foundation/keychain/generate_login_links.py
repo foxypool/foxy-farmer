@@ -1,6 +1,6 @@
 from typing import List, Dict, Any, Tuple
 
-from blspy import G1Element, G2Element, AugSchemeMPL
+from chia_rs import G1Element, G2Element, AugSchemeMPL
 from chia.daemon.keychain_proxy import KeychainProxy
 from chia.protocols.pool_protocol import get_current_authentication_token, AuthenticationPayload
 from chia.types.blockchain_format.sized_bytes import bytes32

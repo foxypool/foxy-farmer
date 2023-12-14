@@ -13,7 +13,7 @@ setup(
     install_requires=[
         "aiohttp>=3.8.5",
         "blspy>=2.0.2",
-        "chia-blockchain@git+https://github.com/foxypool/chia-blockchain@2.1.0-og-1.4.0#egg=chia-blockchain",
+        "chia-blockchain@git+https://github.com/foxypool/chia-blockchain@2.1.2-og-1.5.0#egg=chia-blockchain",
         "click>=8.1.3",
         "colorlog>=6.7.0",
         "humanize==4.8.0",
