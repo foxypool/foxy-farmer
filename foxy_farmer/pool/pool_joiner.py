@@ -1,13 +1,15 @@
 import time
-from asyncio import create_task, sleep, CancelledError, gather
+from asyncio import create_task, sleep, gather
 from pathlib import Path
 from typing import Dict, Any, Optional, List
 
 from chia.cmds.cmds_util import get_wallet
 from chia.rpc.wallet_rpc_client import WalletRpcClient
-from chia.types.aliases import WalletService
+from chia.server.start_service import Service
 from chia.util.config import load_config
 from chia.util.ints import uint16
+from chia.wallet.wallet_node import WalletNode
+from chia.wallet.wallet_node_api import WalletNodeAPI
 from yaspin import yaspin
 
 from foxy_farmer.chia_launcher import ChiaLauncher
@@ -23,7 +25,7 @@ class PoolJoiner:
     _foxy_root: Path
     _config: Dict[str, Any]
     _foxy_config_manager: FoxyConfigManager
-    _wallet_service: Optional[WalletService]
+    _wallet_service: Optional[Service[WalletNode, WalletNodeAPI]]
     _chia_launcher: Optional[ChiaLauncher]
 
     def __init__(self, foxy_root: Path, config: Dict[str, Any], config_path: Path):

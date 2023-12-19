@@ -4,13 +4,19 @@ from typing import Dict, Optional
 from chia.cmds.init_funcs import chia_full_version_str
 from chia.consensus.default_constants import DEFAULT_CONSTANTS
 from chia.daemon.server import daemon_launch_lock_path, log, WebSocketServer
+from chia.farmer.farmer import Farmer
+from chia.farmer.farmer_api import FarmerAPI
+from chia.harvester.harvester import Harvester
+from chia.harvester.harvester_api import HarvesterAPI
 from chia.server.outbound_message import NodeType
 from chia.server.start_farmer import create_farmer_service
 from chia.server.start_harvester import create_harvester_service
+from chia.server.start_service import Service
 from chia.server.start_wallet import create_wallet_service
-from chia.types.aliases import HarvesterService, FarmerService, WalletService
 from chia.util.config import get_unresolved_peer_infos
 from chia.util.lock import Lockfile, LockfileError
+from chia.wallet.wallet_node import WalletNode
+from chia.wallet.wallet_node_api import WalletNodeAPI
 
 
 class ServiceFactory:
@@ -43,14 +49,14 @@ class ServiceFactory:
             print("daemon: already launching")
             return None
 
-    def make_harvester(self) -> HarvesterService:
+    def make_harvester(self) -> Service[Harvester, HarvesterAPI]:
         service_config = self._config["harvester"]
         farmer_peers = get_unresolved_peer_infos(service_config, NodeType.FARMER)
 
         return create_harvester_service(self._root_path, self._config, DEFAULT_CONSTANTS, farmer_peers)
 
-    def make_farmer(self) -> FarmerService:
+    def make_farmer(self) -> Service[Farmer, FarmerAPI]:
         return create_farmer_service(self._root_path, self._config, self._config["pool"], DEFAULT_CONSTANTS)
 
-    def make_wallet(self) -> WalletService:
+    def make_wallet(self) -> Service[WalletNode, WalletNodeAPI]:
         return create_wallet_service(self._root_path, self._config, DEFAULT_CONSTANTS)

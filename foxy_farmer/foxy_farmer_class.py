@@ -5,7 +5,11 @@ from signal import Signals
 from types import FrameType
 from typing import Optional
 
-from chia.types.aliases import FarmerService, HarvesterService
+from chia.farmer.farmer import Farmer
+from chia.farmer.farmer_api import FarmerAPI
+from chia.harvester.harvester import Harvester
+from chia.harvester.harvester_api import HarvesterAPI
+from chia.server.start_service import Service
 from chia.util.misc import SignalHandlers
 from sentry_sdk.sessions import auto_session_tracking
 
@@ -19,8 +23,8 @@ class FoxyFarmer:
     _foxy_root: Path
     _config_path: Path
     _chia_launcher: Optional[ChiaLauncher]
-    _farmer_service: Optional[FarmerService] = None
-    _harvester_service: Optional[HarvesterService] = None
+    _farmer_service: Optional[Service[Farmer, FarmerAPI]] = None
+    _harvester_service: Optional[Service[Harvester, HarvesterAPI]] = None
     _logger: Logger = getLogger("foxy_farmer")
 
     def __init__(self, foxy_root: Path, config_path: Path):

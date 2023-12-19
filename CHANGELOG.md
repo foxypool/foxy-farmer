@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Bump chia to 2.1.3+og-1.5.0.
+
 ## [1.13.1] - 2023-12-14
 
 ### Changed
