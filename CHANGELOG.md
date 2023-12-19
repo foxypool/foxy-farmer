@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.13.2] - 2023-12-19
+
 ### Changed
 
 - Bump chia to 2.1.3+og-1.5.0.
@@ -175,8 +177,9 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.13.1...HEAD
-[1.13.0]: https://github.com/foxypool/foxy-farmer/compare/1.13.0...1.13.1
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.13.2...HEAD
+[1.13.2]: https://github.com/foxypool/foxy-farmer/compare/1.13.1...1.13.2
+[1.13.1]: https://github.com/foxypool/foxy-farmer/compare/1.13.0...1.13.1
 [1.13.0]: https://github.com/foxypool/foxy-farmer/compare/1.12.1...1.13.0
 [1.12.1]: https://github.com/foxypool/foxy-farmer/compare/1.12.0...1.12.1
 [1.12.0]: https://github.com/foxypool/foxy-farmer/compare/1.11.0...1.12.0
