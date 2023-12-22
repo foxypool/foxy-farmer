@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Show connection infos in `summary` command.
+
 ## [1.13.2] - 2023-12-19
 
 ### Changed

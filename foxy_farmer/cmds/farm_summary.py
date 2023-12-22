@@ -3,7 +3,10 @@ from pathlib import Path
 from typing import Dict, Any
 
 import click
+from chia.cmds.cmds_util import get_any_service_client
 from chia.cmds.farm_funcs import get_harvesters_summary
+from chia.cmds.peer_funcs import print_connections
+from chia.rpc.farmer_rpc_client import FarmerRpcClient
 from chia.util.misc import format_bytes
 from chia.util.network import is_localhost
 
@@ -67,3 +70,7 @@ async def print_farm_summary(root_path: Path):
         f"Total size of plots: {format_bytes(PlotStats.total_plot_size)}, "
         f"{format_bytes(PlotStats.total_effective_plot_size)}e (effective)"
     )
+
+    async with get_any_service_client(FarmerRpcClient, root_path=root_path) as (farmer_client, _):
+        print()
+        await print_connections(farmer_client, {})
