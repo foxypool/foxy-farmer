@@ -7,7 +7,7 @@ from chia.cmds.cmds_util import get_wallet
 from chia.rpc.wallet_rpc_client import WalletRpcClient
 from chia.server.start_service import Service
 from chia.util.config import load_config
-from chia.util.ints import uint16
+from chia.util.ints import uint16, uint64
 from chia.wallet.wallet_node import WalletNode
 from chia.wallet.wallet_node_api import WalletNodeAPI
 from yaspin import yaspin
@@ -33,7 +33,7 @@ class PoolJoiner:
         self._config = config
         self._foxy_config_manager = FoxyConfigManager(config_path)
 
-    async def join_pool(self):
+    async def join_pool(self, fee: uint64):
         self._chia_launcher = ChiaLauncher(foxy_root=self._foxy_root, config=self._config)
         await self._chia_launcher.ensure_daemon_running_and_unlocked(require_own_daemon=False)
         start_wallet_task = create_task(self.start_and_await_services())
@@ -70,7 +70,7 @@ class PoolJoiner:
 
                 return
 
-            joined_launcher_ids = await join_plot_nfts_to_pool(wallet_rpc, plot_nfts_not_pooling_with_foxy)
+            joined_launcher_ids = await join_plot_nfts_to_pool(wallet_rpc, plot_nfts_not_pooling_with_foxy, fee=fee)
             if len(joined_launcher_ids) == 0:
                 print("❌ Unable to join any of the PlotNFTs, exiting")
 

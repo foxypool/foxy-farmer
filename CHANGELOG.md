@@ -5,6 +5,7 @@
 ### Added
 
 - Show connection infos in `summary` command.
+- Add `--fee` option to `join-pool` command.
 
 ## [1.13.2] - 2023-12-19
 

@@ -15,7 +15,7 @@ from foxy_farmer.foundation.util.hex import ensure_hex_prefix
 from foxy_farmer.foundation.wallet.transaction import await_transaction_broadcasted
 
 
-async def join_plot_nfts_to_pool(wallet_client: WalletRpcClient, plot_nfts: List[Dict[str, Any]]) -> List[str]:
+async def join_plot_nfts_to_pool(wallet_client: WalletRpcClient, plot_nfts: List[Dict[str, Any]], fee: uint64 = uint64(0)) -> List[str]:
     plot_nfts_by_launcher_id: Dict[bytes32, Dict[str, Any]] = {
         bytes32.from_hexstr(plot_nft["launcher_id"]): plot_nft
         for plot_nft in plot_nfts
@@ -34,7 +34,7 @@ async def join_plot_nfts_to_pool(wallet_client: WalletRpcClient, plot_nfts: List
             bytes32(hexstr_to_bytes(pool_info["target_puzzle_hash"])),
             POOL_URL,
             pool_info["relative_lock_height"],
-            uint64(0),
+            fee,
         )
         await await_transaction_broadcasted(join_pool_coro, wallet_client)
         await sleep(15)
