@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='foxy-farmer',
-    version='1.13.2',
+    version='1.14.0',
     url='https://foxypool.io',
     license='GPLv3',
     author='Felix Brucker',
