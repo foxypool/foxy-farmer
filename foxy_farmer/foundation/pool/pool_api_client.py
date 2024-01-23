@@ -6,7 +6,7 @@ from chia.server.server import ssl_context_for_root
 from chia.ssl.create_ssl import get_mozilla_ca_crt
 
 TIMEOUT = ClientTimeout(total=30)
-POOL_URL = "https://farmer.chia.foxypool.io"
+POOL_URL = "https://farmer-chia.foxypool.io"
 
 
 class PoolApiClient:
