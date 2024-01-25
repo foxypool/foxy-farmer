@@ -2,9 +2,13 @@
 
 ## [Unreleased]
 
+### Added
+
+- Migrate the pool url in existing configs.
+
 ### Changed
 
-- Update the pool url to use when joining the pool to one which is highly available.
+- Update the pool url to use when joining the pool.
 
 ## [1.14.0] - 2024-01-07
 

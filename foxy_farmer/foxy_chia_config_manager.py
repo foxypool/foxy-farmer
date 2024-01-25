@@ -13,6 +13,7 @@ from foxy_farmer.foundation.config.config_patcher import ConfigPatcher
 from foxy_farmer.foxy_config_manager import FoxyConfigManager
 from foxy_farmer.foxy_farming_gateway import eu1_foxy_farming_gateway_address, foxy_farming_gateway_port, \
     eu3_foxy_farming_gateway_address
+from foxy_farmer.migration.make_migration_manager import make_migration_manager
 
 
 class FoxyChiaConfigManager:
@@ -73,6 +74,18 @@ class FoxyChiaConfigManager:
             print(f"You are missing a 'farmer_reward_address' and/or 'pool_payout_address' in {config_path}, please update the config and run again.")
             exit(1)
 
+        migration_manager = make_migration_manager()
+        result = migration_manager.run_migrations(foxy_farmer_config=foxy_config, chia_config=config)
+
+        config_was_updated = config_was_updated or result.did_update_chia_config
+        foxy_config_was_updated = foxy_config_was_updated or result.did_update_foxy_farmer_config
+
+        if foxy_config_was_updated:
+            foxy_config_manager.save_config(foxy_config)
+
+        if config_was_updated:
+            save_config(self._root_path, "config.yaml", config)
+
         config_patcher = ConfigPatcher(foxy_farmer_config=foxy_config, chia_config=config)
         self.patch_configs(
             config_patcher=config_patcher,
@@ -81,13 +94,10 @@ class FoxyChiaConfigManager:
         )
 
         config_patcher_result = config_patcher.get_result()
-        config_was_updated = config_was_updated or config_patcher_result.chia_config_was_updated
-        foxy_config_was_updated = foxy_config_was_updated or config_patcher_result.foxy_farmer_config_was_updated
-
-        if foxy_config_was_updated:
+        if config_patcher_result.foxy_farmer_config_was_updated:
             foxy_config_manager.save_config(foxy_config)
 
-        if config_was_updated:
+        if config_patcher_result.chia_config_was_updated:
             save_config(self._root_path, "config.yaml", config)
 
     def patch_configs(
