@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.15.0] - 2024-01-25
+
 ### Added
 
 - Migrate the pool url in existing configs.
@@ -192,7 +194,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.14.0...HEAD
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.15.0...HEAD
+[1.15.0]: https://github.com/foxypool/foxy-farmer/compare/1.14.0...1.15.0
 [1.14.0]: https://github.com/foxypool/foxy-farmer/compare/1.13.2...1.14.0
 [1.13.2]: https://github.com/foxypool/foxy-farmer/compare/1.13.1...1.13.2
 [1.13.1]: https://github.com/foxypool/foxy-farmer/compare/1.13.0...1.13.1
