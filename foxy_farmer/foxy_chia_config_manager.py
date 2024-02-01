@@ -1,7 +1,7 @@
 from os import environ
 from pathlib import Path
 from shutil import copyfile
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Callable
 from sys import exit
 
 from chia.cmds.init_funcs import chia_init, check_keys
@@ -9,6 +9,7 @@ from chia.cmds.keys_funcs import add_private_key_seed
 from chia.util.config import load_config, save_config
 from chia.util.default_root import DEFAULT_ROOT_PATH, DEFAULT_KEYS_ROOT_PATH
 
+from foxy_farmer.binary_manager.dr_plotter_binary_manager import dr_plotter_binary_release
 from foxy_farmer.foundation.config.backend import Backend
 from foxy_farmer.foundation.config.config_patcher import ConfigPatcher
 from foxy_farmer.foxy_config_manager import FoxyConfigManager
@@ -110,6 +111,7 @@ class FoxyChiaConfigManager:
         foxy_farmer_config: Dict[str, Any],
     ):
         backend = foxy_farmer_config.get("backend", Backend.BladeBit)
+        require_syslog = backend != Backend.BladeBit
         full_node_peers: List[Dict[str, Any]] = [{
             "host": eu1_foxy_farming_gateway_address,
             "port": foxy_farming_gateway_port,
@@ -131,11 +133,24 @@ class FoxyChiaConfigManager:
             .patch_value("daemon_port", foxy_farmer_config.get("chia_daemon_port", 55469))
             .patch_value("farmer.port", foxy_farmer_config.get("chia_farmer_port", 18447))
             .patch_value("farmer.rpc_port", foxy_farmer_config.get("chia_farmer_rpc_port", 18559))
-            .remove_config_key("harvester.farmer_peer")
-            .patch_value("harvester.farmer_peers", [{
-                "host": foxy_farmer_config.get("listen_host"),
-                "port": foxy_farmer_config.get("chia_farmer_port", 18447),
-            }])
+         )
+        if backend == Backend.DrPlotter:  # Deprecated: remove once drplotter is updated to a recent chia version
+            (config_patcher
+                .remove_config_key("harvester.farmer_peers")
+                .patch_value("harvester.farmer_peer", {
+                    "host": foxy_farmer_config.get("listen_host"),
+                    "port": foxy_farmer_config.get("chia_farmer_port", 18447),
+                })
+             )
+        else:
+            (config_patcher
+                .remove_config_key("harvester.farmer_peer")
+                .patch_value("harvester.farmer_peers", [{
+                    "host": foxy_farmer_config.get("listen_host"),
+                    "port": foxy_farmer_config.get("chia_farmer_port", 18447),
+                }])
+             )
+        (config_patcher
             .patch_value("harvester.rpc_port", foxy_farmer_config.get("chia_harvester_rpc_port", 18560))
             .patch_value("wallet.rpc_port", foxy_farmer_config.get("chia_wallet_rpc_port", 19256))
             # Ensure the wallet does not try to connect to localhost
@@ -147,7 +162,7 @@ class FoxyChiaConfigManager:
             # Sync logging
             .patch("log_level", "logging.log_level")
             .patch_value("logging.log_stdout", False)
-            .patch_value("logging.log_syslog", backend == Backend.Gigahorse)
+            .patch_value("logging.log_syslog", require_syslog)
             .patch_value("logging.log_syslog_host", "127.0.0.1")
             .patch_value("logging.log_syslog_port", foxy_farmer_config.get("syslog_port", 11514))
             .patch("listen_host", "self_hostname")
@@ -175,8 +190,10 @@ class FoxyChiaConfigManager:
             .patch_value("wallet.connect_to_unknown_peers", True)
          )
 
-        if backend != Backend.BladeBit:
-            config_patcher.patch_pool_list_closure(ensure_foxy_farmer_client_path_in_pool_url)
+        if backend == Backend.Gigahorse:
+            config_patcher.patch_pool_list_closure(make_ensure_client_path_in_pool_url(f"ff-{version}"))
+        elif backend == Backend.DrPlotter:
+            config_patcher.patch_pool_list_closure(make_ensure_client_path_in_pool_url(f"dr-{dr_plotter_binary_release}"))
 
         if foxy_farmer_config.get("enable_og_pooling", False) is True:
             # Update og payout address
@@ -190,21 +207,23 @@ class FoxyChiaConfigManager:
             config_patcher.patch("farmer_reward_address", "pool.xch_target_address")
 
 
-def ensure_foxy_farmer_client_path_in_pool_url(pool: Dict[str, Any]) -> bool:
-    pool_url: str = pool["pool_url"]
-    if "foxypool.io" not in pool_url:
+def make_ensure_client_path_in_pool_url(client_path: str) -> Callable[[Dict[str, Any]], bool]:
+    def ensure_client_path_in_pool_url(pool: Dict[str, Any]) -> bool:
+        pool_url: str = pool["pool_url"]
+        if "foxypool.io" not in pool_url:
+            return False
+        url_parts = pool_url.split("/")
+
+        if len(url_parts) == 3:
+            url_parts.append(client_path)
+        elif url_parts[-1] != client_path:
+            url_parts[-1] = client_path
+        new_pool_url = "/".join(url_parts)
+        if pool_url != new_pool_url:
+            pool["pool_url"] = new_pool_url
+
+            return True
+
         return False
-    url_parts = pool_url.split("/")
 
-    client_path = f"ff-{version}"
-    if len(url_parts) == 3:
-        url_parts.append(client_path)
-    elif url_parts[-1] != client_path:
-        url_parts[-1] = client_path
-    new_pool_url = "/".join(url_parts)
-    if pool_url != new_pool_url:
-        pool["pool_url"] = new_pool_url
-
-        return True
-
-    return False
+    return ensure_client_path_in_pool_url
