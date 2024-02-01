@@ -7,6 +7,7 @@ from yaml import safe_dump, safe_load, MarkedYAMLError
 
 def _get_default_config():
     return {
+        'backend': 'bladebit',
         'enable_og_pooling': False,
         'plot_directories': [],
         'plot_refresh_interval_seconds': 900,
@@ -16,6 +17,7 @@ def _get_default_config():
         'log_level': 'INFO',
         'listen_host': '127.0.0.1',
         'enable_harvester': True,
+        'recompute_hosts': [],
     }
 
 

@@ -21,7 +21,7 @@ async def run_foxy_farmer(foxy_root: Path, config_path: Path):
     foxy_farmer = FoxyFarmer(foxy_root, config_path)
     await foxy_farmer.setup_process_global_state()
     try:
-        await foxy_farmer.start()
+        await foxy_farmer.run()
     except AlreadyRunningException:
         pass
     finally:

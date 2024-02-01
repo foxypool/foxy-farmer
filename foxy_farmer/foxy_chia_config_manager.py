@@ -1,7 +1,7 @@
 from os import environ
 from pathlib import Path
 from shutil import copyfile
-from typing import Dict, Any
+from typing import Dict, Any, List
 from sys import exit
 
 from chia.cmds.init_funcs import chia_init, check_keys
@@ -12,8 +12,10 @@ from chia.util.default_root import DEFAULT_ROOT_PATH, DEFAULT_KEYS_ROOT_PATH
 from foxy_farmer.foundation.config.config_patcher import ConfigPatcher
 from foxy_farmer.foxy_config_manager import FoxyConfigManager
 from foxy_farmer.foxy_farming_gateway import eu1_foxy_farming_gateway_address, foxy_farming_gateway_port, \
-    eu3_foxy_farming_gateway_address
+    eu3_foxy_farming_gateway_address, eu1_foxy_gigahorse_farming_gateway_address, foxy_gigahorse_farming_gateway_port, \
+    eu3_foxy_gigahorse_farming_gateway_address
 from foxy_farmer.migration.make_migration_manager import make_migration_manager
+from foxy_farmer.version import version
 
 
 class FoxyChiaConfigManager:
@@ -106,6 +108,24 @@ class FoxyChiaConfigManager:
         chia_config: Dict[str, Any],
         foxy_farmer_config: Dict[str, Any],
     ):
+        backend = foxy_farmer_config.get("backend", "bladebit")
+        is_gigahorse = backend == "gigahorse"
+        full_node_peers: List[Dict[str, Any]] = [{
+            "host": eu1_foxy_farming_gateway_address,
+            "port": foxy_farming_gateway_port,
+        }, {
+            "host": eu3_foxy_farming_gateway_address,
+            "port": foxy_farming_gateway_port,
+        }]
+        if is_gigahorse:
+            full_node_peers = [{
+                "host": eu1_foxy_gigahorse_farming_gateway_address,
+                "port": foxy_gigahorse_farming_gateway_port,
+            }, {
+                "host": eu3_foxy_gigahorse_farming_gateway_address,
+                "port": foxy_gigahorse_farming_gateway_port,
+            }]
+
         (config_patcher
             # Ensure different ports
             .patch_value("daemon_port", foxy_farmer_config.get("chia_daemon_port", 55469))
@@ -123,16 +143,13 @@ class FoxyChiaConfigManager:
             .remove_config_key("wallet.full_node_peers")
             # Ensure we connect to the farming gateway
             .remove_config_key("farmer.full_node_peer")
-            .patch_value("farmer.full_node_peers", [{
-               "host": eu1_foxy_farming_gateway_address,
-               "port": foxy_farming_gateway_port,
-            }, {
-               "host": eu3_foxy_farming_gateway_address,
-               "port": foxy_farming_gateway_port,
-            }])
+            .patch_value("farmer.full_node_peers", full_node_peers)
             # Sync logging
             .patch("log_level", "logging.log_level")
             .patch_value("logging.log_stdout", False)
+            .patch_value("logging.log_syslog", is_gigahorse)
+            .patch_value("logging.log_syslog_host", "127.0.0.1")
+            .patch_value("logging.log_syslog_port", foxy_farmer_config.get("syslog_port", 11514))
             .patch("listen_host", "self_hostname")
             # Sync harvester
             .patch("harvester_num_threads", "harvester.num_threads")
@@ -158,6 +175,9 @@ class FoxyChiaConfigManager:
             .patch_value("wallet.connect_to_unknown_peers", True)
          )
 
+        if backend != "bladebit":
+            config_patcher.patch_pool_list_closure(ensure_foxy_farmer_client_path_in_pool_url)
+
         if foxy_farmer_config["enable_og_pooling"] is True:
             # Update og payout address
             config_patcher.patch("pool_payout_address", "farmer.pool_payout_address")
@@ -168,3 +188,23 @@ class FoxyChiaConfigManager:
         else:
             # Ensure the og reward address is the farmer reward address
             config_patcher.patch("farmer_reward_address", "pool.xch_target_address")
+
+
+def ensure_foxy_farmer_client_path_in_pool_url(pool: Dict[str, Any]) -> bool:
+    pool_url: str = pool["pool_url"]
+    if "foxypool.io" not in pool_url:
+        return False
+    url_parts = pool_url.split("/")
+
+    client_path = f"foxy-farmer-{version}"
+    if len(url_parts) == 3:
+        url_parts.append(client_path)
+    elif url_parts[-1] != client_path:
+        url_parts[-1] = client_path
+    new_pool_url = "/".join(url_parts)
+    if pool_url != new_pool_url:
+        pool["pool_url"] = new_pool_url
+
+        return True
+
+    return False

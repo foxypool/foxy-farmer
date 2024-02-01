@@ -1,18 +1,17 @@
-from asyncio import sleep
 from logging import getLogger
 from pathlib import Path
 from typing import Dict, Any, Optional
 
 from chia.daemon.keychain_proxy import KeychainProxy, connect_to_keychain_and_validate
 
-from foxy_farmer.chia_launcher import ChiaLauncher
+from foxy_farmer.farmer.embedded_chia_environment import EmbeddedChiaEnvironment
 from foxy_farmer.foundation.keychain.generate_login_links import generate_login_links
 
 
 class Authenticator:
     _foxy_root: Path
     _config: Dict[str, Any]
-    _chia_launcher: Optional[ChiaLauncher]
+    _chia_environment: Optional[EmbeddedChiaEnvironment]
 
     def __init__(self, foxy_root: Path, config: Dict[str, Any]):
         self._foxy_root = foxy_root
@@ -25,8 +24,12 @@ class Authenticator:
 
             return
 
-        self._chia_launcher = ChiaLauncher(foxy_root=self._foxy_root, config=self._config)
-        await self._chia_launcher.ensure_daemon_running_and_unlocked(require_own_daemon=False)
+        self._chia_environment = EmbeddedChiaEnvironment(
+            root_path=self._foxy_root,
+            config=self._config,
+            allow_connecting_to_existing_daemon=True,
+        )
+        await self._chia_environment.start_daemon()
         logger = getLogger("auth")
         keychain_proxy: Optional[KeychainProxy] = None
         try:
@@ -40,8 +43,4 @@ class Authenticator:
         finally:
             if keychain_proxy is not None:
                 await keychain_proxy.close()
-                await sleep(0.5)
-            self._chia_launcher.shutdown()
-            await self._chia_launcher.await_shutdown()
-            import time
-            time.sleep(0.1)
+            await self._chia_environment.stop_daemon()

@@ -17,7 +17,7 @@ async def wait_for_wallet_sync(wallet_client: WalletRpcClient):
                 try:
                     wallet_timestamp = await wallet_client.get_timestamp_for_height(wallet_height)
                     relative_time = naturaldelta(datetime.now() - datetime.fromtimestamp(float(wallet_timestamp)))
-                except:
+                except Exception:
                     pass
                 spinner.text = f"Waiting for the wallet to sync (peers={connected_full_nodes_count}, height={wallet_height}, {relative_time} behind) ..."
 

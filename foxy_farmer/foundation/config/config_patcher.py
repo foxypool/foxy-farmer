@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, Any, List, Optional, Union
+from typing import Dict, Any, List, Optional, Union, Callable
 
 from chia.util.bech32m import decode_puzzle_hash
 from typing_extensions import Self
@@ -73,10 +73,23 @@ class ConfigPatcher:
 
         self.patch("plot_nfts", "pool.pool_list")
 
+        self.patch_pool_list_value(key="payout_instructions", value=pool_payout_address_ph)
+
+        return self
+
+    def patch_pool_list_closure(self, closure: Callable[[Dict[str, Any]], bool]) -> Self:
         if self._chia_config["pool"].get("pool_list") is not None:
             for pool in self._chia_config["pool"]["pool_list"]:
-                if pool["payout_instructions"] != pool_payout_address_ph:
-                    pool["payout_instructions"] = pool_payout_address_ph
+                if closure(pool):
+                    self._is_chia_config_updated = True
+
+        return self
+
+    def patch_pool_list_value(self, key: str, value: Any) -> Self:
+        if self._chia_config["pool"].get("pool_list") is not None:
+            for pool in self._chia_config["pool"]["pool_list"]:
+                if pool.get(key) != value:
+                    pool[key] = value
                     self._is_chia_config_updated = True
 
         return self

@@ -1,32 +1,25 @@
-import time
-from asyncio import create_task, sleep, gather
+from asyncio import sleep
 from pathlib import Path
 from typing import Dict, Any, Optional, List
 
 from chia.cmds.cmds_util import get_wallet
 from chia.rpc.wallet_rpc_client import WalletRpcClient
-from chia.server.start_service import Service
 from chia.util.config import load_config
 from chia.util.ints import uint16, uint64
-from chia.wallet.wallet_node import WalletNode
-from chia.wallet.wallet_node_api import WalletNodeAPI
 from yaspin import yaspin
 
-from foxy_farmer.chia_launcher import ChiaLauncher
+from foxy_farmer.farmer.embedded_chia_environment import EmbeddedChiaEnvironment
 from foxy_farmer.foundation.wallet.pool_join import get_plot_nft_not_pooling_with_foxy, \
     await_launcher_pool_join_completion, join_plot_nfts_to_pool
 from foxy_farmer.foundation.wallet.sync import wait_for_wallet_sync
 from foxy_farmer.foxy_config_manager import FoxyConfigManager
-from foxy_farmer.service_factory import ServiceFactory
-from foxy_farmer.util.awaitable import await_done
 
 
 class PoolJoiner:
     _foxy_root: Path
     _config: Dict[str, Any]
     _foxy_config_manager: FoxyConfigManager
-    _wallet_service: Optional[Service[WalletNode, WalletNodeAPI]]
-    _chia_launcher: Optional[ChiaLauncher]
+    _chia_environment: Optional[EmbeddedChiaEnvironment]
 
     def __init__(self, foxy_root: Path, config: Dict[str, Any], config_path: Path):
         self._foxy_root = foxy_root
@@ -34,26 +27,32 @@ class PoolJoiner:
         self._foxy_config_manager = FoxyConfigManager(config_path)
 
     async def join_pool(self, fee: uint64):
-        self._chia_launcher = ChiaLauncher(foxy_root=self._foxy_root, config=self._config)
-        await self._chia_launcher.ensure_daemon_running_and_unlocked(require_own_daemon=False)
-        start_wallet_task = create_task(self.start_and_await_services())
-
-        wallet_rpc = await WalletRpcClient.create(
-            self._config["self_hostname"],
-            uint16(self._config["wallet"]["rpc_port"]),
-            self._foxy_root,
-            self._config,
+        self._chia_environment = EmbeddedChiaEnvironment(
+            root_path=self._foxy_root,
+            config=self._config,
+            allow_connecting_to_existing_daemon=True,
         )
-
-        async def is_wallet_reachable() -> bool:
-            try:
-                await wallet_rpc.healthz()
-
-                return True
-            except:
-                return False
+        wallet_rpc: Optional[WalletRpcClient] = None
 
         try:
+            await self._chia_environment.start_daemon()
+            await self._chia_environment.start_services(["wallet"])
+
+            wallet_rpc = await WalletRpcClient.create(
+                self._config["self_hostname"],
+                uint16(self._config["wallet"]["rpc_port"]),
+                self._foxy_root,
+                self._config,
+            )
+
+            async def is_wallet_reachable() -> bool:
+                try:
+                    await wallet_rpc.healthz()
+
+                    return True
+                except:
+                    return False
+
             with yaspin(text="Waiting for the wallet to finish starting ..."):
                 while not await is_wallet_reachable():
                     await sleep(3)
@@ -82,29 +81,11 @@ class PoolJoiner:
             print("✅ Pool join completed")
             self._update_foxy_config_plot_nfts_if_required()
         finally:
-            wallet_rpc.close()
-            await wallet_rpc.await_closed()
-            self.stop()
-            try:
-                await start_wallet_task
-            except:
-                await await_done(self._wallet_service.stop_requested.wait())
-            self._chia_launcher.shutdown()
-            await self._chia_launcher.await_shutdown()
-            time.sleep(0.1)
-
-    async def start_and_await_services(self):
-        service_factory = ServiceFactory(self._foxy_root, self._config)
-        self._wallet_service = service_factory.make_wallet()
-
-        awaitables = [
-            self._wallet_service.run(),
-        ]
-
-        await gather(*awaitables)
-
-    def stop(self):
-        self._wallet_service.stop_requested.set()
+            if wallet_rpc is not None:
+                wallet_rpc.close()
+                await wallet_rpc.await_closed()
+            await self._chia_environment.stop_services(["wallet"])
+            await self._chia_environment.stop_daemon()
 
     def _update_foxy_config_plot_nfts_if_required(self):
         config = load_config(self._foxy_root, "config.yaml")
