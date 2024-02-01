@@ -7,7 +7,7 @@ from yaml import safe_dump, safe_load, MarkedYAMLError
 
 def _get_default_config():
     return {
-        'backend': 'bladebit',
+        'backend': 'gigahorse',
         'enable_og_pooling': False,
         'plot_directories': [],
         'plot_refresh_interval_seconds': 900,
