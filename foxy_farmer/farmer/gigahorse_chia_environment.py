@@ -62,20 +62,22 @@ class GigahorseChiaEnvironment(ChiaEnvironment):
         await ensure_daemon_keyring_is_unlocked(self._daemon_proxy)
 
     async def stop_daemon(self) -> None:
-        if self._daemon_proxy is not None:
+        if self._chia_daemon_process is not None:
             r = await self._daemon_proxy.exit()
             if r.get("data", {}).get("success", False):
                 if r["data"].get("services_stopped") is not None:
                     [print(f"{service}: Stopped") for service in r["data"]["services_stopped"]]
                 print("Daemon stopped")
-                self._daemon_proxy = None
                 self._chia_daemon_process = None
             else:
                 print(f"Stop daemon failed {r}")
+        if self._daemon_proxy is not None:
+            await self._daemon_proxy.close()
+            self._daemon_proxy = None
 
     async def start_services(self, service_names: List[str]) -> None:
         if self._daemon_proxy is None:
-            raise "Daemon Proxy not initialized"
+            raise ValueError("Daemon Proxy not initialized")
         for service in services_for_groups(service_names):
             if await self._daemon_proxy.is_running(service_name=service):
                 continue
@@ -93,7 +95,7 @@ class GigahorseChiaEnvironment(ChiaEnvironment):
 
     async def stop_services(self, service_names: List[str]) -> None:
         if self._daemon_proxy is None:
-            raise "Daemon Proxy not initialized"
+            raise ValueError("Daemon Proxy not initialized")
         for service in services_for_groups(service_names):
             if not await self._daemon_proxy.is_running(service_name=service):
                 continue
