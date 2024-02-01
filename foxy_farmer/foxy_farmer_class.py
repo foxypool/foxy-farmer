@@ -14,7 +14,7 @@ from foxy_farmer.farmer.farmer import Farmer
 from foxy_farmer.farmer.gigahorse_farmer import GigahorseFarmer
 from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_farmer.foxy_config_manager import FoxyConfigManager
-from foxy_farmer.logging.configure_logging import initialize_logging_with_stdout
+from foxy_farmer.ff_logging.configure_logging import initialize_logging_with_stdout
 from foxy_farmer.util.node_id import calculate_harvester_node_id_slug
 
 
@@ -43,20 +43,27 @@ class FoxyFarmer:
         foxy_config_manager = FoxyConfigManager(self._config_path)
         foxy_config = foxy_config_manager.load_config()
 
-        from foxy_farmer.version import version
         backend = foxy_config.get("backend", "bladebit")
-        status_infos = f"Foxy-Farmer version={version} backend={backend}"
-        if foxy_config.get("enable_harvester") is True:
-            status_infos += f" harvester_id={calculate_harvester_node_id_slug(self._foxy_root, config)}"
-        status_infos += f" config_path={self._config_path}"
-        self._logger.info(status_infos)
-
         if backend == "bladebit":
             self._farmer = BladebitFarmer(root_path=self._foxy_root, farmer_config=foxy_config)
         elif backend == "gigahorse":
             self._farmer = GigahorseFarmer(root_path=self._foxy_root, farmer_config=foxy_config)
         else:
-            raise ValueError(f"Backend '{backend}' is not supported!")
+            self._logger.error(f"Backend '{backend}' is not supported!")
+
+            return
+
+        if not self._farmer.supports_system:
+            self._logger.error(f"Backend '{backend}' does not support your system!")
+
+            return
+
+        from foxy_farmer.version import version
+        status_infos = f"Foxy-Farmer version={version} backend={backend}"
+        if foxy_config.get("enable_harvester") is True:
+            status_infos += f" harvester_id={calculate_harvester_node_id_slug(self._foxy_root, config)}"
+        status_infos += f" config_path={self._config_path}"
+        self._logger.info(status_infos)
 
         with auto_session_tracking(session_mode="application"):
             await self._farmer.run()

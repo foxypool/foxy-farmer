@@ -7,6 +7,10 @@ from foxy_farmer.farmer.chia_environment import ChiaEnvironment
 
 class Farmer(ABC):
     @property
+    def supports_system(self) -> bool:
+        return True
+
+    @property
     def _services_to_run(self) -> List[str]:
         services = ["farmer-only"]
         if self._farmer_config.get("enable_harvester") is True:

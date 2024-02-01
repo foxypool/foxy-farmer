@@ -5,7 +5,7 @@ from logging import getLogger
 from typing import Dict, Any
 from pyparsing import Word, alphas, Suppress, nums, Regex
 
-from foxy_farmer.logging.configure_logging import add_stdout_handler
+from foxy_farmer.ff_logging.configure_logging import add_stdout_handler
 
 
 def map_priority_to_log_level(priority: int) -> int:
