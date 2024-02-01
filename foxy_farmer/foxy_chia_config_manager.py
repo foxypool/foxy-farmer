@@ -170,7 +170,7 @@ class FoxyChiaConfigManager:
             .patch("farmer_reward_address", "farmer.xch_target_address")
             .sync_pool_payout_address()
             # Ensure we explicitly disable og pooling as the og client defaults to og pooling
-            .patch_value("farmer.disable_og_pooling", not foxy_farmer_config["enable_og_pooling"])
+            .patch_value("farmer.disable_og_pooling", not foxy_farmer_config.get("enable_og_pooling", False))
             # Ensure the wallet syncs with unknown peers
             .patch_value("wallet.connect_to_unknown_peers", True)
          )
@@ -178,7 +178,7 @@ class FoxyChiaConfigManager:
         if backend != "bladebit":
             config_patcher.patch_pool_list_closure(ensure_foxy_farmer_client_path_in_pool_url)
 
-        if foxy_farmer_config["enable_og_pooling"] is True:
+        if foxy_farmer_config.get("enable_og_pooling", False) is True:
             # Update og payout address
             config_patcher.patch("pool_payout_address", "farmer.pool_payout_address")
             # Ensure the pool reward address is set to any valid address, the og client will auto adjust to the correct
