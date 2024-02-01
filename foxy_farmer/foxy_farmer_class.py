@@ -81,15 +81,5 @@ class FoxyFarmer:
         await self.stop()
 
     async def setup_process_global_state(self) -> None:
-        if platform == "win32" or platform == "cygwin":
-            from win32api import SetConsoleCtrlHandler
-
-            def on_exit(sig, func=None):
-                new_loop = new_event_loop()
-                new_loop.run_until_complete(new_loop.create_task(self.stop()))
-                new_loop.stop()
-
-            SetConsoleCtrlHandler(on_exit, True)
-        else:
-            async with SignalHandlers.manage() as signal_handlers:
-                signal_handlers.setup_async_signal_handler(handler=self._accept_signal)
+        async with SignalHandlers.manage() as signal_handlers:
+            signal_handlers.setup_async_signal_handler(handler=self._accept_signal)
