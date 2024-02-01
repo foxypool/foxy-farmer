@@ -68,6 +68,7 @@ class GigahorseChiaEnvironment(ChiaEnvironment):
                 if r["data"].get("services_stopped") is not None:
                     [print(f"{service}: Stopped") for service in r["data"]["services_stopped"]]
                 print("Daemon stopped")
+                self._chia_daemon_process.wait()
                 self._chia_daemon_process = None
             else:
                 print(f"Stop daemon failed {r}")
