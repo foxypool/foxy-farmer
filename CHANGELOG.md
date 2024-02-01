@@ -4,7 +4,7 @@
 
 ### Added
 
-- Add support for Gigahorse. You can switch between using Bladebit or Gigahorse using the config option `backend` with either `bladebit` or `gigahorse`. Foxy-GH-Farmer will be deprecated in favor of a unified codebase.
+- Add support for Gigahorse. You can switch between using Bladebit or Gigahorse using the config option `backend` with either `bladebit` or `gigahorse`. Foxy-GH-Farmer is now deprecated in favor of a unified codebase.
 
 ## [1.15.0] - 2024-01-25
 
