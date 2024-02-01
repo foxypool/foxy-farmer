@@ -10,6 +10,7 @@ from chia.util.misc import SignalHandlers
 from sentry_sdk.sessions import auto_session_tracking
 
 from foxy_farmer.farmer.bladebit_farmer import BladebitFarmer
+from foxy_farmer.farmer.dr_plotter_farmer import DrPlotterFarmer
 from foxy_farmer.farmer.farmer import Farmer
 from foxy_farmer.farmer.gigahorse_farmer import GigahorseFarmer
 from foxy_farmer.foundation.config.backend import Backend
@@ -49,6 +50,8 @@ class FoxyFarmer:
             self._farmer = BladebitFarmer(root_path=self._foxy_root, farmer_config=foxy_config)
         elif backend == Backend.Gigahorse:
             self._farmer = GigahorseFarmer(root_path=self._foxy_root, farmer_config=foxy_config)
+        elif backend == Backend.DrPlotter:
+            self._farmer = DrPlotterFarmer(root_path=self._foxy_root, farmer_config=foxy_config)
         else:
             self._logger.error(f"Backend '{backend}' is not supported!")
 

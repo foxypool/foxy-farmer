@@ -41,13 +41,14 @@ class BinaryManager(ABC):
     _logger = getLogger("binary_manager")
 
     async def get_binary_directory_path(self) -> Path:
-        cache_base_path = join(self._cache_path, self._binary_release)
+        product_cache_base_path = Path(join(self._cache_path, self._product_name.lower()))
+        cache_base_path = Path(join(product_cache_base_path, self._binary_release))
         binary_directory_path = Path(join(cache_base_path, *self._binary_sub_directory_paths))
         if binary_directory_path.exists():
             return binary_directory_path
 
         with yaspin(text=f"Preparing to download {self._product_name} {self._binary_release} ..") as spinner:
-            self._cache_path.mkdir(parents=True, exist_ok=True)
+            product_cache_base_path.mkdir(parents=True, exist_ok=True)
             with TemporaryDirectory() as temp_dir:
                 archive_path = join(temp_dir, self._archive_file_name)
                 await self._download_release(archive_path, spinner=spinner)
@@ -57,7 +58,7 @@ class BinaryManager(ABC):
 
         return binary_directory_path
 
-    def _extract_file(self, archive_file_path: str, destination_path: str):
+    def _extract_file(self, archive_file_path: str, destination_path: Path):
         if archive_file_path.endswith(".zip"):
             with ZipFile(archive_file_path, 'r') as zip_ref:
                 zip_ref.extractall(destination_path)
