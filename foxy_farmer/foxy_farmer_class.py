@@ -12,6 +12,7 @@ from sentry_sdk.sessions import auto_session_tracking
 from foxy_farmer.farmer.bladebit_farmer import BladebitFarmer
 from foxy_farmer.farmer.farmer import Farmer
 from foxy_farmer.farmer.gigahorse_farmer import GigahorseFarmer
+from foxy_farmer.foundation.config.backend import Backend
 from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_farmer.foxy_config_manager import FoxyConfigManager
 from foxy_farmer.ff_logging.configure_logging import initialize_logging_with_stdout
@@ -43,10 +44,10 @@ class FoxyFarmer:
         foxy_config_manager = FoxyConfigManager(self._config_path)
         foxy_config = foxy_config_manager.load_config()
 
-        backend = foxy_config.get("backend", "bladebit")
-        if backend == "bladebit":
+        backend = foxy_config.get("backend", Backend.BladeBit)
+        if backend == Backend.BladeBit:
             self._farmer = BladebitFarmer(root_path=self._foxy_root, farmer_config=foxy_config)
-        elif backend == "gigahorse":
+        elif backend == Backend.Gigahorse:
             self._farmer = GigahorseFarmer(root_path=self._foxy_root, farmer_config=foxy_config)
         else:
             self._logger.error(f"Backend '{backend}' is not supported!")

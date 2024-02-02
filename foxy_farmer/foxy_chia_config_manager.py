@@ -9,6 +9,7 @@ from chia.cmds.keys_funcs import add_private_key_seed
 from chia.util.config import load_config, save_config
 from chia.util.default_root import DEFAULT_ROOT_PATH, DEFAULT_KEYS_ROOT_PATH
 
+from foxy_farmer.foundation.config.backend import Backend
 from foxy_farmer.foundation.config.config_patcher import ConfigPatcher
 from foxy_farmer.foxy_config_manager import FoxyConfigManager
 from foxy_farmer.foxy_farming_gateway import eu1_foxy_farming_gateway_address, foxy_farming_gateway_port, \
@@ -108,8 +109,7 @@ class FoxyChiaConfigManager:
         chia_config: Dict[str, Any],
         foxy_farmer_config: Dict[str, Any],
     ):
-        backend = foxy_farmer_config.get("backend", "bladebit")
-        is_gigahorse = backend == "gigahorse"
+        backend = foxy_farmer_config.get("backend", Backend.BladeBit)
         full_node_peers: List[Dict[str, Any]] = [{
             "host": eu1_foxy_farming_gateway_address,
             "port": foxy_farming_gateway_port,
@@ -117,7 +117,7 @@ class FoxyChiaConfigManager:
             "host": eu3_foxy_farming_gateway_address,
             "port": foxy_farming_gateway_port,
         }]
-        if is_gigahorse:
+        if backend == Backend.Gigahorse:
             full_node_peers = [{
                 "host": eu1_foxy_gigahorse_farming_gateway_address,
                 "port": foxy_gigahorse_farming_gateway_port,
@@ -147,7 +147,7 @@ class FoxyChiaConfigManager:
             # Sync logging
             .patch("log_level", "logging.log_level")
             .patch_value("logging.log_stdout", False)
-            .patch_value("logging.log_syslog", is_gigahorse)
+            .patch_value("logging.log_syslog", backend == Backend.Gigahorse)
             .patch_value("logging.log_syslog_host", "127.0.0.1")
             .patch_value("logging.log_syslog_port", foxy_farmer_config.get("syslog_port", 11514))
             .patch("listen_host", "self_hostname")
@@ -175,7 +175,7 @@ class FoxyChiaConfigManager:
             .patch_value("wallet.connect_to_unknown_peers", True)
          )
 
-        if backend != "bladebit":
+        if backend != Backend.BladeBit:
             config_patcher.patch_pool_list_closure(ensure_foxy_farmer_client_path_in_pool_url)
 
         if foxy_farmer_config.get("enable_og_pooling", False) is True:
