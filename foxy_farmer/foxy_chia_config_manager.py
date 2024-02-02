@@ -196,7 +196,7 @@ def ensure_foxy_farmer_client_path_in_pool_url(pool: Dict[str, Any]) -> bool:
         return False
     url_parts = pool_url.split("/")
 
-    client_path = f"foxy-farmer-{version}"
+    client_path = f"ff-{version}"
     if len(url_parts) == 3:
         url_parts.append(client_path)
     elif url_parts[-1] != client_path:
