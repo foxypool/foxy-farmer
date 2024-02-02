@@ -5,8 +5,9 @@ Foxy-Farmer is a simplified farmer for the chia blockchain using the Foxy-Pool c
 
 - [x] NFT and OG pooling are both supported!
 - [x] Bladebit compressed plots are supported!
+- [x] Gigahorse compressed plots are supported!
 
-> **Note**:
+> [!NOTE]
 > If you can run a full node, you should!
 
 Foxy-Farmer is useful in the following scenarios:
