@@ -4,6 +4,6 @@ services:
     image: ghcr.io/foxypool/foxy-farmer:latest
     restart: unless-stopped
     volumes:
-      - /path/to/foxy-farmer/chia-config:/root/.foxy-farmer
+      - /path/to/foxy-farmer/data:/root/.foxy-farmer
       - /path/to/foxy-farmer/foxy-farmer.yaml:/app/foxy-farmer.yaml
       - /path/to/your/chia/keys:/root/.chia_keys
