@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.16.0] - 2024-02-02
+
 ### Added
 
 - Add support for Gigahorse. You can switch between using Bladebit or Gigahorse using the config option `backend` with either `bladebit` or `gigahorse`. Foxy-GH-Farmer is now deprecated in favor of a unified codebase.
@@ -198,7 +200,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.15.0...HEAD
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.16.0...HEAD
+[1.16.0]: https://github.com/foxypool/foxy-farmer/compare/1.15.0...1.16.0
 [1.15.0]: https://github.com/foxypool/foxy-farmer/compare/1.14.0...1.15.0
 [1.14.0]: https://github.com/foxypool/foxy-farmer/compare/1.13.2...1.14.0
 [1.13.2]: https://github.com/foxypool/foxy-farmer/compare/1.13.1...1.13.2
