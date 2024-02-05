@@ -10,7 +10,7 @@ setup(
     description='A simplified farmer for the Chia blockchain using the foxy chia farming gateway.',
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    python_requires='>=3.11',
+    python_requires='>=3.11, <4',
     install_requires=[
         "aiohttp>=3.9.1",
         "aioudp==0.1.1",
