@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.17.0] - 2024-02-16
+
 ### Added
 
 - Add support for DrPlotter plots using backend `drplotter`. Set your solver client token in the `foxy-farmer.yaml` with key `dr_plotter_client_token`.
@@ -204,7 +206,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.16.0...HEAD
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.17.0...HEAD
+[1.17.0]: https://github.com/foxypool/foxy-farmer/compare/1.16.0...1.17.0
 [1.16.0]: https://github.com/foxypool/foxy-farmer/compare/1.15.0...1.16.0
 [1.15.0]: https://github.com/foxypool/foxy-farmer/compare/1.14.0...1.15.0
 [1.14.0]: https://github.com/foxypool/foxy-farmer/compare/1.13.2...1.14.0
