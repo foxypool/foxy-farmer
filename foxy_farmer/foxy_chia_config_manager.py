@@ -10,6 +10,7 @@ from chia.util.config import load_config, save_config
 from chia.util.default_root import DEFAULT_ROOT_PATH, DEFAULT_KEYS_ROOT_PATH
 
 from foxy_farmer.binary_manager.dr_plotter_binary_manager import dr_plotter_binary_release
+from foxy_farmer.ff_logging.configure_logging import disabled_logging
 from foxy_farmer.first_run.first_run_wizard import run_first_run_wizard
 from foxy_farmer.foundation.config.backend import Backend
 from foxy_farmer.foundation.config.config_patcher import ConfigPatcher
@@ -75,7 +76,8 @@ class FoxyChiaConfigManager:
             foxy_config_was_updated = True
 
         if not has_foxy_config:
-            await run_first_run_wizard(foxy_root=self._root_path, config=config, foxy_config=foxy_config)
+            with disabled_logging():
+                await run_first_run_wizard(foxy_root=self._root_path, config=config, foxy_config=foxy_config)
             foxy_config_manager.save_config(foxy_config)
             foxy_config_was_updated = False
 

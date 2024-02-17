@@ -1,6 +1,8 @@
+import logging
+from contextlib import contextmanager
 from logging import Logger, StreamHandler, getLogger
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Iterator
 
 from chia.util.chia_logging import initialize_logging, default_log_level
 from colorlog import ColoredFormatter
@@ -47,8 +49,11 @@ def initialize_logging_with_stdout(logging_config: Dict, root_path: Path):
     add_stdout_handler(root_logger, logging_config=logging_config)
 
 
-def remove_all_logging_handlers():
-    logger = getLogger()
-    if len(logger.handlers) > 0:
-        for handler in logger.handlers:
-            logger.removeHandler(handler)
+@contextmanager
+def disabled_logging() -> Iterator[None]:
+    logging.disable(level=logging.CRITICAL)
+    try:
+        yield
+    finally:
+        logging.disable(level=logging.NOTSET)
+

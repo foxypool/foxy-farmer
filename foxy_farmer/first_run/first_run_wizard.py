@@ -38,6 +38,13 @@ async def run_first_run_wizard(foxy_root: Path, config: Dict[str, Any], foxy_con
     ).unsafe_ask_async()
     foxy_config["backend"] = f"{backend}"
 
+    if backend == Backend.DrPlotter:
+        dr_plotter_client_token: str = await text(
+            message="Please enter your DrPlotter client token:",
+            validate=lambda token: len(token) >= 16
+        ).unsafe_ask_async()
+        foxy_config["dr_plotter_client_token"] = dr_plotter_client_token
+
     payout_address: str = await text(
         message="Which payout address do you want to use?",
         default=foxy_config["pool_payout_address"],
