@@ -47,7 +47,7 @@ async def run_first_run_wizard(foxy_root: Path, config: Dict[str, Any], foxy_con
 
     farmer_reward_address: str = await text(
         message="Which farmer reward address do you want to use?",
-        default=foxy_config["farmer_reward_address"],
+        default=foxy_config["farmer_reward_address"] or foxy_config["pool_payout_address"],
         validate=is_valid_address,
     ).unsafe_ask_async()
     foxy_config["farmer_reward_address"] = farmer_reward_address
@@ -85,9 +85,10 @@ async def run_first_run_wizard(foxy_root: Path, config: Dict[str, Any], foxy_con
             default=True,
         ).unsafe_ask_async()
         if should_add_keys:
-            query_and_add_private_key_seed(mnemonic=None)
-            check_keys(foxy_root)
-            all_sks = keychain.get_all_private_keys()
+            while len(all_sks) == 0:
+                query_and_add_private_key_seed(mnemonic=None)
+                check_keys(foxy_root)
+                all_sks = keychain.get_all_private_keys()
 
     if len(foxy_config["plot_nfts"]) == 0:
         should_sync_wallet: bool = await confirm(
@@ -101,7 +102,7 @@ async def run_first_run_wizard(foxy_root: Path, config: Dict[str, Any], foxy_con
             if plot_nft_count == 0:
                 print("No PlotNFTs found, skipping ..")
             else:
-                print(f"Found {plot_nft_count} PlotNFTs")
+                print(f"Found {plot_nft_count} PlotNFT{'s' if plot_nft_count > 1 else ''}")
 
     if len(foxy_config["plot_nfts"]) > 0 and len(all_sks) > 0:
         should_print_login_links: bool = await confirm(
@@ -118,3 +119,4 @@ async def run_first_run_wizard(foxy_root: Path, config: Dict[str, Any], foxy_con
                 print()
                 print(f"Launcher Id: {launcher_id}")
                 print(f" Login Link: {login_link}")
+            print()

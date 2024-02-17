@@ -59,14 +59,14 @@ class EmbeddedChiaEnvironment(ChiaEnvironment):
         await ensure_daemon_keyring_is_unlocked(self._daemon_proxy)
 
     async def stop_daemon(self) -> None:
+        if self._daemon_proxy is not None:
+            await self._daemon_proxy.close()
+            self._daemon_proxy = None
+
         if self._daemon_run_task is not None:
             self._shut_down_daemon_event.set()
             await await_done(self._daemon_run_task)
             self._daemon_run_task = None
-
-        if self._daemon_proxy is not None:
-            await self._daemon_proxy.close()
-            self._daemon_proxy = None
 
     async def start_services(self, service_names: List[str]) -> None:
         for service in services_for_groups(service_names):

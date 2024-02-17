@@ -1,7 +1,8 @@
-from foxy_farmer.error_reporting import init_sentry, close_sentry
+from foxy_farmer.monkey_patch_chia_version import monkey_patch_chia_version
+monkey_patch_chia_version()
 
+from foxy_farmer.error_reporting import init_sentry, close_sentry
 init_sentry()
 
-from foxy_farmer.monkey_patch_chia_version import monkey_patch_chia_version
-
-monkey_patch_chia_version()
+from foxy_farmer.ff_logging.configure_logging import remove_all_logging_handlers
+remove_all_logging_handlers()

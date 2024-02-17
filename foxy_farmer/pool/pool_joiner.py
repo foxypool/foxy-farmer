@@ -46,8 +46,8 @@ class PoolJoiner:
             await wait_for_wallet_sync(wallet_rpc)
 
             await await_launcher_pool_join_completion(self._foxy_root, joined_launcher_ids)
-            print("✅ Pool join completed")
-            self._update_foxy_config_plot_nfts_if_required()
+        print("✅ Pool join completed")
+        self._update_foxy_config_plot_nfts_if_required()
 
     def _update_foxy_config_plot_nfts_if_required(self):
         foxy_config = self._foxy_config_manager.load_config()

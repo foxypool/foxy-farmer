@@ -23,7 +23,7 @@ from foxy_farmer.util.node_id import calculate_harvester_node_id_slug
 class FoxyFarmer:
     _foxy_root: Path
     _config_path: Path
-    _farmer: Optional[Farmer]
+    _farmer: Optional[Farmer] = None
     _logger: Logger = getLogger("foxy_farmer")
 
     def __init__(self, foxy_root: Path, config_path: Path):

@@ -24,6 +24,5 @@ class PlotNftUpdater:
         async with run_wallet(root_path=self._foxy_root, config=self._config) as wallet_rpc:
             # Select wallet to sync
             await get_wallet(self._foxy_root, wallet_rpc, fingerprint=None)
-
             await wait_for_wallet_sync(wallet_rpc)
-            update_foxy_config_plot_nfts_if_required(self._foxy_root, self._foxy_config)
+        update_foxy_config_plot_nfts_if_required(self._foxy_root, self._foxy_config)

@@ -45,3 +45,10 @@ def initialize_logging_with_stdout(logging_config: Dict, root_path: Path):
 
     root_logger = getLogger()
     add_stdout_handler(root_logger, logging_config=logging_config)
+
+
+def remove_all_logging_handlers():
+    logger = getLogger()
+    if len(logger.handlers) > 0:
+        for handler in logger.handlers:
+            logger.removeHandler(handler)
