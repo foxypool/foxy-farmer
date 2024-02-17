@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add interactive first run wizard to simplify the setup for first time users.
+
 ## [1.17.0] - 2024-02-16
 
 ### Added

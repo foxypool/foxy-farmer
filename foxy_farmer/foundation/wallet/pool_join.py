@@ -85,3 +85,15 @@ def get_plot_nft_not_pooling_with_foxy(root_path: Path, joined_launcher_ids: Opt
             config["pool"]["pool_list"],
         )
     )
+
+
+def update_foxy_config_plot_nfts_if_required(root_path: Path, foxy_config: Dict[str, Any]) -> bool:
+    config = load_config(root_path, "config.yaml")
+    pool_list: Optional[List[Dict[str, Any]]] = config["pool"].get("pool_list")
+    if pool_list is None:
+        return False
+    if pool_list == foxy_config.get("plot_nfts"):
+        return False
+    foxy_config["plot_nfts"] = pool_list
+
+    return True

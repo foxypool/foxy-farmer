@@ -14,18 +14,19 @@ from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 def authenticate_cmd(ctx) -> None:
     foxy_root: Path = ctx.obj["root_path"]
     config_path: Path = ctx.obj["config_path"]
-    foxy_chia_config_manager = FoxyChiaConfigManager(foxy_root)
-    foxy_chia_config_manager.ensure_foxy_config(config_path)
 
     config = load_config(foxy_root, "config.yaml")
 
     try:
-        run(authenticate(foxy_root, config))
+        run(authenticate(foxy_root, config, config_path))
     finally:
         close_sentry()
 
 
-async def authenticate(foxy_root: Path, config: Dict[str, Any]):
+async def authenticate(foxy_root: Path, config: Dict[str, Any], config_path: Path):
+    foxy_chia_config_manager = FoxyChiaConfigManager(foxy_root)
+    await foxy_chia_config_manager.ensure_foxy_config(config_path)
+
     from foxy_farmer.keychain.authenticator import Authenticator
     authenticator = Authenticator(foxy_root=foxy_root, config=config)
     await authenticator.authenticate()

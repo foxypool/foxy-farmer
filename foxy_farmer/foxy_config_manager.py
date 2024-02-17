@@ -1,6 +1,6 @@
 from pathlib import Path
 from sys import stderr, exit
-from typing import Dict
+from typing import Dict, Any
 
 from yaml import safe_dump, safe_load, MarkedYAMLError
 
@@ -27,13 +27,16 @@ class FoxyConfigManager:
     def __init__(self, file_path: Path):
         self._file_path = file_path
 
-    def has_config(self):
+    def has_config(self) -> bool:
         return self._file_path.exists()
 
-    def load_config(self):
-        if self._file_path.exists() is False:
-            with open(self._file_path, "w") as f:
-                safe_dump(_get_default_config(), f)
+    def load_config_or_get_default(self) -> Dict[str, Any]:
+        if self.has_config():
+            return self.load_config()
+
+        return _get_default_config()
+
+    def load_config(self) -> Dict[str, Any]:
         with open(self._file_path, "r") as opened_config_file:
             try:
                 config = safe_load(opened_config_file)
@@ -45,6 +48,6 @@ class FoxyConfigManager:
                 exit(1)
         return config
 
-    def save_config(self, config: Dict):
+    def save_config(self, config: Dict[str, Any]):
         with open(self._file_path, "w") as f:
             safe_dump(config, f)

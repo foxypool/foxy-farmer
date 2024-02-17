@@ -32,7 +32,7 @@ class FoxyFarmer:
 
     async def run(self):
         foxy_chia_config_manager = FoxyChiaConfigManager(self._foxy_root)
-        foxy_chia_config_manager.ensure_foxy_config(self._config_path)
+        await foxy_chia_config_manager.ensure_foxy_config(self._config_path)
 
         from chia.util.config import load_config
         config = load_config(self._foxy_root, "config.yaml")

@@ -27,8 +27,6 @@ from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
 def join_pool_cmd(ctx, fee: Decimal) -> None:
     foxy_root: Path = ctx.obj["root_path"]
     config_path: Path = ctx.obj["config_path"]
-    foxy_chia_config_manager = FoxyChiaConfigManager(foxy_root)
-    foxy_chia_config_manager.ensure_foxy_config(config_path)
 
     if fee >= 0.1:
         cli_confirm(f"You selected a fee of {fee} XCH, do you really want to continue? (y/n): ")
@@ -42,6 +40,9 @@ def join_pool_cmd(ctx, fee: Decimal) -> None:
 
 
 async def join_pool(foxy_root: Path, config_path: Path, fee: uint64):
+    foxy_chia_config_manager = FoxyChiaConfigManager(foxy_root)
+    await foxy_chia_config_manager.ensure_foxy_config(config_path)
+
     config = load_config(foxy_root, "config.yaml")
 
     initialize_logging(

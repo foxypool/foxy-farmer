@@ -10,6 +10,7 @@ from chia.util.config import load_config, save_config
 from chia.util.default_root import DEFAULT_ROOT_PATH, DEFAULT_KEYS_ROOT_PATH
 
 from foxy_farmer.binary_manager.dr_plotter_binary_manager import dr_plotter_binary_release
+from foxy_farmer.first_run.first_run_wizard import run_first_run_wizard
 from foxy_farmer.foundation.config.backend import Backend
 from foxy_farmer.foundation.config.config_patcher import ConfigPatcher
 from foxy_farmer.foxy_config_manager import FoxyConfigManager
@@ -26,7 +27,7 @@ class FoxyChiaConfigManager:
     def __init__(self, root_path: Path):
         self._root_path = root_path
 
-    def ensure_foxy_config(self, config_path: Path):
+    async def ensure_foxy_config(self, config_path: Path):
         foxy_chia_config_file_path = self._root_path / "config" / "config.yaml"
         is_first_install = foxy_chia_config_file_path.exists() is False
         if is_first_install:
@@ -54,7 +55,7 @@ class FoxyChiaConfigManager:
 
         foxy_config_manager = FoxyConfigManager(config_path)
         has_foxy_config = foxy_config_manager.has_config()
-        foxy_config = foxy_config_manager.load_config()
+        foxy_config = foxy_config_manager.load_config_or_get_default()
 
         foxy_config_was_updated = False
         # Init the foxy_farmer config from the chia foxy config
@@ -63,6 +64,7 @@ class FoxyChiaConfigManager:
             foxy_config["harvester_num_threads"] = config["harvester"]["num_threads"]
             foxy_config["farmer_reward_address"] = config["farmer"]["xch_target_address"]
             foxy_config["pool_payout_address"] = config["farmer"]["xch_target_address"]
+            foxy_config["plot_nfts"] = config["pool"].get("pool_list", [])
             foxy_config_was_updated = True
 
         if foxy_config["farmer_reward_address"] == "" and config["farmer"]["xch_target_address"] != "":
@@ -71,6 +73,11 @@ class FoxyChiaConfigManager:
         if foxy_config["pool_payout_address"] == "" and config["farmer"]["xch_target_address"] != "":
             foxy_config["pool_payout_address"] = config["farmer"]["xch_target_address"]
             foxy_config_was_updated = True
+
+        if not has_foxy_config:
+            await run_first_run_wizard(foxy_root=self._root_path, config=config, foxy_config=foxy_config)
+            foxy_config_manager.save_config(foxy_config)
+            foxy_config_was_updated = False
 
         if foxy_config.get("farmer_reward_address", "") == "" or foxy_config.get("pool_payout_address", "") == "":
             if foxy_config_was_updated:
