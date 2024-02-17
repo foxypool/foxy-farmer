@@ -47,7 +47,7 @@ async def run_first_run_wizard(foxy_root: Path, config: Dict[str, Any], foxy_con
 
     farmer_reward_address: str = await text(
         message="Which farmer reward address do you want to use?",
-        default=foxy_config["farmer_reward_address"] or foxy_config["pool_payout_address"],
+        default=foxy_config["pool_payout_address"],
         validate=is_valid_address,
     ).unsafe_ask_async()
     foxy_config["farmer_reward_address"] = farmer_reward_address
