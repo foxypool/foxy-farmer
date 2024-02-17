@@ -21,6 +21,7 @@ async def run_first_run_wizard(foxy_root: Path, config: Dict[str, Any], foxy_con
         print("WARNING: No interactive shell available, skipping first run wizard!", file=stderr)
 
         return
+    print("New install detected, running first run wizard")
     use_og_pooling: bool = await confirm(message="Do you have OG (SOLO) plots you want to pool with?", default=foxy_config["enable_og_pooling"]).unsafe_ask_async()
     foxy_config["enable_og_pooling"] = use_og_pooling
 
