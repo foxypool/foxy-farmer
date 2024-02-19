@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.18.0] - 2024-02-19
+
 ### Added
 
 - Add interactive first run wizard to simplify the setup for first time users.
@@ -210,7 +212,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.17.0...HEAD
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.18.0...HEAD
+[1.18.0]: https://github.com/foxypool/foxy-farmer/compare/1.17.0...1.18.0
 [1.17.0]: https://github.com/foxypool/foxy-farmer/compare/1.16.0...1.17.0
 [1.16.0]: https://github.com/foxypool/foxy-farmer/compare/1.15.0...1.16.0
 [1.15.0]: https://github.com/foxypool/foxy-farmer/compare/1.14.0...1.15.0
