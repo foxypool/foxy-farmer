@@ -12,4 +12,4 @@ def calculate_harvester_node_id(root_path: Path, config: Dict[str, Any]) -> byte
 
 
 def calculate_harvester_node_id_slug(root_path: Path, config: Dict[str, Any]) -> str:
-    return calculate_harvester_node_id(root_path, config).hex()[:8]
+    return calculate_harvester_node_id(root_path, config).hex()[:10]
