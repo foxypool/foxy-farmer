@@ -42,7 +42,7 @@ async def run_first_run_wizard(foxy_root: Path, config: Dict[str, Any], foxy_con
     if backend == Backend.DrPlotter:
         dr_plotter_client_token: str = await text(
             message="Please enter your DrPlotter client token:",
-            validate=lambda token: len(token) >= 16
+            validate=lambda token: len(token) >= 32
         ).unsafe_ask_async()
         foxy_config["dr_plotter_client_token"] = dr_plotter_client_token
 
