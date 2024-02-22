@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Update `drplotter` to 0.9.1.
+
 ## [1.18.0] - 2024-02-19
 
 ### Added
