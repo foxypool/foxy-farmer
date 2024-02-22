@@ -3,7 +3,7 @@ from typing import List
 
 from foxy_farmer.binary_manager.binary_manager import BinaryManager
 
-dr_plotter_binary_release = "0.9.0"
+dr_plotter_binary_release = "0.9.2"
 
 
 class DrPlotterBinaryManager(BinaryManager):
@@ -27,4 +27,4 @@ class DrPlotterBinaryManager(BinaryManager):
 
     @property
     def _binary_sub_directory_paths(self) -> List[str]:
-        return ["drharvester"]
+        return [f"drplotter-{self._binary_release}-x86_64", "drharvester"]

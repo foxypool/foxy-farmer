@@ -7,6 +7,10 @@
 - Add pool join question to first run wizard.
 - Add PlotNFT sync question to first run wizard.
 
+### Changed
+
+- Update `drplotter` to 0.9.2.
+
 ### Fixed
 
 - Fix login link generation crashing if pool is unavailable.
