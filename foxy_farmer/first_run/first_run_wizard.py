@@ -1,3 +1,4 @@
+from decimal import Decimal
 from logging import getLogger
 from pathlib import Path
 from sys import stdout, stdin, stderr
@@ -5,7 +6,9 @@ from typing import List, Any, Dict
 
 from chia.cmds.init_funcs import check_keys
 from chia.cmds.keys_funcs import query_and_add_private_key_seed
+from chia.cmds.units import units
 from chia.daemon.keychain_proxy import KeychainProxy
+from chia.util.ints import uint64
 from chia.util.keychain import Keychain
 from prompt_toolkit.shortcuts import CompleteStyle
 from questionary import select, Choice, confirm, text, path, checkbox
@@ -13,7 +16,10 @@ from questionary import select, Choice, confirm, text, path, checkbox
 from foxy_farmer.foundation.config.backend import Backend
 from foxy_farmer.foundation.keychain.generate_login_links import generate_login_links
 from foxy_farmer.foundation.util.bech32_address import is_valid_address
+from foxy_farmer.foundation.util.fee import is_valid_fee
+from foxy_farmer.foundation.wallet.pool_join import get_plot_nft_not_pooling_with_foxy
 from foxy_farmer.pool.plot_nft_updater import PlotNftUpdater
+from foxy_farmer.pool.pool_joiner import PoolJoiner
 
 
 async def run_first_run_wizard(foxy_root: Path, config: Dict[str, Any], foxy_config: Dict[str, Any]):
@@ -98,21 +104,40 @@ async def run_first_run_wizard(foxy_root: Path, config: Dict[str, Any], foxy_con
                 check_keys(foxy_root)
                 all_sks = keychain.get_all_private_keys()
 
-    if len(foxy_config["plot_nfts"]) == 0:
-        should_sync_wallet: bool = await confirm(
-            message="No PlotNFTs detected, do you want to sync the wallet to auto fill them?",
-            default=True,
-        ).unsafe_ask_async()
-        if should_sync_wallet:
-            plot_nft_updater = PlotNftUpdater(foxy_root=foxy_root, config=config, foxy_config=foxy_config)
-            await plot_nft_updater.update_plot_nfts()
-            plot_nft_count = len(foxy_config["plot_nfts"])
-            if plot_nft_count == 0:
-                print("No PlotNFTs found, skipping ..")
-            else:
-                print(f"Found {plot_nft_count} PlotNFT{'s' if plot_nft_count > 1 else ''}")
+    has_plot_nfts = len(foxy_config["plot_nfts"]) > 0
+    should_sync_wallet_message = "No PlotNFTs detected, do you want to sync the wallet to auto fill them?"
+    if has_plot_nfts:
+        should_sync_wallet_message = "Do you want to sync the wallet to update your PlotNFT states?"
+    should_sync_wallet: bool = await confirm(
+        message=should_sync_wallet_message,
+        default=not has_plot_nfts,
+    ).unsafe_ask_async()
+    if should_sync_wallet:
+        plot_nft_updater = PlotNftUpdater(foxy_root=foxy_root, config=config, foxy_config=foxy_config)
+        await plot_nft_updater.update_plot_nfts()
+        plot_nft_count = len(foxy_config["plot_nfts"])
+        if plot_nft_count == 0:
+            print("No PlotNFTs found, skipping ..")
+        else:
+            print(f"{'Updated' if has_plot_nfts else 'Found'} {plot_nft_count} PlotNFT{'s' if plot_nft_count > 1 else ''}")
 
     if len(foxy_config["plot_nfts"]) > 0 and len(all_sks) > 0:
+        plot_nfts_not_pooling_with_foxy = get_plot_nft_not_pooling_with_foxy(foxy_root)
+        if len(plot_nfts_not_pooling_with_foxy) > 0:
+            should_join_pool: bool = await confirm(
+                message="Do you want to join your PlotNFTs to Foxy-Pool?",
+                default=True,
+            ).unsafe_ask_async()
+            if should_join_pool:
+                fee_str: str = await text(
+                    message="Which fee (in XCH) do you want to use?",
+                    default="0",
+                    validate=is_valid_fee,
+                ).unsafe_ask_async()
+                fee_raw: uint64 = uint64(int(Decimal(fee_str) * units["chia"]))
+                pool_joiner = PoolJoiner(foxy_root=foxy_root, config=config, foxy_config=foxy_config)
+                await pool_joiner.join_pool(fee=fee_raw)
+
         should_print_login_links: bool = await confirm(
             message="Show the login links of your PlotNFTs?",
             default=True,

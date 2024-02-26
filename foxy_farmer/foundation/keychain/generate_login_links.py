@@ -1,3 +1,4 @@
+import sys
 from typing import List, Dict, Any, Tuple
 
 from chia_rs import G1Element, G2Element, AugSchemeMPL
@@ -29,7 +30,12 @@ async def generate_login_links(keychain_proxy: KeychainProxy, pool_list: List[Di
 
             continue
         pool_url = pool["pool_url"]
-        pool_info = await get_pool_info(pool_url)
+        try:
+            pool_info = await get_pool_info(pool_url)
+        except Exception as e:
+            print(f"Failed to get the pool info for Launcher Id {launcher_id}: {e}, skipping ...", file=sys.stderr)
+
+            continue
         authentication_token_timeout = pool_info["authentication_token_timeout"]
         authentication_token = get_current_authentication_token(authentication_token_timeout)
         message: bytes32 = std_hash(

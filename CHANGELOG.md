@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add pool join question to first run wizard.
+- Add PlotNFT sync question to first run wizard.
+
+### Fixed
+
+- Fix login link generation crashing if pool is unavailable.
+
 ## [1.18.0] - 2024-02-19
 
 ### Added

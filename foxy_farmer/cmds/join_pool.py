@@ -12,6 +12,7 @@ from chia.util.ints import uint64
 
 from foxy_farmer.error_reporting import close_sentry
 from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
+from foxy_farmer.foxy_config_manager import FoxyConfigManager
 
 
 @click.command("join-pool", short_help="Join your PlotNFTs to the pool")
@@ -42,6 +43,8 @@ def join_pool_cmd(ctx, fee: Decimal) -> None:
 async def join_pool(foxy_root: Path, config_path: Path, fee: uint64):
     foxy_chia_config_manager = FoxyChiaConfigManager(foxy_root)
     await foxy_chia_config_manager.ensure_foxy_config(config_path)
+    config_manager = FoxyConfigManager(config_path)
+    foxy_config = config_manager.load_config()
 
     config = load_config(foxy_root, "config.yaml")
 
@@ -52,5 +55,7 @@ async def join_pool(foxy_root: Path, config_path: Path, fee: uint64):
     )
 
     from foxy_farmer.pool.pool_joiner import PoolJoiner
-    pool_joiner = PoolJoiner(foxy_root=foxy_root, config=config, config_path=config_path)
-    await pool_joiner.join_pool(fee=fee)
+    pool_joiner = PoolJoiner(foxy_root=foxy_root, config=config, foxy_config=foxy_config)
+    did_update = await pool_joiner.join_pool(fee=fee)
+    if did_update:
+        config_manager.save_config(foxy_config)
