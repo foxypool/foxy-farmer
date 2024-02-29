@@ -12,8 +12,10 @@ Foxy-Farmer is a simplified farmer for the chia blockchain using the Foxy-Pool c
 > If you can run a full node, you should!
 
 Foxy-Farmer is useful in the following scenarios:
-- You are replotting your OG pooling farm to compressed madmax NFT plots but do not want to run two full nodes
+- You are replotting your OG pooling farm to compressed NFT plots but do not want to run two full nodes
+- You want to run a DrPlotter setup on a single machine
 - Your hardware does not support running a full node
+- You do not want to manage/run a full node
 
 If you are migrating from FlexFarmer please check out [this guide](https://docs.foxypool.io/proof-of-spacetime/guides/switching-from-flex-farmer-to-foxy/).
 
@@ -25,11 +27,11 @@ The docs can be found [here](https://docs.foxypool.io/proof-of-spacetime/foxy-fa
 
 1. On Linux ensure you have `ocl-icd-libopencl1` installed when using the `gigahorse` backend
 2. Download the latest binary zip for your OS from the [releases page](https://github.com/foxypool/foxy-farmer/releases/latest)
-3. Run the binary, it will create a default `foxy-farmer.yaml` in the current directory based on your current chia `config.yaml`
+3. Run the binary and follow the first run wizard, it will create a `foxy-farmer.yaml` in the current directory based on your inputs.
     > **Note**:
-    > If you never set up chia before on this machine you will need to import your 24 word mnemonic using `./foxy-farmer keys add` and ensure the `config.yaml` in `<USER_HOME>/.foxy-farmer/mainnet/config/` includes your PlotNFT in the pool list. This can be achieved by manually copying it from another `config.yaml` or running `./foxy-farmer join-pool`.
+    > You can join the pool at any time, just run `./foxy-farmer join-pool`. You can add `--fee` to supply a fee in case the mempool is full.
 
-4. Edit the `foxy-farmer.yaml` to your liking and restart foxy-farmer
+4. (Optional) Edit the `foxy-farmer.yaml` to your liking and restart foxy-farmer
 5. Profit!
 
 ### Running from source
@@ -44,11 +46,11 @@ The docs can be found [here](https://docs.foxypool.io/proof-of-spacetime/foxy-fa
     ```bash
     venv/bin/pip install .
     ```
-5. Run using `venv/bin/foxy-farmer` (or activate the venv using `source venv/bin/activate` and then just use `foxy-farmer`), it will create a default `foxy-farmer.yaml` in the current directory based on your current chia `config.yaml` if available.
+5. Run using `venv/bin/foxy-farmer` (or activate the venv using `source venv/bin/activate` and then just use `foxy-farmer`) and follow the first run wizard, it will create a `foxy-farmer.yaml` in the current directory based on your inputs.
    > **Note**:
-   > If you never set up chia before on this machine you will need to import your 24 word mnemonic using `venv/bin/foxy-farmer keys add` and ensure the `config.yaml` in `<USER_HOME>/.foxy-farmer/mainnet/config/` includes your PlotNFT in the pool list. This can be achieved by manually copying it from another `config.yaml` or running `venv/bin/foxy-farmer join-pool`.
+   > You can join the pool at any time, just run `foxy-farmer join-pool`. You can add `--fee` to supply a fee in case the mempool is full.
 
-6. Edit the `foxy-farmer.yaml` to your liking and restart foxy-farmer
+6. (Optional) Edit the `foxy-farmer.yaml` to your liking and restart foxy-farmer
 7. Profit!
 
 ### Using docker
