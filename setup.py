@@ -21,7 +21,7 @@ setup(
         "pyparsing==3.1.1",
         "PyYAML>=6.0.1",
         "questionary==2.0.1",
-        "sentry-sdk==1.33.1",
+        "sentry-sdk==1.40.6",
         "yaspin==3.0.1",
     ],
     packages=find_packages(include=["foxy_farmer", "foxy_farmer.*"]),
