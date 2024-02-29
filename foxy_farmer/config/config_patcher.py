@@ -4,7 +4,7 @@ from typing import Dict, Any, List, Optional, Union, Callable
 from chia.util.bech32m import decode_puzzle_hash
 from typing_extensions import Self
 
-from foxy_farmer.foundation.util.dictionary import get_nested_dict_value, set_nested_dict_value, del_nested_dict_value
+from foxy_farmer.util.dictionary import get_nested_dict_value, set_nested_dict_value, del_nested_dict_value
 
 
 @dataclass

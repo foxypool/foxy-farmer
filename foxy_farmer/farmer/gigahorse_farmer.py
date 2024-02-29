@@ -6,7 +6,7 @@ from platform import system, machine
 
 from chia.util.config import load_config
 
-from foxy_farmer.farmer.gigahorse_chia_environment import GigahorseChiaEnvironment
+from foxy_farmer.environment import GigahorseChiaEnvironment
 from foxy_farmer.farmer.farmer import Farmer
 from foxy_farmer.ff_logging.syslog_server import SyslogServer
 

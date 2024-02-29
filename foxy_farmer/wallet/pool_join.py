@@ -10,9 +10,9 @@ from chia.util.ints import uint64
 from chia.wallet.util.wallet_types import WalletType
 from yaspin import yaspin
 
-from foxy_farmer.foundation.pool.pool_api_client import PoolApiClient, POOL_URL
-from foxy_farmer.foundation.util.hex import ensure_hex_prefix
-from foxy_farmer.foundation.wallet.transaction import await_transaction_broadcasted
+from foxy_farmer.pool.pool_api_client import PoolApiClient, POOL_URL
+from foxy_farmer.util.hex import ensure_hex_prefix
+from foxy_farmer.wallet.transaction import await_transaction_broadcasted
 
 
 async def join_plot_nfts_to_pool(wallet_client: WalletRpcClient, plot_nfts: List[Dict[str, Any]], fee: uint64 = uint64(0)) -> List[str]:

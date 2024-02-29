@@ -4,7 +4,7 @@ from pathlib import Path
 import click
 
 from foxy_farmer import close_sentry
-from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
+from foxy_farmer.config.foxy_chia_config_manager import FoxyChiaConfigManager
 
 
 @click.command("init", short_help="Ensure the configurations are available")

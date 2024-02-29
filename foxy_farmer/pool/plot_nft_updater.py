@@ -3,10 +3,10 @@ from typing import Dict, Any, Optional
 
 from chia.cmds.cmds_util import get_wallet
 
-from foxy_farmer.farmer.embedded_chia_environment import EmbeddedChiaEnvironment
-from foxy_farmer.foundation.wallet.pool_join import update_foxy_config_plot_nfts_if_required
-from foxy_farmer.foundation.wallet.run_wallet import run_wallet
-from foxy_farmer.foundation.wallet.sync import wait_for_wallet_sync
+from foxy_farmer.environment import EmbeddedChiaEnvironment
+from foxy_farmer.wallet.pool_join import update_foxy_config_plot_nfts_if_required
+from foxy_farmer.wallet.run_wallet import run_wallet
+from foxy_farmer.wallet.sync import wait_for_wallet_sync
 
 
 class PlotNftUpdater:

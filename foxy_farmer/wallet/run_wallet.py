@@ -7,7 +7,7 @@ from chia.rpc.wallet_rpc_client import WalletRpcClient
 from chia.util.ints import uint16
 from yaspin import yaspin
 
-from foxy_farmer.farmer.embedded_chia_environment import EmbeddedChiaEnvironment
+from foxy_farmer.environment.embedded_chia_environment import EmbeddedChiaEnvironment
 
 
 @asynccontextmanager

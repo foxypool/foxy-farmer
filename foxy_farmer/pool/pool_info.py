@@ -1,7 +1,7 @@
 from typing import Dict, Any
 
-from foxy_farmer.foundation.pool.pool_api_client import PoolApiClient
-from foxy_farmer.foundation.util.memoize_async import MemoizeAsync
+from foxy_farmer.pool.pool_api_client import PoolApiClient
+from foxy_farmer.util.memoize_async import MemoizeAsync
 
 
 @MemoizeAsync

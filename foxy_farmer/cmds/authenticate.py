@@ -5,8 +5,8 @@ from typing import Dict, Any
 import click
 from chia.util.config import load_config
 
-from foxy_farmer.error_reporting import close_sentry
-from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
+from foxy_farmer.error_reporting.error_reporting import close_sentry
+from foxy_farmer.config.foxy_chia_config_manager import FoxyChiaConfigManager
 
 
 @click.command("auth", short_help="Authenticate your Launcher Ids on the pool")

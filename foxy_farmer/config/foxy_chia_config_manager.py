@@ -12,10 +12,10 @@ from chia.util.default_root import DEFAULT_ROOT_PATH, DEFAULT_KEYS_ROOT_PATH
 from foxy_farmer.binary_manager.dr_plotter_binary_manager import dr_plotter_binary_release
 from foxy_farmer.ff_logging.configure_logging import disabled_logging
 from foxy_farmer.first_run.first_run_wizard import run_first_run_wizard
-from foxy_farmer.foundation.config.backend import Backend
-from foxy_farmer.foundation.config.config_patcher import ConfigPatcher
-from foxy_farmer.foxy_config_manager import FoxyConfigManager
-from foxy_farmer.foxy_farming_gateway import eu1_foxy_farming_gateway_address, foxy_farming_gateway_port, \
+from foxy_farmer.config.backend import Backend
+from foxy_farmer.config.config_patcher import ConfigPatcher
+from foxy_farmer.config.foxy_config_manager import FoxyConfigManager
+from foxy_farmer.config.foxy_farming_gateway import eu1_foxy_farming_gateway_address, foxy_farming_gateway_port, \
     eu3_foxy_farming_gateway_address, eu1_foxy_gigahorse_farming_gateway_address, foxy_gigahorse_farming_gateway_port, \
     eu3_foxy_gigahorse_farming_gateway_address
 from foxy_farmer.migration.make_migration_manager import make_migration_manager

@@ -6,7 +6,7 @@ from sys import platform
 from typing import Any, Dict
 
 from foxy_farmer.binary_manager.gigahorse_binary_manager import GigahorseBinaryManager
-from foxy_farmer.farmer.binary_chia_environment import BinaryChiaEnvironment
+from foxy_farmer.environment.binary_chia_environment import BinaryChiaEnvironment
 
 
 class GigahorseChiaEnvironment(BinaryChiaEnvironment):

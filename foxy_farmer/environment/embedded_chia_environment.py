@@ -14,9 +14,9 @@ from chia.wallet.wallet_node import WalletNode
 from chia.wallet.wallet_node_api import WalletNodeAPI
 
 from foxy_farmer.exceptions.already_running_exception import AlreadyRunningException
-from foxy_farmer.farmer.chia_environment import ChiaEnvironment
-from foxy_farmer.foundation.daemon.daemon_proxy import get_daemon_proxy, ensure_daemon_keyring_is_unlocked
-from foxy_farmer.service_factory import ServiceFactory
+from foxy_farmer.environment.chia_environment import ChiaEnvironment
+from foxy_farmer.daemon.daemon_proxy import get_daemon_proxy, ensure_daemon_keyring_is_unlocked
+from foxy_farmer.environment.service.service_factory import ServiceFactory
 from foxy_farmer.util.awaitable import await_done
 
 

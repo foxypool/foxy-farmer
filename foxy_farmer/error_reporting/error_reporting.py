@@ -2,7 +2,7 @@ import sentry_sdk
 from sentry_sdk import Hub
 from sentry_sdk.integrations.logging import LoggingIntegration
 
-from foxy_farmer.foundation.sentry.filter_sentry_events import filter_sentry_events
+from foxy_farmer.error_reporting.filter_sentry_events import filter_sentry_events
 from foxy_farmer.version import version
 
 

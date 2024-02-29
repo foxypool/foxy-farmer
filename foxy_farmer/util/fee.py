@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from foxy_farmer.foundation.util.decimal import is_valid_decimal
+from foxy_farmer.util.decimal import is_valid_decimal
 
 
 def is_valid_fee(amount_raw: str):

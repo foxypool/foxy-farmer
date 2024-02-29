@@ -2,7 +2,7 @@ from abc import ABC
 from asyncio import Event, sleep
 from typing import List, Any, Dict
 
-from foxy_farmer.farmer.chia_environment import ChiaEnvironment
+from foxy_farmer.environment.chia_environment import ChiaEnvironment
 
 
 class Farmer(ABC):

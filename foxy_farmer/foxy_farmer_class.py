@@ -1,8 +1,7 @@
-from asyncio import AbstractEventLoop, new_event_loop
+from asyncio import AbstractEventLoop
 from logging import Logger, getLogger
 from pathlib import Path
 from signal import Signals
-from sys import platform
 from types import FrameType
 from typing import Optional
 
@@ -13,9 +12,9 @@ from foxy_farmer.farmer.bladebit_farmer import BladebitFarmer
 from foxy_farmer.farmer.dr_plotter_farmer import DrPlotterFarmer
 from foxy_farmer.farmer.farmer import Farmer
 from foxy_farmer.farmer.gigahorse_farmer import GigahorseFarmer
-from foxy_farmer.foundation.config.backend import Backend
-from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
-from foxy_farmer.foxy_config_manager import FoxyConfigManager
+from foxy_farmer.config.backend import Backend
+from foxy_farmer.config.foxy_chia_config_manager import FoxyChiaConfigManager
+from foxy_farmer.config.foxy_config_manager import FoxyConfigManager
 from foxy_farmer.ff_logging.configure_logging import initialize_logging_with_stdout
 from foxy_farmer.util.node_id import calculate_harvester_node_id_slug
 

@@ -5,7 +5,7 @@ from typing import Dict, Any, List
 
 from yaml import safe_dump, safe_load
 
-from foxy_farmer.foundation.migration.migration import Migration, MigrationResult, aggregate_migration_results
+from foxy_farmer.migration.migration import Migration, MigrationResult, aggregate_migration_results
 
 
 @dataclass(frozen=True)

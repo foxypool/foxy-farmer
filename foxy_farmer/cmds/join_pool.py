@@ -10,9 +10,9 @@ from chia.util.chia_logging import initialize_logging
 from chia.util.config import load_config
 from chia.util.ints import uint64
 
-from foxy_farmer.error_reporting import close_sentry
-from foxy_farmer.foxy_chia_config_manager import FoxyChiaConfigManager
-from foxy_farmer.foxy_config_manager import FoxyConfigManager
+from foxy_farmer.error_reporting.error_reporting import close_sentry
+from foxy_farmer.config.foxy_chia_config_manager import FoxyChiaConfigManager
+from foxy_farmer.config.foxy_config_manager import FoxyConfigManager
 
 
 @click.command("join-pool", short_help="Join your PlotNFTs to the pool")

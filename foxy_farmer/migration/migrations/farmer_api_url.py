@@ -1,6 +1,6 @@
 from typing import Dict, Any
 
-from foxy_farmer.foundation.migration.migration import Migration, MigrationResult
+from foxy_farmer.migration.migration import Migration, MigrationResult
 
 
 class FarmerApiUrlMigration(Migration):

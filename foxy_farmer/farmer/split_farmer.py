@@ -1,7 +1,7 @@
 from abc import ABC
 from typing import List
 
-from foxy_farmer.farmer.embedded_chia_environment import EmbeddedChiaEnvironment
+from foxy_farmer.environment import EmbeddedChiaEnvironment
 from foxy_farmer.farmer.farmer import Farmer
 
 

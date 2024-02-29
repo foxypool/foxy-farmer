@@ -5,7 +5,7 @@ from subprocess import Popen
 from typing import Any, Dict
 
 from foxy_farmer.binary_manager.dr_plotter_binary_manager import DrPlotterBinaryManager
-from foxy_farmer.farmer.binary_chia_environment import BinaryChiaEnvironment
+from foxy_farmer.environment.binary_chia_environment import BinaryChiaEnvironment
 
 
 class DrPlotterChiaEnvironment(BinaryChiaEnvironment):

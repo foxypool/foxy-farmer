@@ -4,8 +4,8 @@ from typing import Dict, Any, Optional
 
 from chia.daemon.keychain_proxy import KeychainProxy, connect_to_keychain_and_validate
 
-from foxy_farmer.farmer.embedded_chia_environment import EmbeddedChiaEnvironment
-from foxy_farmer.foundation.keychain.generate_login_links import generate_login_links
+from foxy_farmer.environment import EmbeddedChiaEnvironment
+from foxy_farmer.keychain.generate_login_links import generate_login_links
 
 
 class Authenticator:
