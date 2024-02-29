@@ -3,7 +3,8 @@ from typing import Dict, Any, Optional
 
 from chia.cmds.cmds_util import get_wallet
 
-from foxy_farmer.environment import EmbeddedChiaEnvironment
+from foxy_farmer.config.foxy_config import FoxyConfig
+from foxy_farmer.environment.embedded_chia_environment import EmbeddedChiaEnvironment
 from foxy_farmer.wallet.pool_join import update_foxy_config_plot_nfts_if_required
 from foxy_farmer.wallet.run_wallet import run_wallet
 from foxy_farmer.wallet.sync import wait_for_wallet_sync
@@ -12,10 +13,10 @@ from foxy_farmer.wallet.sync import wait_for_wallet_sync
 class PlotNftUpdater:
     _foxy_root: Path
     _config: Dict[str, Any]
-    _foxy_config: Dict[str, Any]
+    _foxy_config: FoxyConfig
     _chia_environment: Optional[EmbeddedChiaEnvironment]
 
-    def __init__(self, foxy_root: Path, config: Dict[str, Any], foxy_config: Dict[str, Any]):
+    def __init__(self, foxy_root: Path, config: Dict[str, Any], foxy_config: FoxyConfig):
         self._foxy_root = foxy_root
         self._config = config
         self._foxy_config = foxy_config

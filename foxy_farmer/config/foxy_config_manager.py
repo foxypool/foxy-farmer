@@ -1,11 +1,12 @@
 from pathlib import Path
 from sys import stderr, exit
-from typing import Dict, Any
 
 from yaml import safe_dump, safe_load, MarkedYAMLError
 
+from foxy_farmer.config.foxy_config import FoxyConfig
 
-def _get_default_config():
+
+def _get_default_config() -> FoxyConfig:
     return {
         'backend': 'gigahorse',
         'enable_og_pooling': False,
@@ -30,13 +31,13 @@ class FoxyConfigManager:
     def has_config(self) -> bool:
         return self._file_path.exists()
 
-    def load_config_or_get_default(self) -> Dict[str, Any]:
+    def load_config_or_get_default(self) -> FoxyConfig:
         if self.has_config():
             return self.load_config()
 
         return _get_default_config()
 
-    def load_config(self) -> Dict[str, Any]:
+    def load_config(self) -> FoxyConfig:
         with open(self._file_path, "r") as opened_config_file:
             try:
                 config = safe_load(opened_config_file)
@@ -48,6 +49,6 @@ class FoxyConfigManager:
                 exit(1)
         return config
 
-    def save_config(self, config: Dict[str, Any]):
+    def save_config(self, config: FoxyConfig):
         with open(self._file_path, "w") as f:
             safe_dump(config, f)

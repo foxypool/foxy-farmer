@@ -5,6 +5,7 @@ from typing import Dict, Any, List
 
 from yaml import safe_dump, safe_load
 
+from foxy_farmer.config.foxy_config import FoxyConfig
 from foxy_farmer.migration.migration import Migration, MigrationResult, aggregate_migration_results
 
 
@@ -13,7 +14,7 @@ class MigrationManager:
     state_path: Path
     migrations: List[Migration]
 
-    def run_migrations(self, foxy_farmer_config: Dict[str, Any], chia_config: Dict[str, Any]) -> MigrationResult:
+    def run_migrations(self, foxy_farmer_config: FoxyConfig, chia_config: Dict[str, Any]) -> MigrationResult:
         executed_migrations = self._load_migrations()
         migrations_to_run = [m for m in self.migrations if executed_migrations.get(m.name) is not True]
         if len(migrations_to_run) == 0:

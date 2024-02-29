@@ -3,7 +3,7 @@ from typing import Any, Dict
 
 from chia.util.config import load_config
 
-from foxy_farmer.environment import EmbeddedChiaEnvironment
+from foxy_farmer.environment.embedded_chia_environment import EmbeddedChiaEnvironment
 from foxy_farmer.farmer.farmer import Farmer
 
 

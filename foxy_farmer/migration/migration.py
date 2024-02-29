@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Dict, Any, List
 
+from foxy_farmer.config.foxy_config import FoxyConfig
+
 
 @dataclass
 class MigrationResult:
@@ -27,5 +29,5 @@ class Migration:
     def date(self) -> str:
         ...
 
-    def run(self, foxy_farmer_config: Dict[str, Any], chia_config: Dict[str, Any]) -> MigrationResult:
+    def run(self, foxy_farmer_config: FoxyConfig, chia_config: Dict[str, Any]) -> MigrationResult:
         ...

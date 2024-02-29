@@ -14,6 +14,7 @@ from prompt_toolkit.shortcuts import CompleteStyle
 from questionary import select, Choice, confirm, text, path, checkbox
 
 from foxy_farmer.config.backend import Backend
+from foxy_farmer.config.foxy_config import FoxyConfig
 from foxy_farmer.keychain.generate_login_links import generate_login_links
 from foxy_farmer.util.bech32_address import is_valid_address
 from foxy_farmer.util.fee import is_valid_fee
@@ -22,7 +23,7 @@ from foxy_farmer.pool.pool_joiner import PoolJoiner
 from foxy_farmer.wallet.pool_join import get_plot_nft_not_pooling_with_foxy
 
 
-async def run_first_run_wizard(foxy_root: Path, config: Dict[str, Any], foxy_config: Dict[str, Any]):
+async def run_first_run_wizard(foxy_root: Path, config: Dict[str, Any], foxy_config: FoxyConfig):
     if not stdout.isatty() or not stdin.isatty():
         print("WARNING: No interactive shell available, skipping first run wizard!", file=stderr)
 

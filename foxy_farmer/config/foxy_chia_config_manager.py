@@ -10,6 +10,7 @@ from chia.util.config import load_config, save_config
 from chia.util.default_root import DEFAULT_ROOT_PATH, DEFAULT_KEYS_ROOT_PATH
 
 from foxy_farmer.binary_manager.dr_plotter_binary_manager import dr_plotter_binary_release
+from foxy_farmer.config.foxy_config import FoxyConfig, PlotNft
 from foxy_farmer.ff_logging.configure_logging import disabled_logging
 from foxy_farmer.first_run.first_run_wizard import run_first_run_wizard
 from foxy_farmer.config.backend import Backend
@@ -117,7 +118,7 @@ class FoxyChiaConfigManager:
         self,
         config_patcher: ConfigPatcher,
         chia_config: Dict[str, Any],
-        foxy_farmer_config: Dict[str, Any],
+        foxy_farmer_config: FoxyConfig,
     ):
         backend = foxy_farmer_config.get("backend", Backend.BladeBit)
         require_syslog = backend != Backend.BladeBit
@@ -216,9 +217,9 @@ class FoxyChiaConfigManager:
             config_patcher.patch("farmer_reward_address", "pool.xch_target_address")
 
 
-def make_ensure_client_path_in_pool_url(client_path: str) -> Callable[[Dict[str, Any]], bool]:
-    def ensure_client_path_in_pool_url(pool: Dict[str, Any]) -> bool:
-        pool_url: str = pool["pool_url"]
+def make_ensure_client_path_in_pool_url(client_path: str) -> Callable[[PlotNft], bool]:
+    def ensure_client_path_in_pool_url(pool: PlotNft) -> bool:
+        pool_url = pool["pool_url"]
         if "foxypool.io" not in pool_url:
             return False
         url_parts = pool_url.split("/")

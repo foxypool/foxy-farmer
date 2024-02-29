@@ -1,6 +1,6 @@
 from asyncio import sleep
 from pathlib import Path
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict
 
 from chia.rpc.wallet_rpc_client import WalletRpcClient
 from chia.types.blockchain_format.sized_bytes import bytes32
@@ -10,13 +10,14 @@ from chia.util.ints import uint64
 from chia.wallet.util.wallet_types import WalletType
 from yaspin import yaspin
 
+from foxy_farmer.config.foxy_config import PlotNft, FoxyConfig
 from foxy_farmer.pool.pool_api_client import PoolApiClient, POOL_URL
 from foxy_farmer.util.hex import ensure_hex_prefix
 from foxy_farmer.wallet.transaction import await_transaction_broadcasted
 
 
-async def join_plot_nfts_to_pool(wallet_client: WalletRpcClient, plot_nfts: List[Dict[str, Any]], fee: uint64 = uint64(0)) -> List[str]:
-    plot_nfts_by_launcher_id: Dict[bytes32, Dict[str, Any]] = {
+async def join_plot_nfts_to_pool(wallet_client: WalletRpcClient, plot_nfts: List[PlotNft], fee: uint64 = uint64(0)) -> List[str]:
+    plot_nfts_by_launcher_id: Dict[bytes32, PlotNft] = {
         bytes32.from_hexstr(plot_nft["launcher_id"]): plot_nft
         for plot_nft in plot_nfts
     }
@@ -74,7 +75,7 @@ async def await_launcher_pool_join_completion(root_path: Path, joined_launcher_i
             plot_nfts_not_pooling_with_foxy = get_plot_nft_not_pooling_with_foxy(root_path, joined_launcher_ids=joined_launcher_ids)
 
 
-def get_plot_nft_not_pooling_with_foxy(root_path: Path, joined_launcher_ids: Optional[List[str]] = None) -> List[Dict[str, Any]]:
+def get_plot_nft_not_pooling_with_foxy(root_path: Path, joined_launcher_ids: Optional[List[str]] = None) -> List[PlotNft]:
     config = load_config(root_path, "config.yaml")
     if config["pool"].get("pool_list") is None:
         return []
@@ -87,9 +88,9 @@ def get_plot_nft_not_pooling_with_foxy(root_path: Path, joined_launcher_ids: Opt
     )
 
 
-def update_foxy_config_plot_nfts_if_required(root_path: Path, foxy_config: Dict[str, Any]) -> bool:
+def update_foxy_config_plot_nfts_if_required(root_path: Path, foxy_config: FoxyConfig) -> bool:
     config = load_config(root_path, "config.yaml")
-    pool_list: Optional[List[Dict[str, Any]]] = config["pool"].get("pool_list")
+    pool_list: Optional[List[PlotNft]] = config["pool"].get("pool_list")
     if pool_list is None:
         return False
     if pool_list == foxy_config.get("plot_nfts"):

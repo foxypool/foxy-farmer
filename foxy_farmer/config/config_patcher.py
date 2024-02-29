@@ -4,6 +4,7 @@ from typing import Dict, Any, List, Optional, Union, Callable
 from chia.util.bech32m import decode_puzzle_hash
 from typing_extensions import Self
 
+from foxy_farmer.config.foxy_config import FoxyConfig, PlotNft
 from foxy_farmer.util.dictionary import get_nested_dict_value, set_nested_dict_value, del_nested_dict_value
 
 
@@ -14,12 +15,12 @@ class ConfigPatcherResult:
 
 
 class ConfigPatcher:
-    _foxy_farmer_config: Dict[str, Any]
+    _foxy_farmer_config: FoxyConfig
     _chia_config: Dict[str, Any]
     _is_chia_config_updated: bool = False
     _is_foxy_farmer_config_updated: bool = False
 
-    def __init__(self, foxy_farmer_config: Dict[str, Any], chia_config: Dict[str, Any]):
+    def __init__(self, foxy_farmer_config: FoxyConfig, chia_config: Dict[str, Any]):
         self._foxy_farmer_config = foxy_farmer_config
         self._chia_config = chia_config
 
@@ -77,7 +78,7 @@ class ConfigPatcher:
 
         return self
 
-    def patch_pool_list_closure(self, closure: Callable[[Dict[str, Any]], bool]) -> Self:
+    def patch_pool_list_closure(self, closure: Callable[[PlotNft], bool]) -> Self:
         if self._chia_config["pool"].get("pool_list") is not None:
             for pool in self._chia_config["pool"]["pool_list"]:
                 if closure(pool):

@@ -1,5 +1,5 @@
 import sys
-from typing import List, Dict, Any, Tuple
+from typing import List, Tuple
 
 from chia_rs import G1Element, G2Element, AugSchemeMPL
 from chia.daemon.keychain_proxy import KeychainProxy
@@ -9,11 +9,12 @@ from chia.util.byte_types import hexstr_to_bytes
 from chia.util.hash import std_hash
 from chia.wallet.derive_keys import find_authentication_sk
 
+from foxy_farmer.config.foxy_config import PlotNft
 from foxy_farmer.pool.pool_info import get_pool_info
 from foxy_farmer.util.hex import strip_hex_prefix
 
 
-async def generate_login_links(keychain_proxy: KeychainProxy, pool_list: List[Dict[str, Any]]) -> List[Tuple[str, str]]:
+async def generate_login_links(keychain_proxy: KeychainProxy, pool_list: List[PlotNft]) -> List[Tuple[str, str]]:
     all_root_sks = [sk for sk, _ in await keychain_proxy.get_all_private_keys()]
 
     login_links: List[Tuple[str, str]] = []
