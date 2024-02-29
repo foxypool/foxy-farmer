@@ -13,7 +13,7 @@ setup(
     python_requires='>=3.11, <4',
     install_requires=[
         "aiohttp>=3.9.1",
-        "aioudp==0.1.1",
+        "aioudp==1.0.1",
         "chia-blockchain@git+https://github.com/foxypool/chia-blockchain@2.1.4-og-1.6.0#egg=chia-blockchain",
         "click>=8.1.3",
         "colorlog>=6.7.0",
