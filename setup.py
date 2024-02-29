@@ -17,7 +17,7 @@ setup(
         "chia-blockchain@git+https://github.com/foxypool/chia-blockchain@2.1.4-og-1.6.0#egg=chia-blockchain",
         "click>=8.1.3",
         "colorlog>=6.7.0",
-        "humanize==4.8.0",
+        "humanize==4.9.0",
         "pyparsing==3.1.1",
         "PyYAML>=6.0.1",
         "questionary==2.0.1",
