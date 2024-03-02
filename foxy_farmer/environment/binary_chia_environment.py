@@ -1,9 +1,9 @@
 import subprocess
 from abc import ABC
+from asyncio.subprocess import Process, create_subprocess_exec, PIPE
 from logging import Logger
 from os.path import join
 from pathlib import Path
-from subprocess import Popen
 from sys import platform
 from typing import Any, Dict, Optional, List
 
@@ -22,7 +22,7 @@ class BinaryChiaEnvironment(ABC, ChiaEnvironment):
     _logger: Logger
     _binary_manager: BinaryManager
     _binary_directory_path: Optional[Path] = None
-    _chia_daemon_process: Optional[Popen] = None
+    _chia_daemon_process: Optional[Process] = None
     _daemon_proxy: Optional[DaemonProxy] = None
 
     def __init__(
@@ -55,9 +55,9 @@ class BinaryChiaEnvironment(ABC, ChiaEnvironment):
 
             return
 
-        self._chia_daemon_process = self._start_daemon_process()
-        if self._chia_daemon_process.stdout:
-            self._chia_daemon_process.stdout.readline()
+        self._chia_daemon_process = await self._start_daemon_process()
+        if self._chia_daemon_process.stdout is not None:
+            await self._chia_daemon_process.stdout.readline()
         self._daemon_proxy = await get_daemon_proxy(self.root_path, self.config)
         await ensure_daemon_keyring_is_unlocked(self._daemon_proxy)
 
@@ -68,7 +68,7 @@ class BinaryChiaEnvironment(ABC, ChiaEnvironment):
                 if r["data"].get("services_stopped") is not None:
                     [print(f"{service}: Stopped") for service in r["data"]["services_stopped"]]
                 print("Daemon stopped")
-                self._chia_daemon_process.wait()
+                await self._chia_daemon_process.wait()
                 self._chia_daemon_process = None
             else:
                 print(f"Stop daemon failed {r}")
@@ -112,17 +112,17 @@ class BinaryChiaEnvironment(ABC, ChiaEnvironment):
                     error = msg["data"]["error"]
                 print(f"{service} failed to stop. Error: {error}")
 
-    def _start_daemon_process(self) -> Popen:
+    async def _start_daemon_process(self) -> Process:
         creationflags = 0
         if platform == "win32":
             creationflags = subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.CREATE_NO_WINDOW
 
-        process = subprocess.Popen(
-            [join(self._binary_directory_path, self._binary_manager.binary_name), "run_daemon", "--wait-for-unlock"],
-            encoding="utf-8",
+        process = await create_subprocess_exec(
+            join(self._binary_directory_path, self._binary_manager.binary_name),
+            "run_daemon", "--wait-for-unlock",
             cwd=self._binary_directory_path,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            stdout=PIPE,
+            stderr=PIPE,
             creationflags=creationflags,
         )
 

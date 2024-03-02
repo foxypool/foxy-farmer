@@ -1,7 +1,7 @@
 import os
+from asyncio.subprocess import Process
 from logging import getLogger
 from pathlib import Path
-from subprocess import Popen
 from typing import Any, Dict
 
 from foxy_farmer.binary_manager.gigahorse_binary_manager import GigahorseBinaryManager
@@ -21,7 +21,7 @@ class GigahorseChiaEnvironment(BinaryChiaEnvironment):
         self._binary_manager = GigahorseBinaryManager()
         super().__init__(root_path, config, allow_connecting_to_existing_daemon, farmer_config)
 
-    def _start_daemon_process(self) -> Popen:
+    async def _start_daemon_process(self) -> Process:
         os.environ["CHIA_ROOT"] = str(self.root_path)
         if self._farmer_config.get("recompute_hosts") is not None:
             if isinstance(self._farmer_config["recompute_hosts"], str):
@@ -47,5 +47,5 @@ class GigahorseChiaEnvironment(BinaryChiaEnvironment):
         if self._farmer_config.get("cuda_visible_devices") is not None:
             os.environ["CUDA_VISIBLE_DEVICES"] = str(self._farmer_config["cuda_visible_devices"])
 
-        return super()._start_daemon_process()
+        return await super()._start_daemon_process()
 

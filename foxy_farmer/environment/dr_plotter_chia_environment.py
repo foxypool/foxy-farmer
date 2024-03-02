@@ -1,7 +1,7 @@
 import os
+from asyncio.subprocess import Process
 from logging import getLogger
 from pathlib import Path
-from subprocess import Popen
 from typing import Any, Dict
 
 from foxy_farmer.binary_manager.dr_plotter_binary_manager import DrPlotterBinaryManager
@@ -21,10 +21,10 @@ class DrPlotterChiaEnvironment(BinaryChiaEnvironment):
         self._binary_manager = DrPlotterBinaryManager()
         super().__init__(root_path, config, allow_connecting_to_existing_daemon, farmer_config)
 
-    def _start_daemon_process(self) -> Popen:
+    async def _start_daemon_process(self) -> Process:
         os.environ["CHIA_ROOT"] = str(self.root_path)
         if self._farmer_config.get("dr_plotter_client_token") is not None:
             os.environ["DRPLOTTER_CLIENT_TOKEN"] = str(self._farmer_config["dr_plotter_client_token"])
 
-        return super()._start_daemon_process()
+        return await super()._start_daemon_process()
 
