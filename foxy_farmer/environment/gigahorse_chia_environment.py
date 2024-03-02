@@ -2,27 +2,20 @@ import os
 from logging import getLogger
 from pathlib import Path
 from subprocess import Popen
-from sys import platform
 from typing import Any, Dict
 
 from foxy_farmer.binary_manager.gigahorse_binary_manager import GigahorseBinaryManager
+from foxy_farmer.config.foxy_config import FoxyConfig
 from foxy_farmer.environment.binary_chia_environment import BinaryChiaEnvironment
 
 
 class GigahorseChiaEnvironment(BinaryChiaEnvironment):
-    @property
-    def chia_binary_name(self) -> str:
-        if platform == "win32":
-            return "chia.exe"
-
-        return "chia.bin"
-
     def __init__(
         self,
         root_path: Path,
         config: Dict[str, Any],
         allow_connecting_to_existing_daemon: bool,
-        farmer_config: Dict[str, Any],
+        farmer_config: FoxyConfig,
     ):
         self._logger = getLogger("gigahorse_chia_environment")
         self._binary_manager = GigahorseBinaryManager()

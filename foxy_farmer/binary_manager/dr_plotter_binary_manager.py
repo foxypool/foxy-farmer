@@ -1,3 +1,4 @@
+from sys import platform
 from typing import List
 
 
@@ -7,6 +8,13 @@ dr_plotter_binary_release = "0.9.2"
 
 
 class DrPlotterBinaryManager(BinaryManager):
+    @property
+    def binary_name(self) -> str:
+        if platform == "win32":
+            return "drchia.exe"
+
+        return "drchia"
+
     @property
     def _product_name(self) -> str:
         return "DrPlotter"

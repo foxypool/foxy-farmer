@@ -4,6 +4,7 @@ from logging import getLogger
 from os.path import expanduser, join
 from pathlib import Path
 from ssl import SSLContext
+from sys import platform
 from tempfile import TemporaryDirectory
 from typing import List
 from zipfile import ZipFile
@@ -16,6 +17,13 @@ from yaspin.core import Yaspin
 
 
 class BinaryManager(ABC):
+    @property
+    def binary_name(self) -> str:
+        if platform == "win32":
+            return "chia.exe"
+
+        return "chia"
+
     @property
     def _product_name(self) -> str:
         ...

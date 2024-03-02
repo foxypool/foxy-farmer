@@ -11,20 +11,14 @@ from chia.daemon.client import connect_to_daemon_and_validate, DaemonProxy
 from chia.util.service_groups import services_for_groups
 
 from foxy_farmer.binary_manager.binary_manager import BinaryManager
+from foxy_farmer.config.foxy_config import FoxyConfig
 from foxy_farmer.exceptions.already_running_exception import AlreadyRunningException
 from foxy_farmer.environment.chia_environment import ChiaEnvironment
 from foxy_farmer.daemon.daemon_proxy import get_daemon_proxy, ensure_daemon_keyring_is_unlocked
 
 
 class BinaryChiaEnvironment(ABC, ChiaEnvironment):
-    @property
-    def chia_binary_name(self) -> str:
-        if platform == "win32":
-            return "chia.exe"
-
-        return "chia"
-
-    _farmer_config: Dict[str, Any]
+    _farmer_config: FoxyConfig
     _logger: Logger
     _binary_manager: BinaryManager
     _binary_directory_path: Optional[Path] = None
@@ -36,7 +30,7 @@ class BinaryChiaEnvironment(ABC, ChiaEnvironment):
         root_path: Path,
         config: Dict[str, Any],
         allow_connecting_to_existing_daemon: bool,
-        farmer_config: Dict[str, Any],
+        farmer_config: FoxyConfig,
     ):
         self.root_path = root_path
         self.config = config
@@ -124,7 +118,7 @@ class BinaryChiaEnvironment(ABC, ChiaEnvironment):
             creationflags = subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.CREATE_NO_WINDOW
 
         process = subprocess.Popen(
-            [join(self._binary_directory_path, self.chia_binary_name), "run_daemon", "--wait-for-unlock"],
+            [join(self._binary_directory_path, self._binary_manager.binary_name), "run_daemon", "--wait-for-unlock"],
             encoding="utf-8",
             cwd=self._binary_directory_path,
             stdout=subprocess.PIPE,

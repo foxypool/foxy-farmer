@@ -5,20 +5,17 @@ from subprocess import Popen
 from typing import Any, Dict
 
 from foxy_farmer.binary_manager.dr_plotter_binary_manager import DrPlotterBinaryManager
+from foxy_farmer.config.foxy_config import FoxyConfig
 from foxy_farmer.environment.binary_chia_environment import BinaryChiaEnvironment
 
 
 class DrPlotterChiaEnvironment(BinaryChiaEnvironment):
-    @property
-    def chia_binary_name(self) -> str:
-        return "drchia"
-
     def __init__(
             self,
             root_path: Path,
             config: Dict[str, Any],
             allow_connecting_to_existing_daemon: bool,
-            farmer_config: Dict[str, Any],
+            farmer_config: FoxyConfig,
     ):
         self._logger = getLogger("dr_plotter_chia_environment")
         self._binary_manager = DrPlotterBinaryManager()

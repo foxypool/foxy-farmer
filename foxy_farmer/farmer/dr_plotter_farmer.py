@@ -1,10 +1,11 @@
 from asyncio import Task, create_task
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Optional
 from platform import system, machine
 
 from chia.util.config import load_config
 
+from foxy_farmer.config.foxy_config import FoxyConfig
 from foxy_farmer.environment.dr_plotter_chia_environment import DrPlotterChiaEnvironment
 from foxy_farmer.environment.embedded_chia_environment import EmbeddedChiaEnvironment
 from foxy_farmer.farmer.split_chia_farmer import SplitChiaFarmer
@@ -23,7 +24,7 @@ class DrPlotterFarmer(SplitChiaFarmer):
     _syslog_server: SyslogServer
     _syslog_run_task: Optional[Task[None]] = None
 
-    def __init__(self, root_path: Path, farmer_config: Dict[str, Any]):
+    def __init__(self, root_path: Path, farmer_config: FoxyConfig):
         self._farmer_config = farmer_config
         config = load_config(root_path, "config.yaml")
         self._environment = DrPlotterChiaEnvironment(

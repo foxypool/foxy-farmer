@@ -8,6 +8,13 @@ from foxy_farmer.binary_manager.binary_manager import BinaryManager
 
 class GigahorseBinaryManager(BinaryManager):
     @property
+    def binary_name(self) -> str:
+        if platform == "win32":
+            return "chia.exe"
+
+        return "chia.bin"
+
+    @property
     def _product_name(self) -> str:
         return "Gigahorse"
 
