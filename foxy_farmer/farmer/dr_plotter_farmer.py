@@ -7,11 +7,11 @@ from chia.util.config import load_config
 
 from foxy_farmer.environment.dr_plotter_chia_environment import DrPlotterChiaEnvironment
 from foxy_farmer.environment.embedded_chia_environment import EmbeddedChiaEnvironment
-from foxy_farmer.farmer.split_farmer import SplitFarmer
+from foxy_farmer.farmer.split_chia_farmer import SplitChiaFarmer
 from foxy_farmer.ff_logging.syslog_server import SyslogServer
 
 
-class DrPlotterFarmer(SplitFarmer):
+class DrPlotterFarmer(SplitChiaFarmer):
     @property
     def supports_system(self) -> bool:
         arch = machine()

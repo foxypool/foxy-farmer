@@ -1,11 +1,12 @@
 from abc import ABC
 from typing import List
 
+from foxy_farmer.environment.chia_environment import ChiaEnvironment
 from foxy_farmer.environment.embedded_chia_environment import EmbeddedChiaEnvironment
 from foxy_farmer.farmer.farmer import Farmer
 
 
-class SplitFarmer(Farmer, ABC):
+class SplitChiaFarmer(Farmer, ABC):
     @property
     def _services_to_run_on_env(self) -> List[str]:
         return ["harvester"] if self._farmer_config.get("enable_harvester") is True else []
@@ -14,6 +15,7 @@ class SplitFarmer(Farmer, ABC):
     def _services_to_run_on_embedded_env(self) -> List[str]:
         return ["farmer-only"]
 
+    _environment: ChiaEnvironment
     _embedded_environment: EmbeddedChiaEnvironment
 
     async def run(self) -> None:

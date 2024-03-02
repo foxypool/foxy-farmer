@@ -1,17 +1,18 @@
 from asyncio import Task, create_task
 from pathlib import Path
 from sys import platform
-from typing import Any, Dict, Optional
+from typing import Optional
 from platform import system, machine
 
 from chia.util.config import load_config
 
+from foxy_farmer.config.foxy_config import FoxyConfig
 from foxy_farmer.environment.gigahorse_chia_environment import GigahorseChiaEnvironment
-from foxy_farmer.farmer.farmer import Farmer
+from foxy_farmer.farmer.chia_farmer import ChiaFarmer
 from foxy_farmer.ff_logging.syslog_server import SyslogServer
 
 
-class GigahorseFarmer(Farmer):
+class GigahorseFarmer(ChiaFarmer):
     @property
     def supports_system(self) -> bool:
         arch = machine()
@@ -25,7 +26,7 @@ class GigahorseFarmer(Farmer):
     _syslog_server: SyslogServer
     _syslog_run_task: Optional[Task[None]] = None
 
-    def __init__(self, root_path: Path, farmer_config: Dict[str, Any]):
+    def __init__(self, root_path: Path, farmer_config: FoxyConfig):
         self._farmer_config = farmer_config
         config = load_config(root_path, "config.yaml")
         self._environment = GigahorseChiaEnvironment(
