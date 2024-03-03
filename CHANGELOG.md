@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.19.0] - 2024-03-03
+
 ### Added
 
 - Add pool join question to first run wizard.
@@ -229,7 +231,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.18.0...HEAD
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.19.0...HEAD
+[1.18.0]: https://github.com/foxypool/foxy-farmer/compare/1.18.0...1.19.0
 [1.18.0]: https://github.com/foxypool/foxy-farmer/compare/1.17.0...1.18.0
 [1.17.0]: https://github.com/foxypool/foxy-farmer/compare/1.16.0...1.17.0
 [1.16.0]: https://github.com/foxypool/foxy-farmer/compare/1.15.0...1.16.0
