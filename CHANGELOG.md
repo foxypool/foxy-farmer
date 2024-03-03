@@ -17,6 +17,7 @@
 - Fix login link generation crashing if pool is unavailable.
 - Fix harvester id shown on startup missing the last 2 characters.
 - Fix DrPlotter client token input validation in first run wizard.
+- Fix shutdown on windows when just closing the window.
 
 ## [1.18.0] - 2024-02-19
 

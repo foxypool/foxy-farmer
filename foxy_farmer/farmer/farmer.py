@@ -19,3 +19,6 @@ class Farmer(ABC):
         self._stop_event.set()
         while self._stop_event.is_set():
             await sleep(0.1)
+
+    async def kill(self) -> None:
+        await self.stop()

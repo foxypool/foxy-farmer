@@ -19,7 +19,7 @@ from foxy_farmer.version import version
 async def run_foxy_farmer(foxy_root: Path, config_path: Path):
     from foxy_farmer.foxy_farmer_class import FoxyFarmer
     foxy_farmer = FoxyFarmer(foxy_root, config_path)
-    await foxy_farmer.setup_process_global_state()
+    foxy_farmer.setup_window_close_handler()
     try:
         await foxy_farmer.run()
     except AlreadyRunningException:

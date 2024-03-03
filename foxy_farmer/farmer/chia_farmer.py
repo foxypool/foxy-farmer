@@ -26,3 +26,7 @@ class ChiaFarmer(Farmer, ABC):
             await self._environment.stop_services(self._services_to_run)
             await self._environment.stop_daemon()
             self._stop_event.clear()
+
+    async def kill(self) -> None:
+        await self._environment.kill()
+        await super().kill()

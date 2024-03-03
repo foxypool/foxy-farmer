@@ -15,13 +15,15 @@ class SplitChiaFarmer(Farmer, ABC):
     def _services_to_run_on_embedded_env(self) -> List[str]:
         return ["farmer-only"]
 
+    @property
+    def _daemon_environment(self) -> ChiaEnvironment:
+        return self._embedded_environment if len(self._services_to_run_on_env) == 0 else self._environment
+
     _environment: ChiaEnvironment
     _embedded_environment: EmbeddedChiaEnvironment
 
     async def run(self) -> None:
-        daemon_environment = self._environment
-        if len(self._services_to_run_on_env) == 0:
-            daemon_environment = self._embedded_environment
+        daemon_environment = self._daemon_environment
 
         await daemon_environment.init()
         try:
@@ -34,3 +36,7 @@ class SplitChiaFarmer(Farmer, ABC):
             await self._embedded_environment.stop_services(self._services_to_run_on_embedded_env)
             await daemon_environment.stop_daemon()
             self._stop_event.clear()
+
+    async def kill(self) -> None:
+        await self._daemon_environment.kill()
+        await super().kill()

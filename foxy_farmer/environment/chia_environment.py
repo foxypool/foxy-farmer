@@ -21,3 +21,6 @@ class ChiaEnvironment(Protocol):
 
     async def stop_services(self, service_names: List[str]) -> None:
         ...
+
+    async def kill(self):
+        await self.stop_daemon()

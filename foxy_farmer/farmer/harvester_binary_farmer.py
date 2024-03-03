@@ -30,3 +30,7 @@ class HarvesterBinaryFarmer(Farmer, ABC):
             await self._embedded_environment.stop_services(self._services_to_run_on_embedded_env)
             await self._embedded_environment.stop_daemon()
             self._stop_event.clear()
+
+    async def kill(self) -> None:
+        await self._binary_environment.kill()
+        await super().kill()

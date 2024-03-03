@@ -20,4 +20,7 @@ def init_sentry():
 def close_sentry():
     client = Hub.current.client
     if client is not None:
-        client.close(timeout=2.0)
+        try:
+            client.close(timeout=2.0)
+        except KeyboardInterrupt:
+            pass

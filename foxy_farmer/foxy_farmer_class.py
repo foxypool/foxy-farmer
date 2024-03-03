@@ -1,11 +1,10 @@
-from asyncio import AbstractEventLoop
+from asyncio import new_event_loop
 from logging import Logger, getLogger
 from pathlib import Path
-from signal import Signals
-from types import FrameType
+from signal import SIGINT
+from sys import platform
 from typing import Optional
 
-from chia.util.misc import SignalHandlers
 from sentry_sdk.sessions import auto_session_tracking
 
 from foxy_farmer.farmer.bladebit_farmer import BladebitFarmer
@@ -75,14 +74,19 @@ class FoxyFarmer:
         if self._farmer is not None:
             await self._farmer.stop()
 
-    async def _accept_signal(
-            self,
-            signal_: Signals,
-            stack_frame: Optional[FrameType],
-            loop: AbstractEventLoop,
-    ) -> None:
-        await self.stop()
+    async def kill(self) -> None:
+        if self._farmer is not None:
+            await self._farmer.kill()
 
-    async def setup_process_global_state(self) -> None:
-        async with SignalHandlers.manage() as signal_handlers:
-            signal_handlers.setup_async_signal_handler(handler=self._accept_signal)
+    def setup_window_close_handler(self) -> None:
+        if platform == "win32" or platform == "cygwin":
+            from win32api import SetConsoleCtrlHandler
+
+            def on_exit(sig, func=None):
+                # Only handle window closes (x)
+                if sig != SIGINT:
+                    return
+                new_loop = new_event_loop()
+                new_loop.run_until_complete(new_loop.create_task(self.kill()))
+
+            SetConsoleCtrlHandler(on_exit, True)

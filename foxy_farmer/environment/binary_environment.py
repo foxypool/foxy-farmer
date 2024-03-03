@@ -39,6 +39,9 @@ class BinaryEnvironment(ABC):
             for task in self._logging_tasks:
                 task.cancel()
 
+    async def kill(self):
+        await self.stop()
+
     async def _start_process(self) -> Process:
         creationflags = 0
         if platform == "win32":
