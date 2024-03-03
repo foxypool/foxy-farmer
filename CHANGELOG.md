@@ -10,10 +10,13 @@
 ### Changed
 
 - Update `drplotter` to 0.9.2.
+- Update dependencies.
 
 ### Fixed
 
 - Fix login link generation crashing if pool is unavailable.
+- Fix harvester id shown on startup missing the last 2 characters.
+- Fix DrPlotter client token input validation in first run wizard.
 
 ## [1.18.0] - 2024-02-19
 
