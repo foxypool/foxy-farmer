@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Update `gigahorse` to 2.1.4.giga30, adding support for C30-C33 plots.
+
 ## [1.19.0] - 2024-03-03
 
 ### Added
