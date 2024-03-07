@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.20.0] - 2024-03-07
+
 ### Added
 
 - Update `gigahorse` to 2.1.4.giga30, adding support for C30-C33 plots.
@@ -235,8 +237,9 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.19.0...HEAD
-[1.18.0]: https://github.com/foxypool/foxy-farmer/compare/1.18.0...1.19.0
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.20.0...HEAD
+[1.20.0]: https://github.com/foxypool/foxy-farmer/compare/1.19.0...1.20.0
+[1.19.0]: https://github.com/foxypool/foxy-farmer/compare/1.18.0...1.19.0
 [1.18.0]: https://github.com/foxypool/foxy-farmer/compare/1.17.0...1.18.0
 [1.17.0]: https://github.com/foxypool/foxy-farmer/compare/1.16.0...1.17.0
 [1.16.0]: https://github.com/foxypool/foxy-farmer/compare/1.15.0...1.16.0
