@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.21.0] - 2024-03-10
+
 ### Added
 
 - Add PlotNFT creation support to first run wizard.
@@ -245,7 +247,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.20.0...HEAD
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.21.0...HEAD
+[1.21.0]: https://github.com/foxypool/foxy-farmer/compare/1.20.0...1.21.0
 [1.20.0]: https://github.com/foxypool/foxy-farmer/compare/1.19.0...1.20.0
 [1.19.0]: https://github.com/foxypool/foxy-farmer/compare/1.18.0...1.19.0
 [1.18.0]: https://github.com/foxypool/foxy-farmer/compare/1.17.0...1.18.0
