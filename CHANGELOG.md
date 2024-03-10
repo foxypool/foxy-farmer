@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add PlotNFT creation support to first run wizard.
+
 ### Changed
 
 - Update `gigahorse` to 2.1.4.giga31.

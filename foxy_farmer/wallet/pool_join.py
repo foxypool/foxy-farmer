@@ -7,13 +7,14 @@ from chia.types.blockchain_format.sized_bytes import bytes32
 from chia.util.byte_types import hexstr_to_bytes
 from chia.util.config import load_config
 from chia.util.ints import uint64
+from chia.wallet.transaction_record import TransactionRecord
 from chia.wallet.util.wallet_types import WalletType
 from yaspin import yaspin
 
 from foxy_farmer.config.foxy_config import PlotNft, FoxyConfig
 from foxy_farmer.pool.pool_api_client import PoolApiClient, POOL_URL
 from foxy_farmer.util.hex import ensure_hex_prefix
-from foxy_farmer.wallet.transaction import await_transaction_broadcasted
+from foxy_farmer.wallet.transaction import await_transaction_broadcasted, await_transaction_confirmed
 
 
 async def join_plot_nfts_to_pool(wallet_client: WalletRpcClient, plot_nfts: List[PlotNft], fee: uint64 = uint64(0)) -> List[str]:
@@ -38,7 +39,6 @@ async def join_plot_nfts_to_pool(wallet_client: WalletRpcClient, plot_nfts: List
             fee,
         )
         await await_transaction_broadcasted(join_pool_coro, wallet_client)
-        await sleep(15)
 
     joined_launcher_ids: List[str] = []
     for pool_wallet in pooling_wallets:
@@ -63,6 +63,43 @@ async def join_plot_nfts_to_pool(wallet_client: WalletRpcClient, plot_nfts: List
                 print(f"❌ Could not join PlotNFT with LauncherID {launcher_id} because an error occurred: {e}")
 
     return joined_launcher_ids
+
+
+async def create_plot_nft(wallet_client: WalletRpcClient, fee: uint64 = uint64(0)) -> Optional[str]:
+    pool_api_client = PoolApiClient()
+    with yaspin(text="Fetching latest pool info ..."):
+        pool_info = await pool_api_client.get_pool_info()
+
+    async def create_plot_nft_inner() -> TransactionRecord:
+        create_plot_nft_coro = wallet_client.create_new_pool_wallet(
+            target_puzzlehash=bytes32(hexstr_to_bytes(pool_info["target_puzzle_hash"])),
+            pool_url=POOL_URL,
+            relative_lock_height=pool_info["relative_lock_height"],
+            backup_host="localhost:5000",
+            mode="new",
+            state="FARMING_TO_POOL",
+            fee=fee,
+        )
+
+        return await await_transaction_broadcasted(create_plot_nft_coro, wallet_client)
+
+    transaction_record: TransactionRecord
+    with yaspin(text=f"Creating PlotNFT ...") as spinner:
+        while not (await wallet_client.get_synced()):
+            await sleep(5)
+        try:
+            transaction_record = await create_plot_nft_inner()
+        except Exception as e:
+            spinner.stop()
+            print(f"❌ Could not create PlotNFT because an error occurred: {e}")
+
+            return None
+    with yaspin(text=f"Waiting for the PlotNFT creation to be confirmed by the network ..."):
+        await await_transaction_confirmed(transaction_record, wallet_client)
+    launcher_id = transaction_record.additions[0].name().hex()
+    print(f"✅ Created PlotNFT with LauncherID {launcher_id}")
+
+    return launcher_id
 
 
 async def await_launcher_pool_join_completion(root_path: Path, joined_launcher_ids: List[str]):
@@ -98,3 +135,13 @@ def update_foxy_config_plot_nfts_if_required(root_path: Path, foxy_config: FoxyC
     foxy_config["plot_nfts"] = pool_list
 
     return True
+
+
+def get_plot_nft_from_config(root_path: Path, launcher_id: str) -> Optional[PlotNft]:
+    config = load_config(root_path, "config.yaml")
+    pool_list: List[PlotNft] = config["pool"].get("pool_list", [])
+    launcher_id_hex = ensure_hex_prefix(launcher_id)
+    for pool in pool_list:
+        if pool["launcher_id"] == launcher_id_hex:
+            return pool
+    return None
