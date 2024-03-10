@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Update `gigahorse` to 2.1.4.giga31.
+
 ## [1.20.0] - 2024-03-07
 
 ### Added
