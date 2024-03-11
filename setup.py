@@ -12,7 +12,7 @@ dependencies = [
     "pyparsing==3.1.1",
     "PyYAML>=6.0.1",
     "questionary==2.0.1",
-    "sentry-sdk==1.40.6",
+    "sentry-sdk==1.41.0",
     "yaspin==3.0.1",
 ]
 if platform == "win32" or platform == "cygwin":
