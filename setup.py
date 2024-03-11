@@ -9,7 +9,7 @@ dependencies = [
     "click>=8.1.3",
     "colorlog>=6.7.0",
     "humanize==4.9.0",
-    "pyparsing==3.1.1",
+    "pyparsing==3.1.2",
     "PyYAML>=6.0.1",
     "questionary==2.0.1",
     "sentry-sdk==1.40.6",
