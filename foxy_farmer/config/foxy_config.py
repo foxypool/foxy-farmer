@@ -54,3 +54,4 @@ class FoxyConfig(TypedDict):
     cuda_visible_devices: NotRequired[str]
     # DR
     dr_plotter_client_token: NotRequired[str]
+    dr_server_ip_address: NotRequired[str]
