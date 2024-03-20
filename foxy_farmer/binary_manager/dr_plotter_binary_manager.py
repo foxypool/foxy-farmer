@@ -4,7 +4,7 @@ from typing import List
 
 from foxy_farmer.binary_manager.binary_manager import BinaryManager
 
-dr_plotter_binary_release = "0.9.2"
+dr_plotter_binary_release = "0.10.0"
 
 
 class DrPlotterBinaryManager(BinaryManager):

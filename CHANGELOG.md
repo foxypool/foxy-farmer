@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add support for configuring a local DrServer to first run wizard.
+
+### Changed
+
+- Update `drplotter` to 0.10.0.
+
 ## [1.21.0] - 2024-03-10
 
 ### Added
