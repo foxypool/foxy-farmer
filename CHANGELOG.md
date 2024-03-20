@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.22.0] - 2024-03-20
+
 ### Added
 
 - Add support for configuring a local DrServer to first run wizard.
@@ -255,7 +257,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.21.0...HEAD
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.22.0...HEAD
+[1.22.0]: https://github.com/foxypool/foxy-farmer/compare/1.21.0...1.22.0
 [1.21.0]: https://github.com/foxypool/foxy-farmer/compare/1.20.0...1.21.0
 [1.20.0]: https://github.com/foxypool/foxy-farmer/compare/1.19.0...1.20.0
 [1.19.0]: https://github.com/foxypool/foxy-farmer/compare/1.18.0...1.19.0
