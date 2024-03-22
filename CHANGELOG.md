@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Update `drplotter` to 0.11.0. The `drplotter` upstream release fixes a critical bug, see its [release notes](https://github.com/drnick23/drplotter/releases/tag/0.11.0) for more info.
+
 ## [1.22.0] - 2024-03-20
 
 ### Added
