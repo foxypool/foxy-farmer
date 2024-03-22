@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.22.1] - 2024-03-22
+
 ### Changed
 
 - Update `drplotter` to 0.11.0. The `drplotter` upstream release fixes a critical bug, see its [release notes](https://github.com/drnick23/drplotter/releases/tag/0.11.0) for more info.
@@ -261,7 +263,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.22.0...HEAD
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.22.1...HEAD
+[1.22.1]: https://github.com/foxypool/foxy-farmer/compare/1.22.0...1.22.1
 [1.22.0]: https://github.com/foxypool/foxy-farmer/compare/1.21.0...1.22.0
 [1.21.0]: https://github.com/foxypool/foxy-farmer/compare/1.20.0...1.21.0
 [1.20.0]: https://github.com/foxypool/foxy-farmer/compare/1.19.0...1.20.0
