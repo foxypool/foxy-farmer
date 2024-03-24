@@ -71,6 +71,9 @@ jobs:
         include:
           - python-version: "3.11"
             os: ubuntu-20.04
+            package-suffix: ubuntu-20.04
+          - python-version: "3.11"
+            os: ubuntu-latest
             package-suffix: ubuntu
           - python-version: "3.11"
             os: macos-latest
@@ -117,6 +120,7 @@ jobs:
         uses: actions/download-artifact@v4
       - name: Mark binary as executable
         run: |
+          chmod +x foxy-farmer-ubuntu-20.04/foxy-farmer
           chmod +x foxy-farmer-ubuntu/foxy-farmer
           chmod +x foxy-farmer-macos/foxy-farmer
       - name: Create release zip
