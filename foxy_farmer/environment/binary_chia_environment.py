@@ -84,14 +84,14 @@ class BinaryChiaEnvironment(ABC, ChiaEnvironment):
                 continue
             print(f"{service}: ", end="", flush=True)
             msg = await self._daemon_proxy.start_service(service_name=service)
-            success = msg and msg["data"]["success"]
+            success = msg and msg["data"].get("success")
 
             if success is True:
                 print("started")
             else:
                 error = "no response"
                 if msg:
-                    error = msg["data"]["error"]
+                    error = msg["data"].get("error")
                 print(f"{service} failed to start. Error: {error}")
 
     async def stop_services(self, service_names: List[str]) -> None:
@@ -102,14 +102,14 @@ class BinaryChiaEnvironment(ABC, ChiaEnvironment):
                 continue
             print(f"{service}: ", end="", flush=True)
             msg = await self._daemon_proxy.stop_service(service_name=service)
-            success = msg and msg["data"]["success"]
+            success = msg and msg["data"].get("success")
 
             if success is True:
                 print("stopped")
             else:
                 error = "no response"
                 if msg:
-                    error = msg["data"]["error"]
+                    error = msg["data"].get("error")
                 print(f"{service} failed to stop. Error: {error}")
 
     async def _start_daemon_process(self) -> Process:
