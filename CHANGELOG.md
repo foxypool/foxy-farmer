@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [1.22.2] - 2024-03-24
+
+### Fixed
+
+- Fix crashing on exit when the chia daemon does not respond to the exit command.
+
 ## [1.22.1] - 2024-03-22
 
 ### Changed
@@ -263,7 +269,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.22.1...HEAD
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.22.2...HEAD
+[1.22.2]: https://github.com/foxypool/foxy-farmer/compare/1.22.1...1.22.2
 [1.22.1]: https://github.com/foxypool/foxy-farmer/compare/1.22.0...1.22.1
 [1.22.0]: https://github.com/foxypool/foxy-farmer/compare/1.21.0...1.22.0
 [1.21.0]: https://github.com/foxypool/foxy-farmer/compare/1.20.0...1.21.0
