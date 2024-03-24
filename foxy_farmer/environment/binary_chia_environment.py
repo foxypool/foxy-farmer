@@ -9,6 +9,7 @@ from typing import Any, Dict, Optional, List
 
 from chia.daemon.client import connect_to_daemon_and_validate, DaemonProxy
 from chia.util.service_groups import services_for_groups
+from chia.util.ws_message import WsRpcMessage
 
 from foxy_farmer.binary_manager.binary_manager import BinaryManager
 from foxy_farmer.config.foxy_config import FoxyConfig
@@ -63,18 +64,23 @@ class BinaryChiaEnvironment(ABC, ChiaEnvironment):
 
     async def stop_daemon(self) -> None:
         if self._chia_daemon_process is not None:
-            r = await self._daemon_proxy.exit()
-            if r.get("data", {}).get("success", False):
-                if r["data"].get("services_stopped") is not None:
-                    [print(f"{service}: Stopped") for service in r["data"]["services_stopped"]]
+            result: Optional[WsRpcMessage] = None
+            try:
+                result = await self._daemon_proxy.exit()
+            except Exception:
+                pass
+            if result is not None and result.get("data", {}).get("success", False):
+                if result["data"].get("services_stopped") is not None:
+                    [print(f"{service}: Stopped") for service in result["data"]["services_stopped"]]
                 print("Daemon stopped")
-                await self._chia_daemon_process.wait()
-                self._chia_daemon_process = None
             else:
-                print(f"Stop daemon failed {r}")
+                print(f"Stop daemon failed: {result}")
         if self._daemon_proxy is not None:
             await self._daemon_proxy.close()
             self._daemon_proxy = None
+        if self._chia_daemon_process is not None:
+            await self._chia_daemon_process.wait()
+            self._chia_daemon_process = None
 
     async def start_services(self, service_names: List[str]) -> None:
         if self._daemon_proxy is None:
