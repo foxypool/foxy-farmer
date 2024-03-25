@@ -4,14 +4,8 @@ from pathlib import Path
 from typing import Any, Dict, Optional, List
 
 from chia.daemon.client import connect_to_daemon_and_validate, DaemonProxy
-from chia.farmer.farmer import Farmer
-from chia.farmer.farmer_api import FarmerAPI
-from chia.harvester.harvester import Harvester
-from chia.harvester.harvester_api import HarvesterAPI
-from chia.server.start_service import Service
+from chia.types.aliases import FarmerService, HarvesterService, WalletService
 from chia.util.service_groups import services_for_groups
-from chia.wallet.wallet_node import WalletNode
-from chia.wallet.wallet_node_api import WalletNodeAPI
 
 from foxy_farmer.exceptions.already_running_exception import AlreadyRunningException
 from foxy_farmer.environment.chia_environment import ChiaEnvironment
@@ -26,11 +20,11 @@ class EmbeddedChiaEnvironment(ChiaEnvironment):
     _daemon_run_task: Optional[Task[None]] = None
     _daemon_proxy: Optional[DaemonProxy] = None
     _shut_down_daemon_event: Event = Event()
-    _farmer_service: Optional[Service[Farmer, FarmerAPI]] = None
+    _farmer_service: Optional[FarmerService] = None
     _farmer_run_task: Optional[Task[None]] = None
-    _harvester_service: Optional[Service[Harvester, HarvesterAPI]] = None
+    _harvester_service: Optional[HarvesterService] = None
     _harvester_run_task: Optional[Task[None]] = None
-    _wallet_service: Optional[Service[WalletNode, WalletNodeAPI]] = None
+    _wallet_service: Optional[WalletService] = None
     _wallet_run_task: Optional[Task[None]] = None
 
     def __init__(self, root_path: Path, config: Dict[str, Any], allow_connecting_to_existing_daemon: bool):
