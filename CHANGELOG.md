@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.22.4] - 2024-03-26
+
 ### Changed
 
 - Update `gigahorse` to 2.2.1.giga33.
@@ -279,7 +281,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.22.3...HEAD
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.22.4...HEAD
+[1.22.4]: https://github.com/foxypool/foxy-farmer/compare/1.22.3...1.22.4
 [1.22.3]: https://github.com/foxypool/foxy-farmer/compare/1.22.2...1.22.3
 [1.22.2]: https://github.com/foxypool/foxy-farmer/compare/1.22.1...1.22.2
 [1.22.1]: https://github.com/foxypool/foxy-farmer/compare/1.22.0...1.22.1
