@@ -4,7 +4,7 @@ from pathlib import Path
 from signal import SIGINT, Signals
 from sys import platform
 from types import FrameType
-from typing import Optional
+from typing import Optional, Union
 
 from chia.util.misc import SignalHandlers
 from sentry_sdk.sessions import auto_session_tracking
@@ -45,7 +45,7 @@ class FoxyFarmer:
         foxy_config_manager = FoxyConfigManager(self._config_path)
         foxy_config = foxy_config_manager.load_config()
 
-        backend = foxy_config.get("backend", Backend.BladeBit)
+        backend: Union[str, Backend] = foxy_config.get("backend", Backend.BladeBit)
         if backend == Backend.BladeBit:
             self._farmer = BladebitFarmer(root_path=self._foxy_root, farmer_config=foxy_config)
         elif backend == Backend.Gigahorse:

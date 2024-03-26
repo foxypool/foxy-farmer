@@ -13,6 +13,7 @@ dependencies = [
     "PyYAML>=6.0.1",
     "questionary==2.0.1",
     "sentry-sdk==1.41.0",
+    "StrEnum==0.4.15",
     "yaspin==3.0.1",
 ]
 if platform == "win32" or platform == "cygwin":
@@ -28,7 +29,7 @@ setup(
     description='A simplified farmer for the Chia blockchain using the foxy chia farming gateway.',
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    python_requires='>=3.11, <4',
+    python_requires='>=3.9, <4',
     install_requires=dependencies,
     packages=find_packages(include=["foxy_farmer", "foxy_farmer.*"]),
     extras_require=dict(

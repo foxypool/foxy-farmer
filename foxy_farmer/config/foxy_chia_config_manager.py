@@ -1,7 +1,7 @@
 from os import environ
 from pathlib import Path
 from shutil import copyfile
-from typing import Dict, Any, List, Callable
+from typing import Dict, Any, List, Callable, Union
 from sys import exit
 
 from chia.cmds.init_funcs import chia_init, check_keys
@@ -120,7 +120,7 @@ class FoxyChiaConfigManager:
         chia_config: Dict[str, Any],
         foxy_farmer_config: FoxyConfig,
     ):
-        backend = foxy_farmer_config.get("backend", Backend.BladeBit)
+        backend: Union[str, Backend] = foxy_farmer_config.get("backend", Backend.BladeBit)
         require_syslog = backend != Backend.BladeBit
         full_node_peers: List[Dict[str, Any]] = [{
             "host": eu1_foxy_farming_gateway_address,
