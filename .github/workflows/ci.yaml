@@ -76,8 +76,11 @@ jobs:
             os: ubuntu-latest
             package-suffix: ubuntu
           - python-version: "3.11"
-            os: macos-latest
+            os: macos-12
             package-suffix: macos
+          - python-version: "3.11"
+            os: macos-14
+            package-suffix: macos-arm64
           - python-version: "3.11"
             os: windows-latest
             package-suffix: windows
@@ -123,6 +126,7 @@ jobs:
           chmod +x foxy-farmer-ubuntu-20.04/foxy-farmer
           chmod +x foxy-farmer-ubuntu/foxy-farmer
           chmod +x foxy-farmer-macos/foxy-farmer
+          chmod +x foxy-farmer-macos-arm64/foxy-farmer
       - name: Create release zip
         run:
           for i in foxy-farmer-*/; do zip -r -j "${i%/}.zip" "$i"; done
