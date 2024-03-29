@@ -73,7 +73,7 @@ class BinaryChiaEnvironment(ABC, ChiaEnvironment):
                 if result["data"].get("services_stopped") is not None:
                     [print(f"{service}: Stopped") for service in result["data"]["services_stopped"]]
                 print("Daemon stopped")
-            else:
+            elif result is not None:
                 print(f"Stop daemon failed: {result}")
         if self._daemon_proxy is not None:
             await self._daemon_proxy.close()
