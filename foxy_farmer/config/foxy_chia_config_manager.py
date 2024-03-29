@@ -143,24 +143,11 @@ class FoxyChiaConfigManager:
             .patch_value("daemon_port", foxy_farmer_config.get("chia_daemon_port", 55469))
             .patch_value("farmer.port", foxy_farmer_config.get("chia_farmer_port", 18447))
             .patch_value("farmer.rpc_port", foxy_farmer_config.get("chia_farmer_rpc_port", 18559))
-         )
-        if backend == Backend.DrPlotter:  # Deprecated: remove once drplotter is updated to a recent chia version
-            (config_patcher
-                .remove_config_key("harvester.farmer_peers")
-                .patch_value("harvester.farmer_peer", {
-                    "host": foxy_farmer_config.get("listen_host"),
-                    "port": foxy_farmer_config.get("chia_farmer_port", 18447),
-                })
-             )
-        else:
-            (config_patcher
-                .remove_config_key("harvester.farmer_peer")
-                .patch_value("harvester.farmer_peers", [{
-                    "host": foxy_farmer_config.get("listen_host"),
-                    "port": foxy_farmer_config.get("chia_farmer_port", 18447),
-                }])
-             )
-        (config_patcher
+            .remove_config_key("harvester.farmer_peer")
+            .patch_value("harvester.farmer_peers", [{
+                "host": foxy_farmer_config.get("listen_host"),
+                "port": foxy_farmer_config.get("chia_farmer_port", 18447),
+            }])
             .patch_value("harvester.rpc_port", foxy_farmer_config.get("chia_harvester_rpc_port", 18560))
             .patch_value("wallet.rpc_port", foxy_farmer_config.get("chia_wallet_rpc_port", 19256))
             # Ensure the wallet does not try to connect to localhost

@@ -4,7 +4,7 @@ from typing import List
 
 from foxy_farmer.binary_manager.binary_manager import BinaryManager
 
-dr_plotter_binary_release = "0.11.0"
+dr_plotter_binary_release = "0.12.0"
 
 
 class DrPlotterBinaryManager(BinaryManager):
@@ -31,8 +31,8 @@ class DrPlotterBinaryManager(BinaryManager):
     def _archive_file_name(self) -> str:
         archive_base = f"drplotter-{self._binary_release}"
 
-        return f"{archive_base}-x86-64.tar.gz"
+        return f"{archive_base}-x86_64.tar.gz"
 
     @property
     def _binary_sub_directory_paths(self) -> List[str]:
-        return [f"drplotter-{self._binary_release}-x86-64", "drharvester"]
+        return [f"drplotter-{self._binary_release}-x86_64", "drharvester"]

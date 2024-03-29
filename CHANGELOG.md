@@ -5,6 +5,7 @@
 ### Changed
 
 - Update `chia` to 2.2.1.
+- Update `drplotter` to 0.12.0.
 - Update `gigahorse` to 2.2.1.giga35.
 
 ## [1.22.4] - 2024-03-26
