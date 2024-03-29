@@ -20,7 +20,7 @@ class GigahorseBinaryManager(BinaryManager):
 
     @property
     def _binary_release(self) -> str:
-        return "2.2.1.giga33"
+        return "2.2.1.giga35"
 
     @property
     def _release_download_url(self) -> str:
