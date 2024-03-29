@@ -133,6 +133,16 @@ def update_foxy_config_plot_nfts_if_required(root_path: Path, foxy_config: FoxyC
     if pool_list == foxy_config.get("plot_nfts"):
         return False
     foxy_config["plot_nfts"] = pool_list
+    for plot_nft in foxy_config["plot_nfts"]:
+        pool_url = plot_nft["pool_url"]
+        if "foxypool.io" not in pool_url:
+            continue
+
+        url_parts = pool_url.split("/")
+        if len(url_parts) == 3:
+            continue
+
+        plot_nft["pool_url"] = "/".join(url_parts[:-1])
 
     return True
 

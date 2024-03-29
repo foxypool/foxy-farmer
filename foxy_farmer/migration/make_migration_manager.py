@@ -4,6 +4,7 @@ from pathlib import Path
 from foxy_farmer.migration.migration_manager import MigrationManager
 from foxy_farmer.migration.migrations.copy_plot_nfts import CopyPlotNftsMigration
 from foxy_farmer.migration.migrations.farmer_api_url import FarmerApiUrlMigration
+from foxy_farmer.migration.migrations.remove_path_from_plot_nfts import RemovePathFromPlotNftsMigration
 
 
 def make_migration_manager() -> MigrationManager:
@@ -12,5 +13,6 @@ def make_migration_manager() -> MigrationManager:
         migrations=[
             CopyPlotNftsMigration(),
             FarmerApiUrlMigration(),
+            RemovePathFromPlotNftsMigration(),
         ],
     )
