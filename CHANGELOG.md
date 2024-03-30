@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.22.5] - 2024-03-30
+
 ### Changed
 
 - Update `chia` to 2.2.1.
@@ -287,7 +289,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.22.4...HEAD
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.22.5...HEAD
+[1.22.5]: https://github.com/foxypool/foxy-farmer/compare/1.22.4...1.22.5
 [1.22.4]: https://github.com/foxypool/foxy-farmer/compare/1.22.3...1.22.4
 [1.22.3]: https://github.com/foxypool/foxy-farmer/compare/1.22.2...1.22.3
 [1.22.2]: https://github.com/foxypool/foxy-farmer/compare/1.22.1...1.22.2
