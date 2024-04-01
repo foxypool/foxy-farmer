@@ -12,7 +12,7 @@ dependencies = [
     "pyparsing==3.1.2",
     "PyYAML>=6.0.1",
     "questionary==2.0.1",
-    "sentry-sdk==1.41.0",
+    "sentry-sdk==1.44.0",
     "StrEnum==0.4.15",
     "yaspin==3.0.1",
 ]
