@@ -2,7 +2,7 @@ from decimal import Decimal
 from logging import getLogger
 from pathlib import Path
 from sys import stdout, stdin, stderr
-from typing import List, Any, Dict
+from typing import List, Any, Dict, Optional
 
 from chia.cmds.cmds_util import get_wallet
 from chia.cmds.init_funcs import check_keys
@@ -130,13 +130,19 @@ async def run_first_run_wizard(foxy_root: Path, config: Dict[str, Any], foxy_con
                 all_sks = keychain.get_all_private_keys()
 
     has_plot_nfts = len(foxy_config["plot_nfts"]) > 0
-    should_sync_wallet_message = "No PlotNFTs detected, do you want to sync the wallet to auto fill them?"
+    should_sync_wallet_message: Optional[str] = None
+    if use_og_pooling:
+        should_sync_wallet_message = "No PlotNFTs present in your config yet, do you want to fetch them from the blockchain? Required for PlotNFT plots to work."
     if has_plot_nfts:
-        should_sync_wallet_message = "Do you want to sync the wallet to update your PlotNFT states?"
-    should_sync_wallet: bool = await confirm(
-        message=should_sync_wallet_message,
-        default=not has_plot_nfts,
-    ).unsafe_ask_async()
+        should_sync_wallet_message = "Do you want to update your PlotNFTs from the blockchain? Required for PlotNFT plots to work if a pool change was already done on another machine."
+    if should_sync_wallet_message is None:
+        should_sync_wallet = True
+        print("Fetching your PlotNFTs from the blockchain ..")
+    else:
+        should_sync_wallet: bool = await confirm(
+            message=should_sync_wallet_message,
+            default=True,
+        ).unsafe_ask_async()
     if should_sync_wallet:
         plot_nft_updater = PlotNftUpdater(foxy_root=foxy_root, config=config, foxy_config=foxy_config)
         await plot_nft_updater.update_plot_nfts()
