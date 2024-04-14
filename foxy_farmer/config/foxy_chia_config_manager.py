@@ -8,6 +8,7 @@ from chia.cmds.init_funcs import chia_init, check_keys
 from chia.cmds.keys_funcs import add_private_key_seed
 from chia.util.config import load_config, save_config
 from chia.util.default_root import DEFAULT_ROOT_PATH, DEFAULT_KEYS_ROOT_PATH
+from chia.util.keychain import Keychain
 
 from foxy_farmer.binary_manager.dr_plotter_binary_manager import dr_plotter_binary_release
 from foxy_farmer.config.foxy_config import FoxyConfig, PlotNft
@@ -40,7 +41,7 @@ class FoxyChiaConfigManager:
         if is_first_install is True and chia_config_file_path.exists():
             copyfile(chia_config_file_path, self._root_path / "config" / "config.yaml")
 
-        if not DEFAULT_KEYS_ROOT_PATH.exists() and environ.get("CHIA_MNEMONIC") is not None:
+        if (not DEFAULT_KEYS_ROOT_PATH.exists() or not has_keys()) and environ.get("CHIA_MNEMONIC") is not None:
             add_private_key_seed(environ["CHIA_MNEMONIC"].strip(), None)
             check_keys(self._root_path)
 
@@ -224,3 +225,10 @@ def make_ensure_client_path_in_pool_url(client_path: str) -> Callable[[PlotNft],
         return False
 
     return ensure_client_path_in_pool_url
+
+
+def has_keys() -> bool:
+    keychain = Keychain()
+    all_sks = keychain.get_all_private_keys()
+
+    return len(all_sks) > 0

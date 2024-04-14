@@ -6,6 +6,10 @@
 
 - Update `drplotter` to 0.12.1.
 
+### Fixed
+
+- Fix `CHIA_MNEMONIC` not being applied when `.chia_keys` is present but empty.
+
 ## [1.22.5] - 2024-03-30
 
 ### Changed
