@@ -1,4 +1,3 @@
-version: '3'
 services:
   farmer:
     image: ghcr.io/foxypool/foxy-farmer:latest
