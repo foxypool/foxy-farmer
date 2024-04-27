@@ -29,13 +29,17 @@ class FoxyConfigManager:
         self._file_path = file_path
 
     def has_config(self) -> bool:
-        return self._file_path.exists()
+        return self._file_path.exists() and not self._is_config_file_empty()
 
     def load_config_or_get_default(self) -> FoxyConfig:
         if self.has_config():
             return self.load_config()
 
         return _get_default_config()
+
+    def _is_config_file_empty(self) -> bool:
+        with open(self._file_path, "r") as opened_config_file:
+            return not bool(opened_config_file.read())
 
     def load_config(self) -> FoxyConfig:
         with open(self._file_path, "r") as opened_config_file:
