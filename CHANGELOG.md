@@ -10,6 +10,7 @@
 
 - Fix `CHIA_MNEMONIC` not being applied when `.chia_keys` is present but empty.
 - Fix an empty `foxy-farmer.yaml` not triggering the first run wizard.
+- Fix the wallet sync not properly detecting PlotNFTs for dusted wallets.
 
 ## [1.22.5] - 2024-03-30
 

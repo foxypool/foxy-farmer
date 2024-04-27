@@ -186,6 +186,8 @@ class FoxyChiaConfigManager:
             .patch_value("farmer.disable_og_pooling", not foxy_farmer_config.get("enable_og_pooling", False))
             # Ensure the wallet syncs with unknown peers
             .patch_value("wallet.connect_to_unknown_peers", True)
+            # Ensure we do not filter out PlotNFT creation and state changes
+            .patch_value("wallet.xch_spam_amount", 0)
          )
 
         if backend == Backend.Gigahorse:
