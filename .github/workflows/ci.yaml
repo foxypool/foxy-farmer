@@ -69,19 +69,19 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - python-version: "3.11"
+          - python-version: "3.12"
             os: ubuntu-20.04
             package-suffix: ubuntu-20.04
-          - python-version: "3.11"
+          - python-version: "3.12"
             os: ubuntu-latest
             package-suffix: ubuntu
-          - python-version: "3.11"
+          - python-version: "3.12"
             os: macos-12
             package-suffix: macos
-          - python-version: "3.11"
+          - python-version: "3.12"
             os: macos-14
             package-suffix: macos-arm64
-          - python-version: "3.11"
+          - python-version: "3.12"
             os: windows-latest
             package-suffix: windows
 
