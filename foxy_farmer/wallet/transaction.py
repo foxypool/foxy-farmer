@@ -15,7 +15,7 @@ async def await_transaction_broadcasted(
     start = time()
     while time() - start < 15:
         await sleep(0.5)
-        tx = await wallet_client.get_transaction(1, tx_record.name)
+        tx = await wallet_client.get_transaction(tx_record.name)
         if len(tx.sent_to) > 0:
             return tx_record
 
@@ -23,4 +23,4 @@ async def await_transaction_broadcasted(
 async def await_transaction_confirmed(transaction_record: TransactionRecord, wallet_client: WalletRpcClient) -> None:
     while not transaction_record.confirmed:
         await sleep(0.5)
-        transaction_record = await wallet_client.get_transaction(1, transaction_record.name)
+        transaction_record = await wallet_client.get_transaction(transaction_record.name)

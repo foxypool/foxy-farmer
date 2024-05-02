@@ -188,6 +188,7 @@ class FoxyChiaConfigManager:
             .patch_value("wallet.connect_to_unknown_peers", True)
             # Ensure we do not filter out PlotNFT creation and state changes
             .patch_value("wallet.xch_spam_amount", 0)
+            .patch_value("wallet.use_delta_sync", True)
          )
 
         if backend == Backend.Gigahorse:

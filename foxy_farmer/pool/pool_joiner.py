@@ -24,7 +24,6 @@ class PoolJoiner:
         self._foxy_config = foxy_config
 
     async def join_pool(self, fee: uint64) -> bool:
-        did_update = False
         async with run_wallet(root_path=self._foxy_root, config=self._config) as wallet_rpc:
             # Select wallet to sync
             await get_wallet(self._foxy_root, wallet_rpc, fingerprint=None)
