@@ -2,6 +2,7 @@
 import importlib
 import pathlib
 import platform
+import sysconfig
 
 from PyInstaller.utils.hooks import collect_submodules
 
@@ -9,8 +10,16 @@ THIS_IS_WINDOWS = platform.system().lower().startswith("win")
 
 if THIS_IS_WINDOWS:
     hidden_imports_for_windows = ["win32timezone", "win32cred", "pywintypes", "win32ctypes.pywin32"]
+    dll_paths = pathlib.Path(sysconfig.get_path("platlib")) / "*.dll"
+    binaries = [
+        (
+            dll_paths,
+            ".",
+        ),
+    ]
 else:
     hidden_imports_for_windows = []
+    binaries = []
 
 hiddenimports = [
     *collect_submodules("chia"),
@@ -31,7 +40,7 @@ block_cipher = None
 a = Analysis(
     ['foxy_farmer/foxy_farmer_main.py'],
     pathex=[],
-    binaries=[],
+    binaries=binaries,
     datas=datas,
     hiddenimports=hiddenimports,
     hookspath=[],
