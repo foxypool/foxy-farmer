@@ -48,7 +48,10 @@ class FoxyFarmer:
 
         self_update_manager = SelfUpdateManager()
         if foxy_config.get("auto_update", False) and self_update_manager.is_supported:
-            await self_update_manager.update()
+            try:
+                await self_update_manager.update()
+            except Exception as e:
+                self._logger.error(f"Encountered an error during the update check: {e}")
             if self_update_manager.did_update:
                 return True
 
