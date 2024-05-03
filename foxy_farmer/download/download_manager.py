@@ -4,13 +4,13 @@ from os.path import join
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Union
-from zipfile import ZipFile
 
 from aiohttp import ClientSession, ClientTimeout
 from yaspin import yaspin
 from yaspin.core import Yaspin
 
 from foxy_farmer.util.ssl_context import ssl_context
+from foxy_farmer.util.zip_file_with_permissions import ZipFileWithPermissions
 
 
 class DownloadManager:
@@ -53,7 +53,7 @@ class DownloadManager:
 
     def _extract_file(self, archive_file_path: str, destination_path: Path):
         if archive_file_path.endswith(".zip"):
-            with ZipFile(archive_file_path, 'r') as zip_ref:
+            with ZipFileWithPermissions(archive_file_path, 'r') as zip_ref:
                 zip_ref.extractall(destination_path)
 
             return
