@@ -31,6 +31,7 @@ class FoxyConfig(TypedDict):
     chia_harvester_rpc_port: NotRequired[int]
     chia_wallet_rpc_port: NotRequired[int]
     syslog_port: NotRequired[int]
+    auto_update: NotRequired[bool]
     # BB
     enable_og_pooling: NotRequired[bool]
     parallel_decompressor_count: NotRequired[int]
