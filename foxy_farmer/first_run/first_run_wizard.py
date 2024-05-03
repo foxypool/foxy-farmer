@@ -136,8 +136,11 @@ async def run_first_run_wizard(foxy_root: Path, config: Dict[str, Any], foxy_con
     if has_plot_nfts:
         should_sync_wallet_message = "Do you want to update your PlotNFTs from the blockchain? Required for PlotNFT plots to work if a pool change was already done on another machine."
     if should_sync_wallet_message is None:
-        should_sync_wallet = True
-        print("Fetching your PlotNFTs from the blockchain ..")
+        if len(all_sks) > 0:
+            should_sync_wallet = True
+            print("Fetching your PlotNFTs from the blockchain ..")
+        else:
+            should_sync_wallet = False
     else:
         should_sync_wallet: bool = await confirm(
             message=should_sync_wallet_message,
