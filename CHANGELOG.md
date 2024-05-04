@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add support for auto updates when using the binary, to enable set `auto_update: true` in the `foxy-farmer.yaml`.
+
 ## [1.22.7] - 2024-05-04
 
 ### Changed

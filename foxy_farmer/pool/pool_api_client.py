@@ -1,16 +1,14 @@
-from ssl import SSLContext
 from typing import Dict, Any
 
 from aiohttp import ClientSession, ClientTimeout
-from chia.server.server import ssl_context_for_root
-from chia.ssl.create_ssl import get_mozilla_ca_crt
+
+from foxy_farmer.util.ssl_context import ssl_context
 
 TIMEOUT = ClientTimeout(total=30)
 POOL_URL = "https://farmer-chia.foxypool.io"
 
 
 class PoolApiClient:
-    _ssl_context: SSLContext = ssl_context_for_root(get_mozilla_ca_crt())
     _pool_url: str
 
     def __init__(self, pool_url: str = POOL_URL):
@@ -18,5 +16,5 @@ class PoolApiClient:
 
     async def get_pool_info(self) -> Dict[str, Any]:
         async with ClientSession(timeout=TIMEOUT) as client:
-            async with client.get(f"{self._pool_url}/pool_info", ssl=self._ssl_context) as res:
+            async with client.get(f"{self._pool_url}/pool_info", ssl=ssl_context) as res:
                 return await res.json()

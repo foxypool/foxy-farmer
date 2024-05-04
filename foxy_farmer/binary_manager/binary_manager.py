@@ -1,19 +1,12 @@
-import tarfile
 from abc import ABC
-from logging import getLogger
 from os.path import expanduser, join
 from pathlib import Path
-from ssl import SSLContext
 from sys import platform
-from tempfile import TemporaryDirectory
 from typing import List
-from zipfile import ZipFile
 
-from aiohttp import ClientSession, ClientTimeout
-from chia.server.server import ssl_context_for_root
-from chia.ssl.create_ssl import get_mozilla_ca_crt
 from yaspin import yaspin
-from yaspin.core import Yaspin
+
+from foxy_farmer.download.download_manager import DownloadManager
 
 
 class BinaryManager(ABC):
@@ -45,8 +38,7 @@ class BinaryManager(ABC):
         return []
 
     _cache_path: Path = Path(expanduser("~/.foxy-farmer/bin-cache")).resolve()
-    _ssl_context: SSLContext = ssl_context_for_root(get_mozilla_ca_crt())
-    _logger = getLogger("binary_manager")
+    _download_manager: DownloadManager = DownloadManager()
 
     async def get_binary_directory_path(self) -> Path:
         product_cache_base_path = Path(join(self._cache_path, self._product_name.lower()))
@@ -55,44 +47,13 @@ class BinaryManager(ABC):
         if binary_directory_path.exists():
             return binary_directory_path
 
-        with yaspin(text=f"Preparing to download {self._product_name} {self._binary_release} ..") as spinner:
-            product_cache_base_path.mkdir(parents=True, exist_ok=True)
-            with TemporaryDirectory() as temp_dir:
-                archive_path = join(temp_dir, self._archive_file_name)
-                await self._download_release(archive_path, spinner=spinner)
-                spinner.text = f"Extracting {self._product_name} {self._binary_release} .."
-                self._extract_file(archive_path, cache_base_path)
-        self._logger.info(f"✅ Downloaded {self._product_name} {self._binary_release}")
+        product_cache_base_path.mkdir(parents=True, exist_ok=True)
+        file_description = f"{self._product_name} {self._binary_release}"
+        await self._download_manager.download_archive_and_extract(
+            file_url=self._release_download_url,
+            file_name=self._archive_file_name,
+            to_path=cache_base_path,
+            file_description=file_description,
+        )
 
         return binary_directory_path
-
-    def _extract_file(self, archive_file_path: str, destination_path: Path):
-        if archive_file_path.endswith(".zip"):
-            with ZipFile(archive_file_path, 'r') as zip_ref:
-                zip_ref.extractall(destination_path)
-
-            return
-        if archive_file_path.endswith(".tar.gz"):
-            file = tarfile.open(archive_file_path)
-            file.extractall(destination_path)
-            file.close()
-
-            return
-
-        raise RuntimeError(f"Can not extract {archive_file_path}, unsupported extension")
-
-    async def _download_release(self, to_path: str, spinner: Yaspin):
-        one_mib_in_bytes = 2 ** 20
-        chunk_size = 5 * one_mib_in_bytes
-        downloaded_size_mib = 0
-        async with ClientSession(timeout=ClientTimeout(total=15 * 60, connect=60)) as client:
-            async with client.get(self._release_download_url, ssl=self._ssl_context) as res:
-                total_bytes = int(res.headers.get('content-length'))
-                total_mib = total_bytes / one_mib_in_bytes
-                with open(to_path, 'wb') as fd:
-                    async for chunk in res.content.iter_chunked(chunk_size):
-                        fd.write(chunk)
-                        downloaded_size_mib += len(chunk) / one_mib_in_bytes
-                        percentage = (downloaded_size_mib / total_mib) * 100
-                        spinner.text = f"Downloading {self._product_name} {self._binary_release} ({downloaded_size_mib:.2f}/{total_mib:.2f} MiB, {percentage:.2f}%) .."
-

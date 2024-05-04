@@ -41,7 +41,7 @@ class FoxyChiaConfigManager:
         if is_first_install is True and chia_config_file_path.exists():
             copyfile(chia_config_file_path, self._root_path / "config" / "config.yaml")
 
-        if (not DEFAULT_KEYS_ROOT_PATH.exists() or not has_keys()) and environ.get("CHIA_MNEMONIC") is not None:
+        if environ.get("CHIA_MNEMONIC") is not None and (not DEFAULT_KEYS_ROOT_PATH.exists() or not has_keys()):
             add_private_key_seed(environ["CHIA_MNEMONIC"].strip(), None)
             check_keys(self._root_path)
 

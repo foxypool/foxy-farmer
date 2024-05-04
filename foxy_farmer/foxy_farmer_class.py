@@ -17,6 +17,7 @@ from foxy_farmer.config.backend import Backend
 from foxy_farmer.config.foxy_chia_config_manager import FoxyChiaConfigManager
 from foxy_farmer.config.foxy_config_manager import FoxyConfigManager
 from foxy_farmer.ff_logging.configure_logging import initialize_logging_with_stdout
+from foxy_farmer.self_update.self_update_manager import SelfUpdateManager
 from foxy_farmer.util.node_id import calculate_harvester_node_id_slug
 
 
@@ -30,7 +31,7 @@ class FoxyFarmer:
         self._foxy_root = foxy_root
         self._config_path = config_path
 
-    async def run(self):
+    async def run(self) -> bool:
         foxy_chia_config_manager = FoxyChiaConfigManager(self._foxy_root)
         await foxy_chia_config_manager.ensure_foxy_config(self._config_path)
 
@@ -45,6 +46,15 @@ class FoxyFarmer:
         foxy_config_manager = FoxyConfigManager(self._config_path)
         foxy_config = foxy_config_manager.load_config()
 
+        self_update_manager = SelfUpdateManager()
+        if foxy_config.get("auto_update", False) and self_update_manager.is_supported:
+            try:
+                await self_update_manager.update()
+            except Exception as e:
+                self._logger.error(f"Encountered an error during the update check: {e}")
+            if self_update_manager.did_update:
+                return True
+
         backend: Union[str, Backend] = foxy_config.get("backend", Backend.BladeBit)
         if backend == Backend.BladeBit:
             self._farmer = BladebitFarmer(root_path=self._foxy_root, farmer_config=foxy_config)
@@ -55,12 +65,18 @@ class FoxyFarmer:
         else:
             self._logger.error(f"Backend '{backend}' is not supported!")
 
-            return
+            return False
 
         if not self._farmer.supports_system:
             self._logger.error(f"Backend '{backend}' does not support your system!")
 
-            return
+            return False
+
+        if foxy_config.get("auto_update", False) and self_update_manager.is_supported:
+            async def on_update_completed():
+                await self._farmer.stop()
+
+            self_update_manager.start_periodic_update_check(on_update_completed)
 
         from foxy_farmer.version import version
         status_infos = f"Foxy-Farmer version={version} backend={backend}"
@@ -71,6 +87,10 @@ class FoxyFarmer:
 
         with auto_session_tracking(session_mode="application"):
             await self._farmer.run()
+
+        await self_update_manager.shutdown()
+
+        return self_update_manager.did_update
 
     async def stop(self) -> None:
         if self._farmer is not None:
