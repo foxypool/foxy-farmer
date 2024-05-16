@@ -6,6 +6,10 @@
 
 - Add support for auto updates when using the binary, to enable set `auto_update: true` in the `foxy-farmer.yaml`.
 
+### Changed
+
+- Update `drplotter` to 1.0.2. This release requires you to set up your own DrServer and configure its ip/hostname and port via the `dr_server_ip_address` config option in your `foxy-farmer.yaml`, if you have been using the token system until now. Please see the [official release notes](https://github.com/drnick23/drplotter/releases/tag/1.0.2) for more info.
+
 ## [1.22.7] - 2024-05-04
 
 ### Changed
