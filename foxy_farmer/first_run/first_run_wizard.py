@@ -57,25 +57,19 @@ async def run_first_run_wizard(foxy_root: Path, config: Dict[str, Any], foxy_con
     foxy_config["backend"] = f"{backend}"
 
     if backend == Backend.DrPlotter:
-        dr_plotter_mode = await select(
-            message="How do you want to connect to your DrSolvers?",
-            choices=[
-                Choice(title="Connect using a client token", value="remote"),
-                Choice(title="Connect using a DrServer IP and port", value="local"),
-            ],
+        dr_server_ip_address: str = await text(
+            message="Please enter your DrServer IP address and port:",
+            validate=lambda ip_and_port: len(ip_and_port.strip()) > 0
         ).unsafe_ask_async()
-        if dr_plotter_mode == "remote":
-            dr_plotter_client_token: str = await text(
-                message="Please enter your DrPlotter client token:",
-                validate=lambda token: len(token.strip()) == 48
-            ).unsafe_ask_async()
-            foxy_config["dr_plotter_client_token"] = dr_plotter_client_token.strip()
-        if dr_plotter_mode == "local":
-            dr_server_ip_address: str = await text(
-                message="Please enter your DrServer IP address and port:",
-                validate=lambda ip_and_port: len(ip_and_port.strip()) > 0
-            ).unsafe_ask_async()
-            foxy_config["dr_server_ip_address"] = dr_server_ip_address.strip()
+        foxy_config["dr_server_ip_address"] = dr_server_ip_address.strip()
+
+        dr_plotter_client_token: str = await text(
+            message="Please enter your DrPlotter client token or keep empty to use without a token:",
+            validate=lambda token: len(token.strip()) == 48 or len(token.strip()) == 0
+        ).unsafe_ask_async()
+        dr_plotter_client_token = dr_plotter_client_token.strip()
+        if len(dr_plotter_client_token) > 0:
+            foxy_config["dr_plotter_client_token"] = dr_plotter_client_token
 
     payout_address: str = await text(
         message="Which payout address do you want to use?",

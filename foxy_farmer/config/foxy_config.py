@@ -56,3 +56,4 @@ class FoxyConfig(TypedDict):
     # DR
     dr_plotter_client_token: NotRequired[str]
     dr_server_ip_address: NotRequired[str]
+    dr_server_use_ssl: NotRequired[bool]

@@ -27,5 +27,7 @@ class DrPlotterChiaEnvironment(BinaryChiaEnvironment):
             os.environ["DRPLOTTER_CLIENT_TOKEN"] = str(self._farmer_config["dr_plotter_client_token"])
         if self._farmer_config.get("dr_server_ip_address") is not None:
             os.environ["DRSERVER_IP_ADDRESS"] = str(self._farmer_config["dr_server_ip_address"])
+        if self._farmer_config.get("dr_server_use_ssl") is True:
+            os.environ["DRSERVER_USE_SSL"] = str(self._farmer_config["dr_server_use_ssl"])
 
         return await super()._start_daemon_process()
