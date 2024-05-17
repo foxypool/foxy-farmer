@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.23.0] - 2024-05-17
+
 ### Added
 
 - Add support for auto updates when using the binary, to enable set `auto_update: true` in the `foxy-farmer.yaml`.
@@ -316,7 +318,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.22.7...HEAD
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.23.0...HEAD
+[1.23.0]: https://github.com/foxypool/foxy-farmer/compare/1.22.7...1.23.0
 [1.22.7]: https://github.com/foxypool/foxy-farmer/compare/1.22.6...1.22.7
 [1.22.6]: https://github.com/foxypool/foxy-farmer/compare/1.22.5...1.22.6
 [1.22.5]: https://github.com/foxypool/foxy-farmer/compare/1.22.4...1.22.5
