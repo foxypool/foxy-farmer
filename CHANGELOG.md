@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix auto-update replace logic when updating multiple times during the lifetime of the binary.
+
 ## [1.23.1] - 2024-05-19
 
 ### Changed

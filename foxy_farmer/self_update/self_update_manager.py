@@ -1,7 +1,6 @@
 import sys
 from asyncio import Task, create_task, sleep
 from logging import getLogger
-from os import remove
 from os.path import join
 from sys import platform
 from pathlib import Path
@@ -123,7 +122,9 @@ class SelfUpdateManager:
 
     def _swap_binary(self, new_binary_path: Path):
         if self._old_binary_path.exists():
-            remove(self._old_binary_path)
+            # Move to temp dir and try to delete, if in use remain in temp dir until temp is cleaned
+            with TemporaryDirectory(ignore_cleanup_errors=True) as temp_dir:
+                move(self._old_binary_path, join(temp_dir, self._binary_file_name_in_archive))
         move(self._binary_path, self._old_binary_path)
         move(new_binary_path, self._binary_path)
 
