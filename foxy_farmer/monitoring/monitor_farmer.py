@@ -9,9 +9,12 @@ from chia.rpc.farmer_rpc_client import FarmerRpcClient
 from chia.server.outbound_message import NodeType
 
 
-async def monitor_farmer(root_path: Path, until: Event):
+async def monitor_farmer(root_path: Path, until: Event, initial_sleep_sec: float = 60):
+    stale_connection_threshold_sec: float = 90
+    check_interval_sec: float = 10
+
     time_slept = 0
-    while not until.is_set() and time_slept < 60:
+    while not until.is_set() and time_slept < initial_sleep_sec:
         await sleep(1)
         time_slept += 1
     if until.is_set():
@@ -27,11 +30,11 @@ async def monitor_farmer(root_path: Path, until: Event):
             connections = await farmer_client.get_connections(node_type=NodeType.FULL_NODE)
             current_time = time()
 
-            return [conn for conn in connections if current_time - conn.get("last_message_time", 0) >= 90]
+            return [conn for conn in connections if current_time - conn.get("last_message_time", 0) >= stale_connection_threshold_sec]
 
         time_slept = 0
         while not until.is_set():
-            if time_slept >= 10:
+            if time_slept >= check_interval_sec:
                 time_slept = 0
                 try:
                     stale_connections = await get_stale_connections()
