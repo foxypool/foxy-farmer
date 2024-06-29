@@ -6,6 +6,7 @@
 
 - Update `chia` to 2.4.1.
 - Update `gigahorse` to 2.4.1.giga36.
+- Update `drplotter` to 1.0.4.
 
 ### Fixed
 
