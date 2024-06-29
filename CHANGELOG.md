@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add support for monitoring for stale farmer connections, to enable set `monitor_farmer_connections: true` in the `foxy-farmer.yaml`.
+
 ### Changed
 
 - Update `chia` to 2.4.1.

@@ -38,6 +38,7 @@ class DrPlotterFarmer(SplitChiaFarmer):
             config=config,
             allow_connecting_to_existing_daemon=True,
         )
+        self._root_path = root_path
         self._syslog_server = SyslogServer(logging_config=config["logging"])
 
     async def run(self) -> None:

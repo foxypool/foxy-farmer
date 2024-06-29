@@ -16,3 +16,4 @@ class BladebitFarmer(ChiaFarmer):
             config=config,
             allow_connecting_to_existing_daemon=False,
         )
+        self._root_path = root_path
