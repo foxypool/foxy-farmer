@@ -10,6 +10,10 @@ from chia.server.outbound_message import NodeType
 
 
 async def monitor_farmer(root_path: Path, until: Event):
+    logger = getLogger("farmer_monitor")
+    logger.info(f"Starting to monitor for stale connections")
+    await sleep(60)
+
     async with get_any_service_client(FarmerRpcClient, root_path=root_path) as (farmer_client, _):
         farmer_client: FarmerRpcClient
 
@@ -18,9 +22,6 @@ async def monitor_farmer(root_path: Path, until: Event):
             current_time = time()
 
             return [conn for conn in connections if current_time - conn.get("last_message_time", 0) >= 90]
-
-        logger = getLogger("farmer_monitor")
-        logger.info(f"Starting to monitor for stale connections")
 
         time_slept = 0
         while not until.is_set():
@@ -32,7 +33,7 @@ async def monitor_farmer(root_path: Path, until: Event):
                         logger.warning(f"Detected stale connection to {connection['peer_host']}:{connection['peer_port']}, reconnecting ..")
                         # Will auto reconnect as the connections are in the default peers, we just need to close the connection
                         await farmer_client.close_connection(connection["node_id"])
-                except (Exception, ConnectionError) as e:
+                except Exception as e:
                     logger.error(f"Encountered an error while checking for stale connections: {e}")
 
             await sleep(1)
