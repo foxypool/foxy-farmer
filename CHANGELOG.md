@@ -5,6 +5,7 @@
 ### Changed
 
 - Update `chia` to 2.4.1.
+- Update `gigahorse` to 2.4.1.giga36.
 
 ### Fixed
 
