@@ -12,7 +12,13 @@ from chia.server.outbound_message import NodeType
 async def monitor_farmer(root_path: Path, until: Event):
     logger = getLogger("farmer_monitor")
     logger.info(f"Starting to monitor for stale connections")
-    await sleep(60)
+
+    time_slept = 0
+    while not until.is_set() and time_slept < 60:
+        await sleep(1)
+        time_slept += 1
+    if until.is_set():
+        return
 
     async with get_any_service_client(FarmerRpcClient, root_path=root_path) as (farmer_client, _):
         farmer_client: FarmerRpcClient
