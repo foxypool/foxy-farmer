@@ -21,8 +21,10 @@ else:
     hidden_imports_for_windows = []
     binaries = []
 
+chia_submodules = collect_submodules("chia")
+chia_submodules_excluding_tests = [submodule for submodule in chia_submodules if "chia._tests" not in submodule]
 hiddenimports = [
-    *collect_submodules("chia"),
+    *chia_submodules_excluding_tests,
     *hidden_imports_for_windows,
 ]
 
