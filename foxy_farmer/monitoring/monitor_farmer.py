@@ -32,7 +32,7 @@ async def monitor_farmer(root_path: Path, until: Event):
                         logger.warning(f"Detected stale connection to {connection['peer_host']}:{connection['peer_port']}, reconnecting ..")
                         # Will auto reconnect as the connections are in the default peers, we just need to close the connection
                         await farmer_client.close_connection(connection["node_id"])
-                except Exception as e:
+                except (Exception, ConnectionError) as e:
                     logger.error(f"Encountered an error while checking for stale connections: {e}")
 
             await sleep(1)
