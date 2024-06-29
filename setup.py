@@ -5,7 +5,7 @@ from setuptools import find_packages, setup
 dependencies = [
     "aiohttp>=3.9.1",
     "aioudp==1.0.1",
-    "chia-blockchain@git+https://github.com/foxypool/chia-blockchain@2.3.0-og-1.6.1#egg=chia-blockchain",
+    "chia-blockchain@git+https://github.com/foxypool/chia-blockchain@2.4.1-og-1.6.1#egg=chia-blockchain",
     "click>=8.1.3",
     "colorlog>=6.7.0",
     "humanize==4.9.0",

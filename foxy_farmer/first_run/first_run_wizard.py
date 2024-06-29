@@ -6,7 +6,7 @@ from typing import List, Any, Dict, Optional
 
 from chia.cmds.cmds_util import get_wallet
 from chia.cmds.init_funcs import check_keys
-from chia.cmds.keys_funcs import query_and_add_private_key_seed
+from chia.cmds.keys_funcs import query_and_add_key_info
 from chia.cmds.units import units
 from chia.daemon.keychain_proxy import KeychainProxy
 from chia.types.blockchain_format.sized_bytes import bytes32
@@ -119,7 +119,7 @@ async def run_first_run_wizard(foxy_root: Path, config: Dict[str, Any], foxy_con
         ).unsafe_ask_async()
         if should_add_keys:
             while len(all_sks) == 0:
-                query_and_add_private_key_seed(mnemonic=None)
+                query_and_add_key_info(mnemonic_or_pk=None)
                 check_keys(foxy_root)
                 all_sks = keychain.get_all_private_keys()
 

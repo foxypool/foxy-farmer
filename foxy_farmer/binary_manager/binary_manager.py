@@ -4,8 +4,6 @@ from pathlib import Path
 from sys import platform
 from typing import List
 
-from yaspin import yaspin
-
 from foxy_farmer.download.download_manager import DownloadManager
 
 

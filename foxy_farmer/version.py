@@ -1,3 +1,8 @@
-import pkg_resources
+import importlib.metadata
 
-version = pkg_resources.require("foxy-farmer")[0].version
+version: str
+try:
+    version = importlib.metadata.version("foxy-farmer")
+except importlib.metadata.PackageNotFoundError:
+    # package is not installed
+    version = "unknown"

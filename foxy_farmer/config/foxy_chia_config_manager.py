@@ -5,7 +5,7 @@ from typing import Dict, Any, List, Callable, Union
 from sys import exit
 
 from chia.cmds.init_funcs import chia_init, check_keys
-from chia.cmds.keys_funcs import add_private_key_seed
+from chia.cmds.keys_funcs import add_key_info
 from chia.util.config import load_config, save_config
 from chia.util.default_root import DEFAULT_ROOT_PATH, DEFAULT_KEYS_ROOT_PATH
 from chia.util.keychain import Keychain
@@ -42,7 +42,7 @@ class FoxyChiaConfigManager:
             copyfile(chia_config_file_path, self._root_path / "config" / "config.yaml")
 
         if environ.get("CHIA_MNEMONIC") is not None and (not DEFAULT_KEYS_ROOT_PATH.exists() or not has_keys()):
-            add_private_key_seed(environ["CHIA_MNEMONIC"].strip(), None)
+            add_key_info(environ["CHIA_MNEMONIC"].strip(), None)
             check_keys(self._root_path)
 
         config = load_config(self._root_path, "config.yaml")

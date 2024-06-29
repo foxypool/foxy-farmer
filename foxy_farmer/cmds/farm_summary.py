@@ -73,4 +73,4 @@ async def print_farm_summary(root_path: Path):
 
     async with get_any_service_client(FarmerRpcClient, root_path=root_path) as (farmer_client, _):
         print()
-        await print_connections(farmer_client, {})
+        await print_connections(farmer_client, {}, [])

@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Update `chia` to 2.4.1.
+
 ### Fixed
 
 - Fix auto-update replace logic when updating multiple times during the lifetime of the binary.
