@@ -4,7 +4,7 @@
 
 ### Added
 
-- Add support for monitoring for stale farmer connections, to enable set `monitor_farmer_connections: true` in the `foxy-farmer.yaml`.
+- Add monitoring for stale farmer connections.
 
 ### Changed
 

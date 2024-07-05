@@ -26,7 +26,7 @@ class ChiaFarmer(Farmer, ABC):
             await self._environment.start_daemon()
             await self._environment.start_services(self._services_to_run)
             futures: List[Awaitable] = [self._stop_event.wait()]
-            if self._farmer_config.get("monitor_farmer_connections") is True:
+            if self._farmer_config.get("monitor_farmer_connections", True) is True:
                 futures.append(monitor_farmer(root_path=self._root_path, until=self._stop_event))
             await gather(*futures)
         finally:
