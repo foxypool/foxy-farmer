@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.24.0] - 2024-07-05
+
 ### Added
 
 - Add monitoring for stale farmer connections.
@@ -338,7 +340,8 @@
 
 - Initial release
 
-[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.23.1...HEAD
+[unreleased]: https://github.com/foxypool/foxy-farmer/compare/1.24.0...HEAD
+[1.24.0]: https://github.com/foxypool/foxy-farmer/compare/1.23.1...1.24.0
 [1.23.1]: https://github.com/foxypool/foxy-farmer/compare/1.23.0...1.23.1
 [1.23.0]: https://github.com/foxypool/foxy-farmer/compare/1.22.7...1.23.0
 [1.22.7]: https://github.com/foxypool/foxy-farmer/compare/1.22.6...1.22.7
