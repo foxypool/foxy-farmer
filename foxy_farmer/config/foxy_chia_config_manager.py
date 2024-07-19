@@ -17,9 +17,9 @@ from foxy_farmer.first_run.first_run_wizard import run_first_run_wizard
 from foxy_farmer.config.backend import Backend
 from foxy_farmer.config.config_patcher import ConfigPatcher
 from foxy_farmer.config.foxy_config_manager import FoxyConfigManager
-from foxy_farmer.config.foxy_farming_gateway import eu1_foxy_farming_gateway_address, foxy_farming_gateway_port, \
-    eu3_foxy_farming_gateway_address, eu1_foxy_gigahorse_farming_gateway_address, foxy_gigahorse_farming_gateway_port, \
-    eu3_foxy_gigahorse_farming_gateway_address
+from foxy_farmer.config.foxy_farming_gateway import dus1_foxy_farming_gateway_address, foxy_farming_gateway_port, \
+    nue1_foxy_farming_gateway_address, dus1_foxy_gigahorse_farming_gateway_address, foxy_gigahorse_farming_gateway_port, \
+    nue1_foxy_gigahorse_farming_gateway_address
 from foxy_farmer.migration.make_migration_manager import make_migration_manager
 from foxy_farmer.version import version
 
@@ -124,18 +124,18 @@ class FoxyChiaConfigManager:
         backend: Union[str, Backend] = foxy_farmer_config.get("backend", Backend.BladeBit)
         require_syslog = backend != Backend.BladeBit
         full_node_peers: List[Dict[str, Any]] = [{
-            "host": eu1_foxy_farming_gateway_address,
+            "host": dus1_foxy_farming_gateway_address,
             "port": foxy_farming_gateway_port,
         }, {
-            "host": eu3_foxy_farming_gateway_address,
+            "host": nue1_foxy_farming_gateway_address,
             "port": foxy_farming_gateway_port,
         }]
         if backend == Backend.Gigahorse:
             full_node_peers = [{
-                "host": eu1_foxy_gigahorse_farming_gateway_address,
+                "host": dus1_foxy_gigahorse_farming_gateway_address,
                 "port": foxy_gigahorse_farming_gateway_port,
             }, {
-                "host": eu3_foxy_gigahorse_farming_gateway_address,
+                "host": nue1_foxy_gigahorse_farming_gateway_address,
                 "port": foxy_gigahorse_farming_gateway_port,
             }]
 
