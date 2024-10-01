@@ -15,7 +15,7 @@ dependencies = [
     "questionary==2.0.1",
     "sentry-sdk==2.13.0",
     "StrEnum==0.4.15",
-    "yaspin==3.0.2",
+    "yaspin==3.1.0",
 ]
 if platform == "win32" or platform == "cygwin":
     dependencies.append("pywin32>=306")
