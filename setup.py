@@ -10,7 +10,7 @@ dependencies = [
     "colorlog>=6.7.0",
     "humanize==4.11.0",
     "packaging>=23.2.0",
-    "pyparsing==3.1.4",
+    "pyparsing==3.2.0",
     "PyYAML>=6.0.1",
     "questionary==2.0.1",
     "sentry-sdk==2.17.0",
