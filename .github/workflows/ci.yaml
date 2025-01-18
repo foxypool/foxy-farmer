@@ -73,8 +73,11 @@ jobs:
             os: ubuntu-20.04
             package-suffix: ubuntu-20.04
           - python-version: "3.12"
-            os: ubuntu-latest
+            os: ubuntu-22.04
             package-suffix: ubuntu
+          - python-version: "3.12"
+            os: ubuntu-22.04-arm
+            package-suffix: ubuntu-arm64
           - python-version: "3.12"
             os: macos-12
             package-suffix: macos
@@ -125,6 +128,7 @@ jobs:
         run: |
           chmod +x foxy-farmer-ubuntu-20.04/foxy-farmer
           chmod +x foxy-farmer-ubuntu/foxy-farmer
+          chmod +x foxy-farmer-ubuntu-arm64/foxy-farmer
           chmod +x foxy-farmer-macos/foxy-farmer
           chmod +x foxy-farmer-macos-arm64/foxy-farmer
       - name: Create release zip
