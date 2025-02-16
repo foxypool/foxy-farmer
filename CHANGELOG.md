@@ -5,6 +5,7 @@
 ### Changed
 
 - Update `chia` to 2.5.1.
+- Update `gigahorse` to 2.5.1.giga36.
 
 ## [1.24.0] - 2024-07-05
 
