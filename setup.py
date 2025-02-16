@@ -3,15 +3,15 @@ from sys import platform
 from setuptools import find_packages, setup
 
 dependencies = [
-    "aiohttp>=3.9.1",
+    "aiohttp>=3.10.4",
     "aioudp==1.0.1",
-    "chia-blockchain@git+https://github.com/foxypool/chia-blockchain@2.4.1-og-1.6.1#egg=chia-blockchain",
-    "click>=8.1.3",
-    "colorlog>=6.7.0",
+    "chia-blockchain@git+https://github.com/foxypool/chia-blockchain@2.5.1-og-1.6.1#egg=chia-blockchain",
+    "click>=8.1.7",
+    "colorlog>=6.9.0",
     "humanize==4.11.0",
-    "packaging>=23.2.0",
+    "packaging>=24.0",
     "pyparsing==3.2.0",
-    "PyYAML>=6.0.1",
+    "PyYAML>=6.0.2",
     "questionary==2.0.1",
     "sentry-sdk==2.17.0",
     "StrEnum==0.4.15",

@@ -51,7 +51,7 @@ async def join_plot_nfts_to_pool(wallet_client: WalletRpcClient, plot_nfts: List
 
             continue
         with yaspin(text=f"Joining PlotNFT with LauncherID {launcher_id} to the pool ...") as spinner:
-            while not (await wallet_client.get_synced()):
+            while not (await wallet_client.get_sync_status()).synced:
                 await sleep(5)
             try:
                 await join_plot_nft_to_pool(wallet_id)
@@ -85,7 +85,7 @@ async def create_plot_nft(wallet_client: WalletRpcClient, fee: uint64 = uint64(0
 
     transaction_record: TransactionRecord
     with yaspin(text=f"Creating PlotNFT ...") as spinner:
-        while not (await wallet_client.get_synced()):
+        while not (await wallet_client.get_sync_status()).synced:
             await sleep(5)
         try:
             transaction_record = await create_plot_nft_inner()

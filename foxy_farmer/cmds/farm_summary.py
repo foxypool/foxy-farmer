@@ -7,7 +7,7 @@ from chia.cmds.cmds_util import get_any_service_client
 from chia.cmds.farm_funcs import get_harvesters_summary
 from chia.cmds.peer_funcs import print_connections
 from chia.rpc.farmer_rpc_client import FarmerRpcClient
-from chia.util.misc import format_bytes
+from chia.cmds.cmds_util import format_bytes
 from chia.util.network import is_localhost
 
 

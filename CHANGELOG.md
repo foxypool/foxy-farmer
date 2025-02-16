@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Update `chia` to 2.5.1.
+
 ## [1.24.0] - 2024-07-05
 
 ### Added

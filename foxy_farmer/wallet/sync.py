@@ -1,6 +1,7 @@
 from asyncio import sleep
 from datetime import datetime
 
+from chia.rpc.wallet_request_types import GetTimestampForHeight
 from chia.rpc.wallet_rpc_client import WalletRpcClient
 from chia.server.outbound_message import NodeType
 from humanize import naturaldelta
@@ -11,11 +12,11 @@ async def wait_for_wallet_sync(wallet_client: WalletRpcClient):
     with yaspin(text="Waiting for the wallet to sync ...") as spinner:
         async def update_spinner_text():
             connected_full_nodes_count = len(await wallet_client.get_connections(node_type=NodeType.FULL_NODE))
-            wallet_height = await wallet_client.get_height_info()
+            wallet_height = (await wallet_client.get_height_info()).height
             relative_time = "N/A"
             if connected_full_nodes_count > 0:
                 try:
-                    wallet_timestamp = await wallet_client.get_timestamp_for_height(wallet_height)
+                    wallet_timestamp = (await wallet_client.get_timestamp_for_height(GetTimestampForHeight(wallet_height))).timestamp
                     relative_time = naturaldelta(datetime.now() - datetime.fromtimestamp(float(wallet_timestamp)))
                 except Exception:
                     pass
@@ -26,10 +27,7 @@ async def wait_for_wallet_sync(wallet_client: WalletRpcClient):
             await sleep(5)
         await update_spinner_text()
         await sleep(10)
-        while await wallet_client.get_sync_status():
-            await update_spinner_text()
-            await sleep(5)
-        while not (await wallet_client.get_synced()):
+        while not (await wallet_client.get_sync_status()).synced:
             await update_spinner_text()
             await sleep(5)
     print("✅ Wallet synced")

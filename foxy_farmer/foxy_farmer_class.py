@@ -6,8 +6,9 @@ from sys import platform
 from types import FrameType
 from typing import Optional, Union
 
-from chia.util.misc import SignalHandlers
-from sentry_sdk.sessions import auto_session_tracking
+import sentry_sdk
+from chia.server.signal_handlers import SignalHandlers
+from sentry_sdk.sessions import track_session
 
 from foxy_farmer.farmer.bladebit_farmer import BladebitFarmer
 from foxy_farmer.farmer.dr_plotter_farmer import DrPlotterFarmer
@@ -85,7 +86,7 @@ class FoxyFarmer:
         status_infos += f" config_path={self._config_path}"
         self._logger.info(status_infos)
 
-        with auto_session_tracking(session_mode="application"):
+        with track_session(scope=sentry_sdk.get_current_scope(), session_mode="application"):
             await self._farmer.run()
 
         await self_update_manager.shutdown()
