@@ -20,7 +20,7 @@ from foxy_farmer.config.foxy_config_manager import FoxyConfigManager
 from foxy_farmer.config.foxy_farming_gateway import dus1_foxy_farming_gateway_address, foxy_farming_gateway_port, \
     nue1_foxy_farming_gateway_address, dus1_foxy_gigahorse_farming_gateway_address, foxy_gigahorse_farming_gateway_port, \
     nue1_foxy_gigahorse_farming_gateway_address
-from foxy_farmer.migration.make_migration_manager import make_migration_manager
+from foxy_farmer.config.migration.make_migration_manager import make_migration_manager
 from foxy_farmer.version import version
 
 

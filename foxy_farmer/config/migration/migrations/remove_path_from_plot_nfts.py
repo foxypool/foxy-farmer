@@ -1,13 +1,13 @@
 from typing import Dict, Any
 
 from foxy_farmer.config.foxy_config import FoxyConfig
-from foxy_farmer.migration.migration import Migration, MigrationResult
+from foxy_farmer.config.migration.migration import Migration, MigrationResult
 
 
 class RemovePathFromPlotNftsMigration(Migration):
     @property
-    def date(self) -> str:
-        return "2024-03-29"
+    def version(self) -> int:
+        return 3
 
     def run(self, foxy_farmer_config: FoxyConfig, chia_config: Dict[str, Any]) -> MigrationResult:
         if foxy_farmer_config.get("plot_nfts") is None:

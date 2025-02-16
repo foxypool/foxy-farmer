@@ -12,6 +12,7 @@ class PlotNft(TypedDict):
 
 class FoxyConfig(TypedDict):
     # General
+    migration_version: NotRequired[int]
     backend: NotRequired[str]
     plot_directories: List[str]
     plot_refresh_interval_seconds: NotRequired[int]

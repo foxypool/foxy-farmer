@@ -23,10 +23,10 @@ def aggregate_migration_results(results: List[MigrationResult]) -> MigrationResu
 class Migration:
     @property
     def name(self):
-        return f"{self.date}-{type(self).__name__.replace('Migration', '')}"
+        return f"v{self.version} - {type(self).__name__.replace('Migration', '')}"
 
     @property
-    def date(self) -> str:
+    def version(self) -> int:
         ...
 
     def run(self, foxy_farmer_config: FoxyConfig, chia_config: Dict[str, Any]) -> MigrationResult:
