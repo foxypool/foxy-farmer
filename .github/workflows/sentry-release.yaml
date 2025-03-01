@@ -17,7 +17,7 @@ jobs:
         id: tag
         run: echo TAG=${GITHUB_REF/refs\/tags\//} >> $GITHUB_OUTPUT
       - name: Create Sentry release
-        uses: getsentry/action-release@v1
+        uses: getsentry/action-release@v2
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
