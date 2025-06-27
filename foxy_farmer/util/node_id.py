@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Dict, Any
 
 from chia.server.server import calculate_node_id
-from chia.types.blockchain_format.sized_bytes import bytes32
+from chia_rs.sized_bytes import bytes32
 
 
 def calculate_harvester_node_id(root_path: Path, config: Dict[str, Any]) -> bytes32:

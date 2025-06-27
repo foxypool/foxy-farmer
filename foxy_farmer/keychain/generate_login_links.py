@@ -4,7 +4,7 @@ from typing import List, Tuple
 from chia_rs import G1Element, G2Element, AugSchemeMPL
 from chia.daemon.keychain_proxy import KeychainProxy
 from chia.protocols.pool_protocol import get_current_authentication_token, AuthenticationPayload
-from chia.types.blockchain_format.sized_bytes import bytes32
+from chia_rs.sized_bytes import bytes32
 from chia.util.byte_types import hexstr_to_bytes
 from chia.util.hash import std_hash
 from chia.wallet.derive_keys import find_authentication_sk

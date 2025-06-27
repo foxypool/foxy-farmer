@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Dict, Any, Optional
 
 from chia.cmds.cmds_util import get_wallet
-from chia.util.ints import uint64
+from chia_rs.sized_ints import uint64
 
 from foxy_farmer.config.foxy_config import FoxyConfig
 from foxy_farmer.environment.embedded_chia_environment import EmbeddedChiaEnvironment

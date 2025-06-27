@@ -9,9 +9,9 @@ from chia.cmds.init_funcs import check_keys
 from chia.cmds.keys_funcs import query_and_add_key_info
 from chia.cmds.units import units
 from chia.daemon.keychain_proxy import KeychainProxy
-from chia.types.blockchain_format.sized_bytes import bytes32
+from chia_rs.sized_bytes import bytes32
 from chia.util.bech32m import encode_puzzle_hash
-from chia.util.ints import uint64
+from chia_rs.sized_ints import uint64
 from chia.util.keychain import Keychain
 from prompt_toolkit.shortcuts import CompleteStyle
 from questionary import select, Choice, confirm, text, path, checkbox

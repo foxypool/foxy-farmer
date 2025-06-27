@@ -8,7 +8,7 @@ from chia.cmds.cmds_util import cli_confirm
 from chia.cmds.units import units
 from chia.util.chia_logging import initialize_logging
 from chia.util.config import load_config
-from chia.util.ints import uint64
+from chia_rs.sized_ints import uint64
 
 from foxy_farmer.error_reporting.error_reporting import close_sentry
 from foxy_farmer.config.foxy_chia_config_manager import FoxyChiaConfigManager
