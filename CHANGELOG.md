@@ -6,6 +6,7 @@
 
 - Update `chia` to 2.5.4.
 - Update `gigahorse` to 2.5.3.giga36.
+- Ubuntu 20.04 is no longer supported in packaged binaries. Please upgrade your OS or install from source.
 
 ## [1.24.0] - 2024-07-05
 

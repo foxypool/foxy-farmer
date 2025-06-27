@@ -4,7 +4,7 @@ from logging import getLogger
 from os.path import join
 from sys import platform
 from pathlib import Path
-from platform import libc_ver, machine, system
+from platform import machine, system
 from shutil import move
 from tempfile import TemporaryDirectory
 from typing import Optional, Dict, Any, Callable
@@ -55,12 +55,7 @@ class SelfUpdateManager:
 
             return f"{prefix}.zip"
 
-        prefix = f"{prefix}ubuntu"
-        [_, libc_version] = libc_ver()
-        if Version(libc_version) < Version("2.35"):
-            return f"{prefix}-20.04.zip"
-
-        return f"{prefix}.zip"
+        return f"{prefix}ubuntu.zip"
 
     did_update: bool = False
     _download_manager: DownloadManager = DownloadManager()
