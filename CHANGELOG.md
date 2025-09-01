@@ -8,6 +8,10 @@
 - Update `gigahorse` to 2.5.3.giga36.
 - Ubuntu 20.04 is no longer supported in packaged binaries. Please upgrade your OS or install from source.
 
+### Fixed
+
+- Fix running foxy-farmer on systems where a very old `config.yaml` from previous chia installs is present.
+
 ## [1.24.0] - 2024-07-05
 
 ### Added
