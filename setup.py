@@ -8,7 +8,7 @@ dependencies = [
     "chia-blockchain@git+https://github.com/foxypool/chia-blockchain@2.5.4-og-1.6.1#egg=chia-blockchain",
     "click>=8.1.7",
     "colorlog>=6.9.0",
-    "humanize==4.11.0",
+    "humanize==4.12.1",
     "packaging>=24.0",
     "pyparsing==3.2.0",
     "PyYAML>=6.0.2",
